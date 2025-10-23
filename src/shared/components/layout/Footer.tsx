@@ -3,7 +3,7 @@ import logo from '../../../assets/logo.png'
 export default function Footer() {
     return <footer className="bg-gt-light-grey text-gt-dark-green py-16 border-t border-border">
         <div className="container mx-auto px-4">
-            <div className="flex justify-between gap-12 mb-12">
+            <div className="flex flex-col lg:justify-between md:flex-row gap-12 mb-12 ">
                 <div className="md:col-span-2">
                     <div className="flex items-center gap-2 mb-4">
                         <img src={logo} className="w-10 h-auto text-white" alt="logo"/>
