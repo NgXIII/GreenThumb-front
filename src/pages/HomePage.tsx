@@ -1,5 +1,5 @@
 export default function HomePage() {
-    return <main>
-        <h1 className="text-2xl">Welcome home !</h1>
-    </main>
+    return <div className="bg-gt-light-grey">
+        <h1 className="text-2xl text-black text-center">Welcome home !</h1>
+    </div>
 }
