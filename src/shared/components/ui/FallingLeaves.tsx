@@ -10,7 +10,7 @@ function setupCanvasResize(canvas: HTMLCanvasElement) {
 }
 
 function generateLeaves(canvas: HTMLCanvasElement, color: string[]) {
-    return Array.from({length: 15}, () => ({
+    return Array.from({length: 20}, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         size: 10 + Math.random() * 20,
