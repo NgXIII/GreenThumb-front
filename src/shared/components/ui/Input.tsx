@@ -1,14 +1,12 @@
-import {Component} from "react";
+type InputProps = {
+    label?: string
+    placeholder?: string
+    inputType: "text" | "password" | "email" | "file" | "number"
+}
 
-class Input extends Component {
-    constructor(props: object) {
-        super(props)
-        this.state = {}
-    }
-
-    render() {
-        return <>
-
-        </>
-    }
+export default function Input({ label, placeholder, inputType }: InputProps) {
+    return <>
+        {label && <label>{label}</label>}
+        <input type={inputType} placeholder={placeholder}/>
+    </>
 }

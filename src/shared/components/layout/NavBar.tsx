@@ -5,9 +5,9 @@ import { useOutsideToggle } from '../../hooks/useOutsideToggle'
 import LogoLink from './LogoLink'
 import NavItem from './NavItem'
 import ProfileMenu from './ProfileMenu'
-import type { NavBarProps, NavItemType } from '../../types/types/layout'
+import type { NavBarProps, NavItemType } from '../../types/layout.ts'
 
-export default function NavBar({ isAuthenticated = true }: NavBarProps) {
+export default function NavBar({ isAuthenticated = false }: NavBarProps) {
     const location = useLocation()
     const navigate = useNavigate()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)
@@ -23,7 +23,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const onLogout = () => {
         // remplacer par la logique réelle
         console.log('logout')
-        navigate('/login')
+        navigate('/')
     }
 
     function AuthenticatedView() {
@@ -104,7 +104,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                 Se connecter
                             </Link>
 
-                            <Link to="/signup" className="px-3 py-2 rounded-full bg-gt-green text-white hover:bg-gt-dark-green transition-colors">
+                            <Link to="/inscription" className="px-3 py-2 rounded-full bg-gt-green text-white hover:bg-gt-dark-green transition-colors">
                                 Créer un compte
                             </Link>
                         </div>

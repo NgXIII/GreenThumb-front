@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { NavItemProps } from '../../types/types/layout'
+import type { NavItemProps } from '../../types/layout.ts'
 
 export default function NavItem({ name, icon: Icon, path, active = false, onClick, size = 20, compact = false }: NavItemProps) {
     if (compact) {

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import logo from '../../../assets/logo.png'
-import type { LogoLinkProps } from '../../types/types/layout'
+import type { LogoLinkProps } from '../../types/layout.ts'
 
 export default function LogoLink({ className = '' }: LogoLinkProps) {
     return (

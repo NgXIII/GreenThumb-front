@@ -1,6 +1,6 @@
 import { User, LogOut } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import type { ProfileMenuProps } from '../../types/types/layout'
+import type { ProfileMenuProps } from '../../types/layout.ts'
 
 export default function ProfileMenu({ isOpen, refProp, onToggle, onClose, onLogout, isActive = false }: ProfileMenuProps) {
     return (
