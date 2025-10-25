@@ -6,10 +6,11 @@ import Tag from "../shared/components/ui/Tag.tsx";
 import type {Discussion} from "../shared/types/discussion.ts";
 import {formatDateFr, formatTimeAgo} from "../shared/utils/date.ts";
 import { motion } from "framer-motion";
-import  {type JSX} from "react";
+import {type JSX, useEffect, useState} from "react";
 import type {Tutorial} from "../shared/types/tutorial.ts";
 import {ArrowRight} from "lucide-react";
 import * as React from "react";
+import {getUserCount} from "../services/repos/getUserCount.ts";
 
 const discussion: Discussion[] = [
     {
@@ -70,7 +71,7 @@ export default function HomePage(): JSX.Element {
             <CommunitySection />
             <TutorialSession />
             <AdvantageSection />
-            < CallToActionSection />
+            <CallToActionSection />
         </main>
     );
 }
@@ -87,14 +88,26 @@ export default function HomePage(): JSX.Element {
  */
 function HeaderHome(): JSX.Element {
     const season = useSeason()
+    const [userCount, setUserCount] = useState<number | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        getUserCount()
+            .then(setUserCount)
+            .catch((err) => setError(err.message));
+    }, [])
+
+    const plural = userCount && userCount > 1 ? "s" : "";
 
     return (
         <header
             className="w-screen relative bg-gradient-to-b from-green-50 to-green-100 px-6 sm:px-10 md:px-20 lg:px-32 xl:px-48 py-10 sm:py-14 md:py-20 lg:py-28 text-center flex flex-col items-center overflow-hidden">
             {getSeasonUI(season)}
+
+            {error && <p className="text-red-500">Erreur : {error}</p>}
             <div className="flex flex-col items-center gap-4 max-w-xl">
                 <h2 className="text-sm font-medium text-green-700 bg-green-100/70 border border-green-200 px-4 py-1 rounded-full [animation:circle-reveal_2s_ease-in-out_forwards]">
-                    🌿 Rejoignez plus de 1000 jardiniers passionnés
+                    🌿 Rejoignez plus de {userCount} jardinier{plural} passionnés
                 </h2>
 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
