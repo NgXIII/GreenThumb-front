@@ -2,12 +2,14 @@ import FallingLeaves from "../shared/components/ui/FallingLeaves.tsx";
 import {useSeason} from "../shared/hooks/useSeason.ts";
 import Snowflakes from "../shared/components/ui/Snowflakes.tsx";
 import SakuraPetals from "../shared/components/ui/SakuraPetals.tsx";
+import Tag from "../shared/components/ui/Tag.tsx";
 import type {Discussion} from "../shared/types/discussion.ts";
 import {formatDateFr, formatTimeAgo} from "../shared/utils/date.ts";
 import { motion } from "framer-motion";
-import type {JSX} from "react";
+import  {type JSX} from "react";
 import type {Tutorial} from "../shared/types/tutorial.ts";
 import {ArrowRight} from "lucide-react";
+import * as React from "react";
 
 const discussion: Discussion[] = [
     {
@@ -277,34 +279,39 @@ function TutorialCards({ data }: { data: Tutorial[]}) {
         </section>
     );
 }
-function AboutArticle({icon, title, description}: {icon: string, title: string; description: string}) {
 
-    return (
-        <motion.article
-            whileHover={{ y: -6, scale: 1.03, boxShadow: "0 12px 20px rgba(0,0,0,0.1)" }}
-            transition={{ type: "spring", stiffness: 200, damping: 15 }}
-            className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 text-left cursor-pointer"
-        >
-            <div className="flex items-center mb-4">
-                <div className="flex items-center justify-center w-12 h-12 bg-green-600 rounded-lg text-white text-2xl mr-4">
-                    {icon}
-                </div>
-                <h3 className="text-lg font-semibold text-green-700">{title}</h3>
-            </div>
-            <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
-        </motion.article>
-    );
-}
-
-function TutorialCard({tag, title, date, imageUrl}: Tutorial) {
+function CardBase({ children }: { children: React.ReactNode }) {
     return (
         <motion.article
             whileHover={{ y: -6, scale: 1.03, boxShadow: "0 12px 20px rgba(0,0,0,0.08)" }}
             transition={{ type: "spring", stiffness: 200, damping: 15 }}
-            className="bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer flex flex-col"
+            className="bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer flex flex-col text-left shadow-sm hover:shadow-md"
         >
-            {/* Image section */}
-            <div className="relative w-full h-32 sm:h-40 bg-gradient-to-b from-green-50 to-green-100 flex items-center justify-center">
+            {children}
+        </motion.article>
+    );
+}
+function AboutArticle({icon, title, description}: {icon: string, title: string; description: string}) {
+
+    return (
+        <CardBase>
+            <div className="p-3 sm:p-4">
+                <div className="flex items-center mb-4">
+                    <div className="flex items-center justify-center w-12 h-12 bg-green-600 rounded-lg text-white text-2xl mr-4">
+                        {icon}
+                    </div>
+                    <h3 className="text-lg font-semibold text-green-700">{title}</h3>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
+            </div>
+        </CardBase>
+    );
+}
+
+function TutorialCard({ tag, title, date, imageUrl }: Tutorial) {
+    return (
+        <CardBase>
+            <div className="relative w-full h-44 sm:h-48 bg-gradient-to-b from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
                 {imageUrl ? (
                     <img
                         src={imageUrl}
@@ -316,11 +323,10 @@ function TutorialCard({tag, title, date, imageUrl}: Tutorial) {
                 )}
             </div>
 
-            {/* Content section */}
-            <div className="p-5 sm:p-6 flex flex-col flex-1">
-                <span className="inline-block text-[11px] sm:text-xs font-medium bg-green-50 text-green-700 border border-green-100 px-2.5 py-0.5 rounded-full mb-3">
-                    {tag}
-                </span>
+            <div className="p-5 sm:p-6 flex flex-col flex-1 items-center">
+                <div className="mb-3">
+                    <Tag tag={tag} color="amber" />
+                </div>
 
                 <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 line-clamp-2">
                     {title}
@@ -328,27 +334,25 @@ function TutorialCard({tag, title, date, imageUrl}: Tutorial) {
 
                 <TutorialCardFooter date={date} />
             </div>
-        </motion.article>
+        </CardBase>
     );
 }
 
 function CommunityCard({tag, title, author, commentsCount, time}: Discussion) {
     return (
-        <motion.article
-            whileHover={{ y: -6, scale: 1.03, boxShadow: "0 12px 20px rgba(0,0,0,0.1)" }}
-            transition={{ type: "spring", stiffness: 200, damping: 15 }}
-            className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 text-left cursor-pointer"
-        >
-            <span className="inline-block text-xs sm:text-sm font-medium bg-gray-100 text-gray-800 px-3 py-1 rounded-full mb-3">
-               {tag}
-            </span>
+        <CardBase>
+            <div className="p-3 sm:p-4">
+                <div className="flex justify-center p-3 sm:p-4">
+                    <Tag tag={tag} color="green"/>
+                </div>
 
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 line-clamp-2">
-                {title}
-            </h3>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 line-clamp-2">
+                    {title}
+                </h3>
 
-            <CommunityCardFooter author={author} commentsCount={commentsCount} time={time} />
-        </motion.article>
+                <CommunityCardFooter author={author} commentsCount={commentsCount} time={time} />
+            </div>
+        </CardBase>
     );
 
 }
