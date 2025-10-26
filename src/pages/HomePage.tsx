@@ -3,38 +3,15 @@ import {useSeason} from "../shared/hooks/useSeason.ts";
 import Snowflakes from "../shared/components/ui/Snowflakes.tsx";
 import SakuraPetals from "../shared/components/ui/SakuraPetals.tsx";
 import Tag from "../shared/components/ui/Tag.tsx";
-import type {Discussion} from "../shared/types/discussion.ts";
+import type {Message} from "../shared/types/message.ts";
 import {formatDateFr, formatTimeAgo} from "../shared/utils/date.ts";
 import { motion } from "framer-motion";
-import {type JSX, useEffect, useState} from "react";
+import {type JSX} from "react";
 import type {Tutorial} from "../shared/types/tutorial.ts";
 import {ArrowRight} from "lucide-react";
 import * as React from "react";
-import {getUserCount} from "../services/repos/getUserCount.ts";
-
-const discussion: Discussion[] = [
-    {
-        tag: "Conseils",
-        title: "Meilleurs engrais naturels pour plantes d'intérieur ?",
-        author: "PlantGirl",
-        commentsCount: 18,
-        time: "2025-10-22T14:00:00"
-    },
-    {
-        tag: "Conseils",
-        title: "Meilleurs engrais naturels pour plantes d'intérieur ?",
-        author: "PlantGirl",
-        commentsCount: 18,
-        time: "2025-10-22T14:00:00"
-    },
-    {
-        tag: "Conseils",
-        title: "Meilleurs engrais naturels pour plantes d'intérieur ?",
-        author: "PlantGirl",
-        commentsCount: 18,
-        time: "2025-10-23T21:46:00"
-    }
-]
+import useTopMessages from "../shared/hooks/useTopMessages.ts";
+import {useUserCount} from "../shared/hooks/useUserCount.ts";
 
 const tutorial: Tutorial[] = [
     {
@@ -87,15 +64,8 @@ export default function HomePage(): JSX.Element {
  * @return {JSX.Element} The rendering header for the home page
  */
 function HeaderHome(): JSX.Element {
-    const season = useSeason()
-    const [userCount, setUserCount] = useState<number | null>(null);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        getUserCount()
-            .then(setUserCount)
-            .catch((err) => setError(err.message));
-    }, [])
+    const season = useSeason();
+    const { userCount, error, loading } = useUserCount();
 
     const plural = userCount && userCount > 1 ? "s" : "";
 
@@ -107,7 +77,9 @@ function HeaderHome(): JSX.Element {
             {error && <p className="text-red-500">Erreur : {error}</p>}
             <div className="flex flex-col items-center gap-4 max-w-xl">
                 <h2 className="text-sm font-medium text-green-700 bg-green-100/70 border border-green-200 px-4 py-1 rounded-full [animation:circle-reveal_2s_ease-in-out_forwards]">
-                    🌿 Rejoignez plus de {userCount} jardinier{plural} passionnés
+                    {loading
+                        ? "Chargement des jardiniers..."
+                        : `🌿 Rejoignez plus de ${userCount ?? 0} jardinier${plural} passionnés`}
                 </h2>
 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
@@ -240,6 +212,8 @@ function AdvantageCard({description}: { description: string }) {
 
 
 function CommunitySection() {
+    const { messages, error, loading } = useTopMessages();
+
     return (
         <section className="bg-gradient-to-b py-12 px-4 sm:px-6 md:px-10 text-center">
             <div className="max-w-6xl mx-auto">
@@ -250,7 +224,10 @@ function CommunitySection() {
                 <p className="text-gray-600 text-sm sm:text-base mb-10">
                     Découvrez ce que la communauté partage en ce moment
                 </p>
-                <CommunityCards data={discussion}/>
+
+                {loading && <p>Chargement...</p>}
+                {error && <p className="text-red-500">Erreur : {error}</p>}
+                {!loading && !error && <CommunityCards data={messages} />}
             </div>
         </section>
     );
@@ -273,7 +250,7 @@ function TutorialSession() {
     );
 }
 
-function CommunityCards({ data }: { data: Discussion[]}) {
+function CommunityCards({ data }: { data: Message[]}) {
     return (
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
             {data.map((item, index) => (
@@ -351,19 +328,23 @@ function TutorialCard({ tag, title, date, imageUrl }: Tutorial) {
     );
 }
 
-function CommunityCard({tag, title, author, commentsCount, time}: Discussion) {
+function CommunityCard({tags, title, author, likeCount, date}: Message) {
     return (
         <CardBase>
             <div className="p-3 sm:p-4">
-                <div className="flex justify-center p-3 sm:p-4">
-                    <Tag tag={tag} color="green"/>
+                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                    {
+                        tags.map((tag, index) => (
+                        <Tag key={index} tag={tag} color="green" />
+                    ))
+                    }
                 </div>
 
                 <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 line-clamp-2">
                     {title}
                 </h3>
 
-                <CommunityCardFooter author={author} commentsCount={commentsCount} time={time} />
+                <CommunityCardFooter author={author} commentsCount={likeCount} time={date} />
             </div>
         </CardBase>
     );
@@ -376,19 +357,15 @@ function CommunityCardFooter({author, commentsCount, time}: {author: string, com
             <span>{author}</span>
             <span>•</span>
             <span className="flex items-center space-x-1">
-                     <svg
-                         xmlns="http://www.w3.org/2000/svg"
-                         viewBox="0 0 24 24"
-                         fill="currentColor"
-                         className="w-4 h-4 text-gray-500"
-                     >
-                          <path
-                              fillRule="evenodd"
-                              d="M4.5 4.5A2.25 2.25 0 0 0 2.25 6.75v8.25a2.25 2.25 0 0 0 2.25 2.25h2.25v3.75l4.5-3.75h6a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 17.25 4.5H4.5Zm0 1.5h12.75a.75.75 0 0 1 .75.75v8.25a.75.75 0 0 1-.75.75h-6.374a.75.75 0 0 0-.48.175L8.25 18.22v-2.195a.75.75 0 0 0-.75-.75H4.5a.75.75 0 0 1-.75-.75V6.75a.75.75 0 0 1 .75-.75Z"
-                              clipRule="evenodd"
-                          />
-                     </svg>
-                     <span>{commentsCount}</span>
+                 <svg
+                     xmlns="http://www.w3.org/2000/svg"
+                     viewBox="0 0 24 24"
+                     fill="currentColor"
+                     className="w-5 h-5 text-green-600 hover:text-green-700 transition-colors duration-200"
+                 >
+                    <path d="M12 2a1 1 0 0 1 1 1v3c1.933 0 3.5 1.567 3.5 3.5S14.933 13 13 13h-2v8a1 1 0 1 1-2 0v-8H7c-1.933 0-3.5-1.567-3.5-3.5S5.067 6 7 6V3a1 1 0 0 1 1-1h4zm0 2h-2v2h2V4zM7 8C6.172 8 5.5 8.672 5.5 9.5S6.172 11 7 11h6c.828 0 1.5-.672 1.5-1.5S13.828 8 13 8H7z" />
+                </svg>
+                <span>{commentsCount}</span>
                 </span>
             <span>•</span>
             <span>{formatTimeAgo(time)}</span>
