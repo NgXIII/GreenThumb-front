@@ -2,7 +2,8 @@ import logo from "../assets/logo.png"
 import {Link} from "react-router-dom";
 import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
 import QuartetLeaves from "@/shared/components/ui/customs/QuartetLeaves.tsx";
-import {Form, useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { Form } from "@/shared/components/ui/form";
 import {type UserCreationPost, UserCreationSchema} from "../shared/types/schemas/UserSchema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
@@ -16,7 +17,7 @@ export default function RegisterPage() {
                 </Link>
             </div>
 
-            <div className="flex-1 flex flex-col items-center px-4 lg:mt-20">
+            <div className="flex-1 flex flex-col items-center px-4 lg:mb-20">
                 <div className="w-full max-w-4xl relative">
                     <QuartetLeaves
                         positionLeave1="top-5 left-202"
@@ -50,7 +51,16 @@ export default function RegisterPage() {
 function RegisterForm() {
     const form = useForm<UserCreationPost>({
         resolver: zodResolver(UserCreationSchema),
-        mode: "all"
+        mode: "all",
+        defaultValues: {
+            username: "",
+            firstname: "",
+            lastname: "",
+            password: "",
+            confirmPassword: "",
+            email: "",
+            phoneNumber: "",
+        }
     })
 
     const submit = (values: UserCreationPost) => {
@@ -81,7 +91,7 @@ function LeftColumn() {
         <div className="flex flex-col gap-5 lg:flex-1">
             <InputForm name="username" inputType="text" placeholder="PlantQueen" label="Nom d'utilisateur*" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <InputForm name="username" inputType="text" placeholder="Aerts" label="Nom*" />
+                <InputForm name="lastname" inputType="text" placeholder="Aerts" label="Nom*" />
                 <InputForm name="firstname" inputType="text" placeholder="Emelie" label="Prénom*" />
             </div>
             <InputForm name="password" inputType="password" label="Mot de passe*" placeholder="*********" />
