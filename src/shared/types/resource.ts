@@ -1,5 +1,4 @@
-export interface Tutorial {
-    tag: string;
+export interface Resource {
     title: string;
     date: string;
     imageUrl: string;

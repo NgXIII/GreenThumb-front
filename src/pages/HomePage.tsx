@@ -7,32 +7,12 @@ import type {Message} from "../shared/types/message.ts";
 import {formatDateFr, formatTimeAgo} from "../shared/utils/date.ts";
 import { motion } from "framer-motion";
 import {type JSX} from "react";
-import type {Tutorial} from "../shared/types/tutorial.ts";
+import type {Resource} from "../shared/types/resource.ts";
 import {ArrowRight} from "lucide-react";
 import * as React from "react";
 import useTopMessages from "../shared/hooks/useTopMessages.ts";
 import {useUserCount} from "../shared/hooks/useUserCount.ts";
-
-const tutorial: Tutorial[] = [
-    {
-        tag: "Guides",
-        title: "Guide complet de l'arrosage en été",
-        date: "2025-6-12",
-        imageUrl: "https://images.pexels.com/photos/4503261/pexels-photo-4503261.jpeg?auto=compress&cs=tinysrgb&w=600"
-    },
-    {
-        tag: "Guides",
-        title: "Guide complet de l'arrosage en été",
-        date: "2025-6-12",
-        imageUrl: "https://images.pexels.com/photos/4503261/pexels-photo-4503261.jpeg?auto=compress&cs=tinysrgb&w=600"
-    },
-    {
-        tag: "Guides",
-        title: "Guide complet de l'arrosage en été",
-        date: "2025-6-12",
-        imageUrl: "https://images.pexels.com/photos/4503261/pexels-photo-4503261.jpeg?auto=compress&cs=tinysrgb&w=600"
-    }
-]
+import useThreeResources from "../shared/hooks/useThreeResources.ts";
 
 /**
  * Base component that displays the home page.
@@ -234,6 +214,8 @@ function CommunitySection() {
 }
 
 function TutorialSession() {
+    const { messages, error, loading } = useThreeResources();
+
     return (
         <section className="bg-gradient-to-b py-12 px-4 sm:px-6 md:px-10 text-center">
             <div className="max-w-6xl mx-auto">
@@ -244,7 +226,9 @@ function TutorialSession() {
                 <p className="text-gray-600 text-sm sm:text-base mb-10">
                     Apprenez de nouvelles techniques avec nos ressources détaillées
                 </p>
-                <TutorialCards data={tutorial}/>
+                {loading && <p>Chargement...</p>}
+                {error && <p className="text-red-500">Erreur : {error}</p>}
+                {!loading && !error && <TutorialCards data={messages} />}
             </div>
         </section>
     );
@@ -260,7 +244,7 @@ function CommunityCards({ data }: { data: Message[]}) {
     );
 }
 
-function TutorialCards({ data }: { data: Tutorial[]}) {
+function TutorialCards({ data }: { data: Resource[]}) {
     return (
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
             {data.map((item, index) => (
@@ -298,13 +282,16 @@ function AboutArticle({icon, title, description}: {icon: string, title: string; 
     );
 }
 
-function TutorialCard({ tag, title, date, imageUrl }: Tutorial) {
+function TutorialCard({title, date, imageUrl }: Resource) {
+    const urlImage = "src/assets/resourceImage/" + imageUrl;
+
     return (
         <CardBase>
+            {/* Image */}
             <div className="relative w-full h-44 sm:h-48 bg-gradient-to-b from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
-                {imageUrl ? (
+                {urlImage ? (
                     <img
-                        src={imageUrl}
+                        src={urlImage}
                         alt={title}
                         className="w-full h-full object-cover"
                     />
@@ -313,16 +300,16 @@ function TutorialCard({ tag, title, date, imageUrl }: Tutorial) {
                 )}
             </div>
 
-            <div className="p-5 sm:p-6 flex flex-col flex-1 items-center">
-                <div className="mb-3">
-                    <Tag tag={tag} color="amber" />
+            <div className="flex flex-col flex-1 justify-between p-5 sm:p-6 h-full">
+                <div>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 line-clamp-2">
+                        {title}
+                    </h3>
                 </div>
 
-                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 line-clamp-2">
-                    {title}
-                </h3>
-
-                <TutorialCardFooter date={date} />
+                <div className="mt-auto pt-4 border-t border-gray-100">
+                    <TutorialCardFooter date={date} />
+                </div>
             </div>
         </CardBase>
     );
