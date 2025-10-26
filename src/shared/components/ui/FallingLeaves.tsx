@@ -22,7 +22,7 @@ function generateLeaves(canvas: HTMLCanvasElement, color: string[]) {
 }
 
 function createLeafDrawer(ctx: CanvasRenderingContext2D) {
-    const drawLeaf = (x: number, y: number, size: number, rotation: number, color: string) => {
+    return (x: number, y: number, size: number, rotation: number, color: string) => {
         ctx.save()
         ctx.translate(x, y);
         ctx.rotate((rotation * Math.PI) / 180);
@@ -33,8 +33,7 @@ function createLeafDrawer(ctx: CanvasRenderingContext2D) {
         ctx.quadraticCurveTo(-size / 2, -size / 2, 0, 0);
         ctx.fill();
         ctx.restore();
-    }
-    return drawLeaf;
+    };
 }
 
 function startLeafAnimation(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, leaves: {
