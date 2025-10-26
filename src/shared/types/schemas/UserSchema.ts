@@ -6,13 +6,13 @@ export const UserCreationSchema = z
         firstname: z.string().min(1, "Le prénom est obligatoire"),
         lastname: z.string().min(1, "Le nom de famille est obligatoire"),
         password: z.string().min(8, "Le mot de passe doit faire au moins 8 caractères"),
-        confirmpassword: z.string().min(1, "Veuillez confirmer votre mot de passe"),
+        confirmPassword: z.string().min(1, "Veuillez confirmer votre mot de passe"),
         email: z.email("L'email n'est pas valide").min(1, "L'email est obligatoire"),
         phoneNumber: z.number().optional(),
     })
-    .refine((data) => data.password === data.confirmpassword, {
+    .refine((data) => data.password === data.confirmPassword, {
         message: "Les mots de passe ne correspondent pas",
-        path: ["confirmpassword"],
+        path: ["confirmPassword"],
     })
 
 export type UserCreationPost = z.infer<typeof UserCreationSchema>
