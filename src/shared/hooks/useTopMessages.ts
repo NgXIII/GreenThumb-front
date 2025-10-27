@@ -1,4 +1,4 @@
-import {getTop3Message} from "../../services/repos/getTop3Message.ts";
+import {getTop3Messages} from "../../services/repos/getTop3Messages.ts";
 import {useEffect, useState} from "react";
 import type {Message} from "../types/message.ts";
 
@@ -8,7 +8,7 @@ export default function useTopMessages() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getTop3Message()
+        getTop3Messages()
             .then((res) => setMessages(res))
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false));

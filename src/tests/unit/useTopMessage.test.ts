@@ -1,6 +1,6 @@
 import useTopMessages from "../../shared/hooks/useTopMessages"
 import { renderHook, waitFor } from "@testing-library/react"
-import * as repo from "../../services/repos/getTop3Message"
+import * as repo from "../../services/repos/getTop3Messages.ts"
 
 const fakeMessage = [
     { title: "Test", tags: [], author: "Moi", likeCount: 69, date: new Date().toISOString() },
@@ -8,7 +8,7 @@ const fakeMessage = [
 
 describe("useTopMessage()", () => {
     it("retourne les messages", async () => {
-        vi.spyOn(repo, "getTop3Message").mockResolvedValueOnce(fakeMessage)
+        vi.spyOn(repo, "getTop3Messages").mockResolvedValueOnce(fakeMessage)
 
         const { result } = renderHook(() => useTopMessages())
 
@@ -23,7 +23,7 @@ describe("useTopMessage()", () => {
     })
 
     it("gère une erreur API", async () => {
-        vi.spyOn(repo, "getTop3Message").mockRejectedValueOnce(new Error("Boom"))
+        vi.spyOn(repo, "getTop3Messages").mockRejectedValueOnce(new Error("Boom"))
 
         const { result } = renderHook(() => useTopMessages())
 
