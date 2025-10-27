@@ -2,8 +2,8 @@ import logo from "../assets/logo.png"
 import {Link} from "react-router-dom";
 import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
 import QuartetLeaves from "@/shared/components/ui/customs/QuartetLeaves.tsx";
-import { useForm } from "react-hook-form";
-import { Form } from "@/shared/components/ui/form";
+import {useForm, useFormContext} from "react-hook-form";
+import {Form, FormField, FormItem} from "@/shared/components/ui/form";
 import {type UserCreationPost, UserCreationSchema} from "../shared/types/schemas/UserSchema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
@@ -13,7 +13,11 @@ export default function RegisterPage() {
         <main className="min-h-screen flex flex-col text-black bg-[linear-gradient(to_bottom,#faf8f5,#f9f8f4,#f6f8f3,#f3f9f3,#f0f9f4)] overflow-hidden">
             <div className="w-full px-4 py-4">
                 <Link to="/" className="block mx-auto lg:mx-0 w-24">
-                    <img src={logo} className="max-w-full h-auto w-24" alt="Logo" />
+                    <img
+                        src={logo}
+                        alt="Logo"
+                        className="max-w-full h-auto w-24 transition-transform duration-300 ease-out hover:scale-105"
+                    />
                 </Link>
             </div>
 
@@ -26,13 +30,16 @@ export default function RegisterPage() {
                         positionLeave4="top-126 left-30"
                     />
 
-                    <div className="border border-gray-400 rounded-xl bg-gt-white px-4 sm:px-10 py-2 mb-8 relative z-10">
+                    <section className="border border-input rounded-md bg-white shadow-xs
+                                     px-4 sm:px-10 py-6 mb-8 relative z-10
+                                     transition-[color,box-shadow]"
+                    >
                         <h1 className="text-2xl font-semibold mt-4 mb-6 text-center lg:text-left lg:text-[2rem]">
                             Inscription
                         </h1>
 
                         <RegisterForm />
-                    </div>
+                    </section>
                 </div>
 
                 <div className="pb-4 text-center">
@@ -88,7 +95,7 @@ function RegisterForm() {
 
 function LeftColumn() {
     return (
-        <div className="flex flex-col gap-5 lg:flex-1">
+        <section className="flex flex-col gap-5 lg:flex-1">
             <InputForm name="username" inputType="text" placeholder="PlantQueen" label="Nom d'utilisateur*" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InputForm name="lastname" inputType="text" placeholder="Aerts" label="Nom*" />
@@ -96,7 +103,7 @@ function LeftColumn() {
             </div>
             <InputForm name="password" inputType="password" label="Mot de passe*" placeholder="*********" />
             <InputForm name="confirmPassword" inputType="password" label="Confirmer le mot de passe*" placeholder="*********" />
-        </div>
+        </section>
     );
 }
 
@@ -111,33 +118,65 @@ function Separator() {
 
 function RightColumn() {
     return (
-        <div className="flex flex-col gap-5 lg:flex-1">
-            <InputFile label="Photo de profil" />
+        <section className="flex flex-col gap-5 lg:flex-1">
+            <InputFile label="Photo de profil" name="avatar" />
             <InputForm name="email" inputType="email" label="E-mail*" placeholder="emilie.aerts@gmail.com" />
             <InputForm name="phoneNumber" inputType="number" label="Téléphone*" placeholder="0123456789" />
-        </div>
+        </section>
     );
 }
 
 function TermsCheckbox() {
+    const form = useFormContext<UserCreationPost>();
+
     return (
-        <div className="flex items-start gap-1">
-            <div className="checkbox-wrapper-19">
-                <input type="checkbox" id="cbtest-19" />
-                <label htmlFor="cbtest-19" className="check-box" />
-            </div>
-            <p className="text-sm">
-                J'accepte les{' '}
-                <a href="#" className="underline text-green-600">
-                    Conditions générales d'utilisation
-                </a>
-                {' '}et la{' '}
-                <a href="#" className="underline text-green-600">
-                    Politique de Confidentialité
-                </a>
-            </p>
-        </div>
-    );
+        <FormField
+            control={form.control}
+            name="terms"
+            render={({ field, fieldState }) => (
+                <FormItem>
+                    <div className="flex items-start gap-2">
+                        <div className="checkbox-wrapper-19">
+                            <input
+                                id="cb-terms"
+                                type="checkbox"
+                                checked={!!field.value}
+                                onChange={(e) => field.onChange(e.target.checked)}
+                            />
+                            <label htmlFor="cb-terms" className="check-box" />
+                        </div>
+                        {fieldState.error ? (
+                            <div className="flex items-center justify-between gap-2">
+                                <p className="text-sm text-red-500">
+                                    J'accepte les{" "}
+                                    <a href="#" className="underline">
+                                        Conditions générales d'utilisation
+                                    </a>{" "}
+                                    et la{" "}
+                                    <a href="#" className="underline">
+                                        Politique de Confidentialité
+                                    </a>
+                                </p>
+                            </div>
+                        ) : (
+                            <div>
+                                <p className="text-sm">
+                                    J'accepte les{" "}
+                                    <a href="#" className="underline text-gt-green">
+                                        Conditions générales d'utilisation
+                                    </a>{" "}
+                                    et la{" "}
+                                    <a href="#" className="underline text-gt-green">
+                                        Politique de Confidentialité
+                                    </a>
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </FormItem>
+            )}
+        />
+    )
 }
 
 function SubmitButton() {

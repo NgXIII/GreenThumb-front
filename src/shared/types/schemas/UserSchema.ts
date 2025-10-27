@@ -1,4 +1,6 @@
-import * as z from 'zod'
+import * as z from "zod";
+
+const allowedImageTypes = ["image/png", "image/jpeg", "image/jpg"]
 
 export const UserCreationSchema = z
     .object({
@@ -12,6 +14,18 @@ export const UserCreationSchema = z
             .string()
             .min(1, "Le téléphone est obligatoire")
             .regex(/^\d{10,}$/, "Le téléphone doit contenir uniquement des chiffres"),
+        terms: z.literal(true, "Vous devez accepter les conditions pour continuer"),
+        avatar: z
+            .any()
+            .optional()
+            .refine((file) => !file || file instanceof File, {
+                message: "Fichier invalide",
+                path: ["avatar"],
+            })
+            .refine((file?: File) => !file || allowedImageTypes.includes(file.type), {
+                message: "L'image doit être PNG, JPG ou JPEG",
+                path: ["avatar"],
+            }),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Les mots de passe ne correspondent pas",
