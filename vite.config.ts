@@ -21,5 +21,16 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    test: {
+      globals: true,
+      environment: "jsdom",
+      setupFiles: "src/tests/setupTests.ts",
+      include: ["src/tests/**/*.test.ts", "src/tests/**/*.test.tsx"],
+      coverage: {
+        all: true,
+        reportsDirectory: './coverage',
+        reporter: ["text", "html"],
+      },
+    },
   }
 })
