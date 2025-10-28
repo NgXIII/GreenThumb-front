@@ -18,8 +18,9 @@
   font-weight: 400;
 
   color-scheme: light dark;
+  color: black;
+  background-color: mintcream;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #fbfbf9;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -290,5 +291,20 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@keyframes circle-reveal {
+  0% {
+    clip-path: circle(0% at 50% 50%);
+    opacity: 1;
+  }
+  49% {
+    clip-path: circle(50% at 50% 50%);
+    opacity: 1;
+  }
+  100% {
+    clip-path: circle(150% at 50% 50%);
+    opacity: 1;
   }
 }
