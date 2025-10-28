@@ -1,61 +1,11 @@
-import logo from "../assets/logo.png"
-import {Link} from "react-router-dom";
-import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
-import QuartetLeaves from "@/shared/components/ui/customs/QuartetLeaves.tsx";
 import {useForm, useFormContext} from "react-hook-form";
-import {Form, FormField, FormItem} from "@/shared/components/ui/form";
-import {type UserCreationPost, UserCreationSchema} from "../shared/types/schemas/UserSchema.ts";
+import {type UserCreationPost, UserCreationSchema} from "@/shared/types/schemas/UserSchema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {Form, FormField, FormItem} from "@/shared/components/ui/form.tsx";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
+import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
 
-export default function RegisterPage() {
-    return (
-        <main className="min-h-screen flex flex-col text-black bg-[linear-gradient(to_bottom,#faf8f5,#f9f8f4,#f6f8f3,#f3f9f3,#f0f9f4)] overflow-hidden">
-            <div className="w-full px-4 py-4">
-                <Link to="/" className="block mx-auto lg:mx-0 w-24">
-                    <img
-                        src={logo}
-                        alt="Logo"
-                        className="max-w-full h-auto w-24 transition-transform duration-300 ease-out hover:scale-105"
-                    />
-                </Link>
-            </div>
-
-            <div className="flex-1 flex flex-col items-center px-4 lg:mb-20">
-                <div className="w-full max-w-4xl relative">
-                    <QuartetLeaves
-                        positionLeave1="top-5 left-202"
-                        positionLeave2="top-60 -left-27"
-                        positionLeave3="-top-28 left-120"
-                        positionLeave4="top-126 left-30"
-                    />
-
-                    <section className="border border-input rounded-md bg-white shadow-xs
-                                     px-4 sm:px-10 py-6 mb-8 relative z-10
-                                     transition-[color,box-shadow]"
-                    >
-                        <h1 className="text-2xl font-semibold mt-4 mb-6 text-center lg:text-left lg:text-[2rem]">
-                            Inscription
-                        </h1>
-
-                        <RegisterForm />
-                    </section>
-                </div>
-
-                <div className="pb-4 text-center">
-                    <p>
-                        Déjà inscrit ?{' '}
-                        <Link to="/" className="underline text-gt-green">
-                            Connectez-vous
-                        </Link>
-                    </p>
-                </div>
-            </div>
-        </main>
-    );
-}
-
-function RegisterForm() {
+export default function RegisterForm() {
     const form = useForm<UserCreationPost>({
         resolver: zodResolver(UserCreationSchema),
         mode: "all",

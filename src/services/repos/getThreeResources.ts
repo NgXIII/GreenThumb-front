@@ -1,4 +1,4 @@
-import type {Resource} from "../../shared/types/resource.ts";
+import type {Resource} from "@/shared/types/resource.ts";
 import apiClient from "../http/apiClient.ts";
 
 export async function getThreeResources(): Promise<Resource[]> {

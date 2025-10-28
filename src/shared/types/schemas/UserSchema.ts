@@ -12,8 +12,8 @@ export const UserCreationSchema = z
         email: z.email("L'email n'est pas valide").min(1, "L'email est obligatoire"),
         phoneNumber: z
             .string()
-            .min(1, "Le téléphone est obligatoire")
-            .regex(/^\d{10,}$/, "Le téléphone doit contenir uniquement des chiffres"),
+            .min(1, "Le numéro de téléphone est obligatoire")
+            .regex(/^\d{10,}$/, "Veuillez encoder un numéro de téléphone valide"),
         terms: z.literal(true, "Vous devez accepter les conditions pour continuer"),
         avatar: z
             .any()

@@ -1,14 +1,14 @@
-import FallingLeaves from "../../shared/components/ui/FallingLeaves.tsx";
-import {useSeason} from "../../shared/hooks/useSeason.ts";
-import Snowflakes from "../../shared/components/ui/Snowflakes.tsx";
-import SakuraPetals from "../../shared/components/ui/SakuraPetals.tsx";
+import FallingLeaves from "../../shared/components/ui/customs/FallingLeaves.tsx";
+import {useSeason} from "@/shared/hooks/useSeason.ts";
+import Snowflakes from "../../shared/components/ui/customs/Snowflakes.tsx";
+import SakuraPetals from "../../shared/components/ui/customs/SakuraPetals.tsx";
 import { motion } from "framer-motion";
 import {type JSX} from "react";
 import {ArrowRight} from "lucide-react";
-import {useUserCount} from "../../shared/hooks/useUserCount.ts";
 import AboutMe from "./About.tsx";
 import CommunitySection from "./Community.tsx";
 import TutorialSession from "./Tutorial.tsx";
+import {useUserCount} from "@/shared/hooks/useUserCount.ts";
 
 /**
  * Base component that displays the home page.

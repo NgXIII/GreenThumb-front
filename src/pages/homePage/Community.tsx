@@ -1,6 +1,6 @@
 import useTopMessages from "../../shared/hooks/useTopMessages.ts";
 import type {Message} from "../../shared/types/message.ts";
-import Tag from "../../shared/components/ui/Tag.tsx";
+import Tag from "../../shared/components/ui/customs/Tag.tsx";
 import CardBase from "./CardBase.tsx";
 import {formatTimeAgo} from "../../shared/utils/date.ts";
 

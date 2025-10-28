@@ -13,7 +13,7 @@ type InputFormProps = {
 };
 
 export default function InputForm({name, label, placeholder, inputType = "text", autoComplete}: InputFormProps) {
-    const { control } = useFormContext<UserCreationPost>();
+    const { control } = useFormContext<UserCreationPost>()
 
     return (
         <FormField

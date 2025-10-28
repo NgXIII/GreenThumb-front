@@ -1,4 +1,4 @@
-import type {Message} from "../../shared/types/message.ts";
+import type {Message} from "@/shared/types/message.ts";
 import apiClient from "../http/apiClient.ts";
 
 export async function getTop3Messages(): Promise<Message[]> {

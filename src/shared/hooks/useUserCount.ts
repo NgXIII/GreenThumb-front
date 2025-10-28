@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserCount } from "../../services/repos/getUserCount";
+import { getUserCount } from "@/services/repos/getUserCount.ts";
 
 export function useUserCount() {
     const [userCount, setUserCount] = useState<number | null>(null);
@@ -10,8 +10,9 @@ export function useUserCount() {
         getUserCount()
             .then((count) => setUserCount(count))
             .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+            .finally(() => setLoading(false))
     }, []);
 
     return { userCount, error, loading };
 }
+

@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import type {Resource} from "../types/resource.ts";
-import {getThreeResources} from "../../services/repos/getThreeResources.ts";
+import {getThreeResources} from "@/services/repos/getThreeResources.ts";
 
 export default function useThreeResources() {
     const [messages, setMessages] = useState<Resource[]>([]);

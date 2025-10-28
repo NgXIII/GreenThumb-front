@@ -1,4 +1,4 @@
-import {getTop3Messages} from "../../services/repos/getTop3Messages.ts";
+import {getTop3Messages} from "@/services/repos/getTop3Messages.ts";
 import {useEffect, useState} from "react";
 import type {Message} from "../types/message.ts";
 
