@@ -1,6 +1,6 @@
 import {useAccountStore} from "@/app/stores/userStore.ts";
 import {useCallback} from "react";
-import {getAuthenticate, getConnection, getLogout, getRegister} from "@/services/repos/getAuthentification.ts";
+import {getAuthenticate, getConnection, getLogout, getRegister} from "@/services/auth/getAuthentification.ts";
 import type {UserConnection} from "@/shared/types/user.ts";
 import type {UserCreationPost} from "@/shared/types/schemas/UserSchema.ts";
 
