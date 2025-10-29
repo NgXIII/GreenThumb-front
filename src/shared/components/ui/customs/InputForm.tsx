@@ -8,7 +8,7 @@ type InputFormProps = {
     name: Path<UserCreationPost>
     label: string
     placeholder?: string
-    inputType?: "text" | "password" | "email" | "number"
+    inputType?: "text" | "password" | "email" | "number" | "tel"
     autoComplete?: string
 };
 

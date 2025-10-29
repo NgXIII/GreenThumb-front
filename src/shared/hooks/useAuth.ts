@@ -33,24 +33,24 @@ export function useAuth() {
         getAuthenticate()
             .then(setAccount)
             .catch(() => setAccount(null))
-    }, [])
+    }, [setAccount])
 
     const login = useCallback((data: UserConnection) => {
         getConnection(data)
             .then(setAccount)
             .catch(() => setAccount(null))
-    }, [])
+    }, [setAccount])
 
     const register = useCallback((data: UserCreationPost) => {
         getRegister(data)
             .then(setAccount)
             .catch(() => setAccount(null))
-    }, [])
+    }, [setAccount])
 
     const logout = useCallback(() => {
         getLogout()
             .then(setAccount)
-    }, [])
+    }, [setAccount])
 
     return {
         account,

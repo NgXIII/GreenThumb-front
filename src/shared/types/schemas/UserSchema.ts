@@ -7,7 +7,12 @@ export const UserCreationSchema = z
         username: z.string().min(1, "Le nom d'utilisateur est obligatoire"),
         firstname: z.string().min(1, "Le prénom est obligatoire"),
         lastname: z.string().min(1, "Le nom de famille est obligatoire"),
-        password: z.string().min(8, "Le mot de passe doit faire au moins 8 caractères"),
+        password: z.string()
+            .min(8, "Le mot de passe doit faire au moins 8 caractères")
+            .regex(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/,
+                "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial"
+            ),
         confirmPassword: z.string().min(1, "Veuillez confirmer votre mot de passe"),
         email: z.email("L'email n'est pas valide").min(1, "L'email est obligatoire"),
         phoneNumber: z

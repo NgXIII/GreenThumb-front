@@ -73,7 +73,7 @@ function RightColumn() {
         <section className="flex flex-col gap-5 lg:flex-1">
             <InputFile label="Photo de profil" name="avatar" />
             <InputForm name="email" inputType="email" label="E-mail*" placeholder="emilie.aerts@gmail.com" />
-            <InputForm name="phoneNumber" inputType="number" label="Téléphone*" placeholder="0123456789" />
+            <InputForm name="phoneNumber" inputType="tel" label="Téléphone*" placeholder="0123456789" />
         </section>
     );
 }
