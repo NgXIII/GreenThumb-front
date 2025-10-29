@@ -53,7 +53,9 @@ export default function InputFile({ label, name }: InputFileProps) {
                 </div>
 
                 <div className="flex flex-col gap-2 flex-1">
-                    <label className="inline-flex items-center justify-center px-4 py-2 bg-gt-green text-gt-white rounded-md cursor-pointer hover:bg-green-700 transition-colors text-sm font-medium">
+                    <label className="inline-flex items-center justify-center px-4 py-2 bg-gt-green text-gt-white
+                    rounded-md cursor-pointer hover:bg-green-700 transition-colors text-sm font-medium
+                    hover:shadow-md transform duration-200 hover:scale-105">
                         Choisir une image
                         <input
                             type="file"

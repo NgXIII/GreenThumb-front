@@ -4,8 +4,10 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormField, FormItem} from "@/shared/components/ui/form.tsx";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
 import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
+import {useAuth} from "@/shared/hooks/useAuth.ts";
 
 export default function RegisterForm() {
+    const {register} = useAuth()
     const form = useForm<UserCreationPost>({
         resolver: zodResolver(UserCreationSchema),
         mode: "all",
@@ -21,7 +23,7 @@ export default function RegisterForm() {
     })
 
     const submit = (values: UserCreationPost) => {
-        console.log(values)
+        register(values)
     }
 
     return (
@@ -134,7 +136,8 @@ function SubmitButton() {
         <div className="lg:flex lg:justify-center">
             <button
                 type="submit"
-                className="w-full lg:w-auto lg:px-12 lg:text-xl py-2 rounded-md bg-gt-yellow hover:bg-yellow-500 text-gt-white mb-4 cursor-pointer"
+                className="w-full lg:w-auto lg:px-12 lg:text-xl py-2 rounded-md bg-gt-yellow hover:bg-yellow-500
+                text-gt-white mb-4 cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105"
             >
                 S'inscrire
             </button>
