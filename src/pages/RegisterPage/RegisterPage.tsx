@@ -16,7 +16,7 @@ export default function RegisterPage() {
                 </Link>
             </header>
 
-            <div className="flex-1 flex flex-col items-center px-4 lg:mb-20">
+            <div className="flex-1 flex flex-col items-center px-4">
                 <div className="w-full max-w-4xl relative">
                     <QuartetLeaves
                         positionLeave1="top-5 left-202"
