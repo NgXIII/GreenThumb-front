@@ -3,6 +3,7 @@ import Layout from "../../shared/components/layout/Layout.tsx";
 import ErrorPage from "../../pages/ErrorPage.tsx";
 import RegisterPage from "@/pages/registerPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
+import {ProfilePage} from "@/pages/profilePage/ProfilePage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/profile',
-                //element: <ProfilePage/>
+                element: <ProfilePage/>
             },
         ],
     },
