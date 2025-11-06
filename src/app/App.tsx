@@ -2,6 +2,7 @@ import {RouterProvider} from "react-router-dom";
 import router from "./routes/Router.tsx";
 import {useAuth, AuthStatus} from "@/shared/hooks/useAuth.ts";
 import { LoaderCircle } from 'lucide-react';
+import {Toaster} from "sonner";
 
 
 /* TODO: Faire en sorte de gérer le cas où les cookies sont delete */
@@ -14,7 +15,10 @@ export default function App() {
         </>
     }else {
         return (
-            <RouterProvider router={router} />
+            <>
+                <RouterProvider router={router} />
+                <Toaster position="top-right" richColors />
+            </>
         )
     }
 }

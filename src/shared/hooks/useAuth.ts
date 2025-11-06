@@ -35,11 +35,16 @@ export function useAuth() {
             .catch(() => setAccount(null))
     }, [setAccount])
 
-    const login = useCallback((data: UserConnection) => {
-        getConnection(data)
-            .then(setAccount)
-            .catch(() => setAccount(null))
-    }, [setAccount])
+    const login = useCallback(async (data: UserConnection) => {
+        try {
+            const account = await getConnection(data);
+            setAccount(account);
+            return account;
+        } catch (error) {
+            setAccount(null);
+            throw error; // important
+        }
+    }, [setAccount]);
 
     const register = useCallback((data: UserCreationPost) => {
         getRegister(data)
