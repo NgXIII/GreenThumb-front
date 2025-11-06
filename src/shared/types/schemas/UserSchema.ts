@@ -43,18 +43,9 @@ export const UserConnectionSchema = z
     .object({
         login: z
             .string()
-            .min(1, "le login est requis")
-            .refine(
-                (val) =>
-                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || /^[a-zA-Z0-9._-]+$/.test(val),
-                "Le login doit être un nom d'utilisateur ou un email valide"
-            ),
+            .min(1, "le login est requis"),
         password: z.string()
             .min(8, "Le mot de passe doit faire au moins 8 caractères")
-            .regex(
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/,
-                "Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial"
-            ),
     })
 
 export type UserConnectionPost = z.infer<typeof UserConnectionSchema>

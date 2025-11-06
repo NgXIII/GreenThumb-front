@@ -42,7 +42,7 @@ export function useAuth() {
             return account;
         } catch (error) {
             setAccount(null);
-            throw error; // important
+            throw error;
         }
     }, [setAccount]);
 
