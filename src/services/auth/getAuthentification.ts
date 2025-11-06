@@ -11,9 +11,8 @@ export async function getAuthenticate(): Promise<UserAuthentification> {
 }
 
 export async function getConnection(data: UserConnection): Promise<UserAuthentification> {
-    const response = await apiClient.post<UserAuthentification>("/connection", data)
-
-    return response.data
+    const response = await apiClient.post<UserAuthentification>("/sessions", data);
+    return response.data;
 }
 
 export async function getLogout(): Promise<UserAuthentification> {

@@ -38,3 +38,14 @@ export const UserCreationSchema = z
     })
 
 export type UserCreationPost = z.infer<typeof UserCreationSchema>
+
+export const UserConnectionSchema = z
+    .object({
+        login: z
+            .string()
+            .min(1, "le login est requis"),
+        password: z.string()
+            .min(8, "Le mot de passe doit faire au moins 8 caractères")
+    })
+
+export type UserConnectionPost = z.infer<typeof UserConnectionSchema>

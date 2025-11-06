@@ -3,6 +3,7 @@ import Layout from "../../shared/components/layout/Layout.tsx";
 import ErrorPage from "../../pages/ErrorPage.tsx";
 import RegisterPage from "../../pages/RegisterPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
+import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/connexion",
-        //element: <ConnectionPage />
+        element: <LoginPage />
     },
 ]);
 
