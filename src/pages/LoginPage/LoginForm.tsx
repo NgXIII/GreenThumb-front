@@ -7,10 +7,13 @@ import {Link, useNavigate} from "react-router-dom";
 import {toast} from "sonner";
 import {useAuth} from "@/shared/hooks/useAuth.ts";
 import {AxiosError} from "axios";
+import {Button} from "@/shared/components/ui/button.tsx";
+import {Loader2} from "lucide-react";
 
 export default function LoginForm() {
     const {login} = useAuth()
     const navigate = useNavigate();
+
     const form = useForm<UserConnectionPost>({
         resolver: zodResolver(UserConnectionSchema),
         mode: "all",
@@ -19,6 +22,10 @@ export default function LoginForm() {
             password: ""
         }
     })
+
+    const {
+        formState: { isSubmitting },
+    } = form;
 
     const submit = async (values: UserConnectionPost) => {
         try {
@@ -58,7 +65,7 @@ export default function LoginForm() {
                     Mot de passe oublié ?
                 </a>
 
-                <SubmitButton />
+                <SubmitButton isSubmitting={isSubmitting}/>
                 <SeparatorWithText />
                 <InscriptionLink />
             </form>
@@ -66,16 +73,25 @@ export default function LoginForm() {
     );
 }
 
-function SubmitButton() {
+function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
     return (
         <div className="flex justify-center">
-            <button
+            <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full px-8 py-2 rounded-md bg-gt-green hover:bg-green-500
                 text-gt-white cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105"
             >
-                Se connecter
-            </button>
+                { isSubmitting ? (
+                    <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Connexion...
+                    </>
+                ) : (
+                    "Se connecter"
+                )}
+
+            </Button>
         </div>
     );
 }
