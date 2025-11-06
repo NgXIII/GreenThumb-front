@@ -7,7 +7,7 @@ import NavItem from './NavItem'
 import ProfileMenu from './ProfileMenu'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
 
-export default function NavBar({ isAuthenticated = false }: NavBarProps) {
+export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const location = useLocation()
     const navigate = useNavigate()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)

@@ -1,7 +1,7 @@
 import logo from "../../assets/logo.png"
 import {Link} from "react-router-dom";
 import QuartetLeaves from "@/shared/components/ui/customs/QuartetLeaves.tsx";
-import RegisterForm from "@/pages/RegisterPage/RegisterForm.tsx";
+import RegisterForm from "@/pages/registerPage/RegisterForm.tsx";
 
 export default function RegisterPage() {
     return (
