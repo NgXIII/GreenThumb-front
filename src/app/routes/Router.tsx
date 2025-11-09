@@ -4,6 +4,8 @@ import ErrorPage from "../../pages/ErrorPage.tsx";
 import RegisterPage from "../../pages/RegisterPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
+import AccountDebugPage from "@/pages/AccountDebugPage.tsx";
+import ProtectedRoute from "@/shared/components/ui/customs/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
     {
@@ -31,6 +33,14 @@ const router = createBrowserRouter([
                 path: '/profile',
                 //element: <ProfilPage/>
             },
+            {
+                path: '/account',
+                element: (
+                    <ProtectedRoute>
+                        <AccountDebugPage />
+                    </ProtectedRoute>
+                )
+            }
         ],
     },
     {

@@ -10,9 +10,9 @@ export async function getAuthenticate(): Promise<UserAuthentification> {
     return response.data
 }
 
-export async function getConnection(data: UserConnection): Promise<UserAuthentification> {
+export async function getConnection(data: UserConnection): Promise<{ token: UserAuthentification }> {
     const response = await apiClient.post<UserAuthentification>("/sessions", data);
-    return response.data;
+    return { token: response.data};
 }
 
 export async function getLogout(): Promise<UserAuthentification> {
