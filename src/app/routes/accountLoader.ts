@@ -70,8 +70,6 @@ export async function accountLoader() {
         if(isValid) {
             return null;
         }
-
-        console.warn("[accountLoader] Token invalide, tentative de refresh...");
         const refreshedToken = await refreshSession();
 
         if (!refreshedToken) {
@@ -80,8 +78,6 @@ export async function accountLoader() {
 
         return null;
     } catch (error) {
-        console.warn("[accountLoader] Erreur lors de la vérification du token :", error);
-
         const refreshedToken = await refreshSession();
 
         if (!refreshedToken) {
