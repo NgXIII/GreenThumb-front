@@ -5,6 +5,7 @@ import {Form, FormField, FormItem} from "@/shared/components/ui/form.tsx";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
 import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
 import {useAuth} from "@/shared/hooks/useAuth.ts";
+import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 
 export default function RegisterForm() {
     const {register} = useAuth()
@@ -22,7 +23,11 @@ export default function RegisterForm() {
         }
     })
 
-    const submit = (values: UserCreationPost) => {
+    const submit = async (values: UserCreationPost) => {
+        if (values.avatar instanceof File) {
+            values.avatar = await fileToBase64(values.avatar);
+        }
+
         register(values)
     }
 

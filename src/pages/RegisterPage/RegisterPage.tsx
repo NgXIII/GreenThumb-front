@@ -8,7 +8,7 @@ export default function RegisterPage() {
         <main className="min-h-screen flex flex-col text-black bg-[linear-gradient(to_bottom,#faf8f5,#f9f8f4,#f6f8f3,#f3f9f3,#f0f9f4)] overflow-hidden">
             <LogoHeader />
 
-            <div className="flex-1 flex flex-col items-center px-4 lg:mb-20">
+            <div className="flex-1 flex flex-col items-center px-4">
                 <div className="w-full max-w-4xl relative">
                     <QuartetLeaves
                         positionLeave1="top-5 left-202"
