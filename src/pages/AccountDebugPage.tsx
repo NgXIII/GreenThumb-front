@@ -15,3 +15,5 @@ export default function AccountDebugPage() {
         </div>
     )
 }
+
+// c'est une page pour tester les routes protéger a supprimer quand on a une page sous authentification
