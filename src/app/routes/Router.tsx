@@ -5,7 +5,7 @@ import RegisterPage from "../../pages/RegisterPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
 import AccountDebugPage from "@/pages/AccountDebugPage.tsx";
-import ProtectedRoute from "@/shared/components/ui/customs/ProtectedRoute.tsx";
+import {accountLoader} from "@/app/routes/accountLoader.ts";
 
 const router = createBrowserRouter([
     {
@@ -35,11 +35,8 @@ const router = createBrowserRouter([
             },
             {
                 path: '/account',
-                element: (
-                    <ProtectedRoute>
-                        <AccountDebugPage />
-                    </ProtectedRoute>
-                )
+                loader: accountLoader,
+                element: <AccountDebugPage />
             }
         ],
     },
