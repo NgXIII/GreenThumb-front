@@ -42,9 +42,7 @@ export function useAuth() {
     }, [setAccount])
 
     const register = useCallback((data: UserCreationPost) => {
-        getRegister(data)
-            .then(setAccount)
-            .catch(() => setAccount(null))
+        getRegister(data).then(() => setAccount)
     }, [setAccount])
 
     const logout = useCallback(() => {
