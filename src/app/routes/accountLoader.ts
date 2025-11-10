@@ -51,17 +51,21 @@ async function refreshSession(): Promise<AccessToken | null>  {
     }
 }
 
+async function tryRefresh() {
+    const refreshedToken = await refreshSession();
+    if (!refreshedToken) {
+        throw redirect("/connexion");
+    }
+
+    return null
+}
+
 export async function accountLoader() {
     const { account } = useAccountStore.getState();
     const currentToken = account?.token;
 
     if(!currentToken) {
-        const refreshedToken = await refreshSession();
-        if (!refreshedToken) {
-            throw redirect("/connexion");
-        }
-
-        return null
+        return await tryRefresh();
     }
 
     try {
@@ -70,20 +74,9 @@ export async function accountLoader() {
         if(isValid) {
             return null;
         }
-        const refreshedToken = await refreshSession();
 
-        if (!refreshedToken) {
-            throw redirect("/connexion");
-        }
-
-        return null;
-    } catch (error) {
-        const refreshedToken = await refreshSession();
-
-        if (!refreshedToken) {
-            throw redirect("/connexion");
-        }
-
-        return null;
+       return await tryRefresh();
+    } catch {
+       return await tryRefresh();
     }
 }
