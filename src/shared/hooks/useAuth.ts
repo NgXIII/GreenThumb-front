@@ -3,6 +3,7 @@ import {useCallback} from "react";
 import {getAuthenticate, getConnection, getLogout, getRegister, verifyEmail, resendVerificationEmail} from "@/services/auth/getAuthentification.ts";
 import type {UserConnection} from "@/shared/types/user.ts";
 import type {UserCreationPost} from "@/shared/types/schemas/UserSchema.ts";
+import { AxiosError } from 'axios';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -56,10 +57,12 @@ export function useAuth() {
     }, [setAccount])
 
     const verify = useCallback(async (token: string) => {
-        // eslint-disable-next-line no-useless-catch
         try {
             await verifyEmail(token);
         } catch (error) {
+            if (error instanceof AxiosError) {
+                throw error;
+            }
             throw error;
         }
     }, []);
