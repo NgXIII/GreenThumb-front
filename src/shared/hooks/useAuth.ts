@@ -1,6 +1,6 @@
 import {useAccountStore} from "@/app/stores/userStore.ts";
 import {useCallback} from "react";
-import {getAuthenticate, getConnection, getLogout, getRegister} from "@/services/auth/getAuthentification.ts";
+import {getAuthenticate, getConnection, getLogout, getRegister, verifyEmail, resendVerificationEmail} from "@/services/auth/getAuthentification.ts";
 import type {UserConnection} from "@/shared/types/user.ts";
 import type {UserCreationPost} from "@/shared/types/schemas/UserSchema.ts";
 
@@ -46,14 +46,27 @@ export function useAuth() {
         }
     }, [setAccount]);
 
-    const register = useCallback((data: UserCreationPost) => {
-        getRegister(data).then(() => setAccount)
+    const register = useCallback(async (data: UserCreationPost) => {
+        await getRegister(data);
     }, [setAccount])
 
     const logout = useCallback(() => {
         getLogout()
             .then(setAccount)
     }, [setAccount])
+
+    const verify = useCallback(async (token: string) => {
+        // eslint-disable-next-line no-useless-catch
+        try {
+            await verifyEmail(token);
+        } catch (error) {
+            throw error;
+        }
+    }, []);
+
+    const resendVerification = useCallback(async (email: string) => {
+        await resendVerificationEmail(email);
+    }, []);
 
     return {
         account,
@@ -62,5 +75,7 @@ export function useAuth() {
         login,
         register,
         logout,
+        verify,
+        resendVerification,
     }
 }

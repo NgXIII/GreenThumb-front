@@ -4,6 +4,7 @@ import ErrorPage from "../../pages/ErrorPage.tsx";
 import RegisterPage from "../../pages/RegisterPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
+import VerifyEmailPage from "@/pages/VerifyEmailPage/VerifyEmailPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
     {
         path: "/connexion",
         element: <LoginPage />
+    },
+    {
+        path: "/verify-email",
+        element: <VerifyEmailPage />
     },
 ]);
 
