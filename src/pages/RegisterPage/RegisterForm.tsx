@@ -117,13 +117,13 @@ function TermsCheckbox() {
                             </div>
                         ) : (
                             <div>
-                                <p className="text-sm">
+                                <p className="text-sm text-gt-text">
                                     J'accepte les{" "}
-                                    <a href="#" className="underline text-gt-green">
+                                    <a href="#" className="underline text-gt-text-accent hover:text-gt-primary transition-colors">
                                         Conditions générales d'utilisation
                                     </a>{" "}
                                     et la{" "}
-                                    <a href="#" className="underline text-gt-green">
+                                    <a href="#" className="underline text-gt-text-accent hover:text-gt-primary transition-colors">
                                         Politique de Confidentialité
                                     </a>
                                 </p>
@@ -141,8 +141,8 @@ function SubmitButton() {
         <div className="lg:flex lg:justify-center">
             <button
                 type="submit"
-                className="w-full lg:w-auto lg:px-12 lg:text-xl py-2 rounded-md bg-gt-yellow hover:bg-yellow-500
-                text-gt-white mb-4 cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105"
+                className="w-full lg:w-auto lg:px-12 lg:text-xl py-2 rounded-md bg-gt-yellow hover:bg-gt-yellow-dark
+                text-gt-black mb-4 cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105 font-medium"
             >
                 S'inscrire
             </button>

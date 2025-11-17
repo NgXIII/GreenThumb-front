@@ -60,7 +60,7 @@ export default function LoginForm() {
 
                 <a
                     href="#"
-                    className="text-xs text-gt-green text-left mt-1 hover:underline"
+                    className="text-xs text-gt-text-accent text-left mt-1 hover:underline hover:text-gt-primary transition-colors"
                 >
                     Mot de passe oublié ?
                 </a>
@@ -79,8 +79,8 @@ function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
             <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full px-8 py-2 rounded-md bg-gt-green hover:bg-green-500
-                text-gt-white cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105"
+                className="w-full px-8 py-2 rounded-md bg-gt-primary hover:bg-gt-primary-hover
+                text-gt-primary-foreground cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105"
             >
                 { isSubmitting ? (
                     <>
@@ -111,10 +111,10 @@ function InscriptionLink() {
         <div className="flex justify-center">
             <Link
                 to="/inscription"
-                className="w-full px-8 py-2 rounded-md bg-gt-yellow hover:bg-yellow-400
-                text-gt-white cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105 text-center"
+                className="w-full px-8 py-2 rounded-md bg-gt-yellow hover:bg-gt-yellow-dark
+                text-gt-black cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105 text-center font-medium"
             >
-                S’inscrire
+                S'inscrire
             </Link>
         </div>
     );
