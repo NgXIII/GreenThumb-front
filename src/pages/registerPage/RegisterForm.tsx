@@ -5,9 +5,13 @@ import {Form, FormField, FormItem} from "@/shared/components/ui/form.tsx";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
 import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
 import {useAuth} from "@/shared/hooks/useAuth.ts";
+import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
+import {useNavigate} from "react-router-dom";
+import {toast} from "sonner";
 
 export default function RegisterForm() {
     const {register} = useAuth()
+    const navigate = useNavigate()
     const form = useForm<UserCreationPost>({
         resolver: zodResolver(UserCreationSchema),
         mode: "all",
@@ -22,8 +26,19 @@ export default function RegisterForm() {
         }
     })
 
-    const submit = (values: UserCreationPost) => {
-        register(values)
+    const submit = async (values: UserCreationPost) => {
+        if (values.avatar instanceof File) {
+            values.avatar = await fileToBase64(values.avatar);
+        }
+
+        try {
+            await register(values)
+            toast.success("Inscription réussie ! Veuillez vérifier votre adresse e-mail.")
+            navigate(`/verify-email?email=${encodeURIComponent(values.email)}`)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch {
+            toast.error("Erreur lors de l'inscription. Veuillez réessayer.")
+        }
     }
 
     return (

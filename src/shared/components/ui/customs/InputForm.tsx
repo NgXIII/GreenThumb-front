@@ -1,19 +1,21 @@
 import { useFormContext, type Path } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
-import type { UserCreationPost } from "@/shared/types/schemas/UserSchema";
 import HoverInfoError from "@/shared/components/ui/customs/HoverInfoError"; // <-- ton composant
 
-type InputFormProps = {
-    name: Path<UserCreationPost>
+type InputFormProps<T extends Record<string, unknown>> = {
+    name: Path<T>
     label: string
     placeholder?: string
     inputType?: "text" | "password" | "email" | "number" | "tel"
     autoComplete?: string
 };
 
-export default function InputForm({name, label, placeholder, inputType = "text", autoComplete}: InputFormProps) {
-    const { control } = useFormContext<UserCreationPost>()
+
+export default function InputForm<T extends Record<string, unknown>>(
+    {name, label, placeholder, inputType = "text", autoComplete,}: InputFormProps<T>
+) {
+    const { control } = useFormContext<T>();
 
     return (
         <FormField
@@ -38,6 +40,7 @@ export default function InputForm({name, label, placeholder, inputType = "text",
                     <FormControl>
                         <Input
                             {...field}
+                            value={field.value as string | number | readonly string[] | undefined}
                             type={inputType}
                             placeholder={placeholder}
                             autoComplete={autoComplete}

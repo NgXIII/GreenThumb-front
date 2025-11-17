@@ -9,10 +9,9 @@ export type UserAccount = {
 
 export type UserAuthentification = {
     token: string
-    user: UserAccount
 }
 
 export type UserConnection = {
-    user: string // email | username
+    login: string // email | username
     password: string
 }

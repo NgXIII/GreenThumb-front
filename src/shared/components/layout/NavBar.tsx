@@ -100,7 +100,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                         <LogoLink />
 
                         <div className="flex items-center gap-3">
-                            <Link to="/login" className="px-3 py-2 rounded-full text-gt-dark-green hover:bg-gt-light-grey transition-colors">
+                            <Link to="/connexion" className="px-3 py-2 rounded-full text-gt-dark-green hover:bg-gt-light-grey transition-colors">
                                 Se connecter
                             </Link>
 
