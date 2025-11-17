@@ -6,6 +6,7 @@ import HomePage from "@/pages/homePage/HomePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
 import AccountDebugPage from "@/pages/AccountDebugPage.tsx";
 import {accountLoader} from "@/app/routes/accountLoader.ts";
+import VerifyEmailPage from "@/pages/VerifyEmailPage/VerifyEmailPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
     {
         path: "/connexion",
         element: <LoginPage />
+    },
+    {
+        path: "/verify-email",
+        element: <VerifyEmailPage />
     },
 ]);
 
