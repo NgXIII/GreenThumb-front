@@ -19,7 +19,8 @@ const router = createBrowserRouter([
             },
             {
                 path: '/dashboard',
-                //element: <DashboardPage/>
+                loader: accountLoader,
+                element: <AccountDebugPage />
             },
             {
                 path: '/community',
@@ -33,11 +34,6 @@ const router = createBrowserRouter([
                 path: '/profile',
                 //element: <ProfilPage/>
             },
-            {
-                path: '/account',
-                loader: accountLoader,
-                element: <AccountDebugPage />
-            }
         ],
     },
     {

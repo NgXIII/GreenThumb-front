@@ -13,7 +13,7 @@ export enum AuthStatus {
 }
 
 export function useAuth() {
-    const {account, setAccount} = useAccountStore()
+    const {account, setAccount, clearAccount} = useAccountStore()
     let status
     switch (account) {
         case null:
@@ -50,9 +50,13 @@ export function useAuth() {
         getRegister(data).then(() => setAccount)
     }, [setAccount])
 
-    const logout = useCallback(() => {
-        getLogout()
-            .then(setAccount)
+    const logout = useCallback(async () => {
+        try {
+            await getLogout()
+            setAccount(null)
+        } catch {
+            setAccount(null)
+        }
     }, [setAccount])
 
     return {

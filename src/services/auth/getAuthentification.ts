@@ -14,7 +14,7 @@ export async function getConnection(data: UserConnection): Promise<{ token: User
 }
 
 export async function getLogout(): Promise<UserAuthentification> {
-    const response = await apiClient.delete<UserAuthentification>("/logout")
+    const response = await apiClient.delete<UserAuthentification>("/sessions")
 
     return response.data
 }
