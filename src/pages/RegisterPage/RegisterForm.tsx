@@ -77,8 +77,8 @@ function LeftColumn() {
 function Separator() {
     return (
         <>
-            <div className="hidden lg:block border-l border-gray-300 self-stretch" />
-            <div className="lg:hidden border-t border-gray-300 mt-1" />
+            <div className="hidden lg:block border-l border-gt-border self-stretch" />
+            <div className="lg:hidden border-t border-gt-border mt-1" />
         </>
     );
 }

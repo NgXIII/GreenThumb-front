@@ -2,11 +2,17 @@ import {Link} from "react-router-dom";
 import QuartetLeaves from "@/shared/components/ui/customs/QuartetLeaves.tsx";
 import RegisterForm from "@/pages/RegisterPage/RegisterForm.tsx";
 import LogoHeader from "@/shared/components/ui/customs/LogoHeader.tsx";
+import ThemeToggle from "@/shared/components/layout/ThemeToggle.tsx";
 
 export default function RegisterPage() {
     return (
         <main className="min-h-screen flex flex-col text-gt-text bg-background overflow-hidden transition-colors duration-300">
             <LogoHeader />
+
+            {/* Theme Toggle Button - Top Right */}
+            <div className="absolute top-4 right-4 z-50">
+                <ThemeToggle />
+            </div>
 
             <div className="flex-1 flex flex-col items-center px-4">
                 <div className="w-full max-w-4xl relative">

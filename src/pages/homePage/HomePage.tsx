@@ -47,7 +47,7 @@ function HeaderHome(): JSX.Element {
 
     return (
         <header
-            className="w-screen relative bg-gt-surface px-6 sm:px-10 md:px-20 lg:px-32 xl:px-48 py-10 sm:py-14 md:py-20 lg:py-28 text-center flex flex-col items-center overflow-hidden transition-colors duration-300">
+            className="w-screen relative bg-gradient-to-b from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 px-6 sm:px-10 md:px-20 lg:px-32 xl:px-48 py-10 sm:py-14 md:py-20 lg:py-28 text-center flex flex-col items-center overflow-hidden transition-colors duration-300">
             {getSeasonUI(season)}
 
             {error && <p className="text-red-500">Erreur : {error}</p>}
@@ -59,11 +59,11 @@ function HeaderHome(): JSX.Element {
                 </h2>
 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
-                    <span className="text-gt-text">
+                    <span className="bg-gradient-to-b from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
                         Cultivez vos
                     </span>
                     <span
-                        className="block text-gt-primary">
+                        className="block bg-gradient-to-b from-green-500 to-emerald-400 dark:from-green-400 dark:to-emerald-300 bg-clip-text text-transparent">
                         connaissances vertes
                     </span>
                 </h1>
@@ -79,13 +79,13 @@ function HeaderHome(): JSX.Element {
 
 function CallToActionSection() {
     return (
-      <section className="relative w-full bg-gt-primary text-gt-primary-foreground text-center py-24 px-6 sm:px-10 overflow-hidden transition-colors duration-300">
+      <section className="relative w-full bg-gradient-to-br from-green-400 via-emerald-500 to-amber-400 dark:from-green-700 dark:via-emerald-800 dark:to-amber-700 text-white text-center py-24 px-6 sm:px-10 overflow-hidden transition-colors duration-300">
           <div className="max-w-3xl mx-auto flex flex-col items-center space-y-8">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">
                   Prêt à faire pousser vos <br className="hidden sm:block"/> connaissance&nbsp;?
               </h2>
 
-              <p className="text-lg opacity-90 max-w-xl mx-auto">
+              <p className="text-lg text-green-50/90 max-w-xl mx-auto">
                   Rejoignez GreenThumb gratuitement et commencez votre aventure verte dès aujourd'hui
               </p>
 
@@ -93,7 +93,7 @@ function CallToActionSection() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.97 }}
                   href="#"
-                  className="inline-flex items-center justify-center gap-2 bg-gt-surface-elevated text-gt-text-accent font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-green-700 dark:bg-green-900 dark:text-green-50 font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200"
               >
                   Créer mon compte gratuitement
                   <ArrowRight className="w-4 h-4" />
@@ -106,7 +106,7 @@ function CallToActionSection() {
 
 function AdvantageSection() {
     return (
-        <section className="w-full bg-gt-surface-elevated py-16 px-4 sm:px-6 lg:px-10 text-center transition-colors duration-300">
+        <section className="w-full bg-gradient-to-b from-green-50 to-white dark:from-green-900/10 dark:to-background py-16 px-4 sm:px-6 lg:px-10 text-center transition-colors duration-300">
             <div className="max-w-6xl mx-auto">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gt-text mb-12">
                     Ce que vous obtenez avec GreenThumb

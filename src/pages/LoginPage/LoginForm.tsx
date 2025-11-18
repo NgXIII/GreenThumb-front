@@ -99,9 +99,9 @@ function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
 function SeparatorWithText() {
     return (
         <div className="flex items-center w-full my-1">
-            <div className="flex-grow border-t border-gray-300" />
-            <span className="mx-3 text-gray-500 text-sm select-none">ou</span>
-            <div className="flex-grow border-t border-gray-300" />
+            <div className="flex-grow border-t border-gt-border" />
+            <span className="mx-3 text-gt-text-muted text-sm select-none">ou</span>
+            <div className="flex-grow border-t border-gt-border" />
         </div>
     );
 }
