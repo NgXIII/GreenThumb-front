@@ -7,16 +7,16 @@ export default function TutorialSession() {
     const { messages, error, loading } = useThreeResources();
 
     return (
-        <section className="bg-gradient-to-b py-12 px-4 sm:px-6 md:px-10 text-center">
+        <section className="w-full bg-gt-surface-elevated py-12 px-4 sm:px-6 md:px-10 text-center transition-colors duration-300">
             <div className="max-w-6xl mx-auto">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gt-text mb-2">
                     Guides et tutoriels experts
                 </h2>
 
-                <p className="text-gray-600 text-sm sm:text-base mb-10">
+                <p className="text-gt-text-muted text-sm sm:text-base mb-10">
                     Apprenez de nouvelles techniques avec nos ressources détaillées
                 </p>
-                {loading && <p>Chargement...</p>}
+                {loading && <p className="text-gt-text-muted">Chargement...</p>}
                 {error && <p className="text-red-500">Erreur : {error}</p>}
                 {!loading && !error && <TutorialCards data={messages} />}
             </div>
@@ -40,7 +40,7 @@ function TutorialCard({title, date, imageUrl }: Resource) {
     return (
         <CardBase>
             {/* Image */}
-            <div className="relative w-full h-44 sm:h-48 bg-gradient-to-b from-green-50 to-green-100 flex items-center justify-center overflow-hidden">
+            <div className="relative w-full h-44 sm:h-48 bg-gt-surface flex items-center justify-center overflow-hidden">
                 {urlImage ? (
                     <img
                         src={urlImage}
@@ -54,12 +54,12 @@ function TutorialCard({title, date, imageUrl }: Resource) {
 
             <div className="flex flex-col flex-1 justify-between p-5 sm:p-6 h-full">
                 <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 line-clamp-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-gt-text mb-3 line-clamp-2">
                         {title}
                     </h3>
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-gray-100">
+                <div className="mt-auto pt-4 border-t border-gt-border">
                     <TutorialCardFooter date={date} />
                 </div>
             </div>
@@ -69,7 +69,7 @@ function TutorialCard({title, date, imageUrl }: Resource) {
 
 function TutorialCardFooter({date}: {date: string}) {
     return (
-        <footer className="flex flex-wrap items-center gap-x-2 text-sm text-gray-500">
+        <footer className="flex flex-wrap items-center gap-x-2 text-sm text-gt-text-muted">
             <span>{formatDateFr(date)}</span>
         </footer>
     );
