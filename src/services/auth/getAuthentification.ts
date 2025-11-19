@@ -22,3 +22,11 @@ export async function getLogout(): Promise<UserAuthentification> {
 export async function getRegister(data: UserCreationPost): Promise<void> {
     await apiClient.post<void>("/register", data)
 }
+
+export async function verifyEmail(token: string): Promise<void> {
+    await apiClient.post("/sessions/verify", { token });
+}
+
+export async function resendVerificationEmail(email: string): Promise<void> {
+    await apiClient.post<void>("/sessions/verify/resend", { email });
+}

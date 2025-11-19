@@ -1,8 +1,9 @@
 import {useAccountStore} from "@/app/stores/userStore.ts";
 import {useCallback} from "react";
-import {getAuthenticate, getConnection, getLogout, getRegister} from "@/services/auth/getAuthentification.ts";
+import {getAuthenticate, getConnection, getLogout, getRegister, verifyEmail, resendVerificationEmail} from "@/services/auth/getAuthentification.ts";
 import type {UserConnection} from "@/shared/types/user.ts";
 import type {UserCreationPost} from "@/shared/types/schemas/UserSchema.ts";
+import { AxiosError } from 'axios';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -46,8 +47,8 @@ export function useAuth() {
         }
     }, [setAccount]);
 
-    const register = useCallback((data: UserCreationPost) => {
-        getRegister(data).then(() => setAccount)
+    const register = useCallback(async (data: UserCreationPost) => {
+        await getRegister(data);
     }, [setAccount])
 
     const logout = useCallback(async () => {
@@ -59,6 +60,21 @@ export function useAuth() {
         }
     }, [setAccount])
 
+    const verify = useCallback(async (token: string) => {
+        try {
+            await verifyEmail(token);
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                throw error;
+            }
+            throw error;
+        }
+    }, []);
+
+    const resendVerification = useCallback(async (email: string) => {
+        await resendVerificationEmail(email);
+    }, []);
+
     return {
         account,
         status,
@@ -66,5 +82,7 @@ export function useAuth() {
         login,
         register,
         logout,
+        verify,
+        resendVerification,
     }
 }

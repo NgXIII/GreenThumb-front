@@ -5,6 +5,7 @@ import RegisterPage from "../../pages/RegisterPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
 import {accountLoader} from "@/app/routes/accountLoader.ts";
+import VerifyEmailPage from "@/pages/VerifyEmailPage/VerifyEmailPage.tsx";
 import RequireAuth from "@/shared/components/layout/RequireAuth.tsx";
 import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
 import {userLoader} from "@/app/routes/userLoader.ts";
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
             { path: "/inscription", element: <RegisterPage /> },
             { path: "/connexion", element: <LoginPage /> },
         ]
+    },
+    {
+        path: "/verify-email",
+        element: <VerifyEmailPage />
     },
 ]);
 
