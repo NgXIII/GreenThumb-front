@@ -8,7 +8,7 @@ export default function LegalNoticePage() {
         <p>
           <strong>GreenThumb</strong><br />
           Société fictive pour projet pédagogique<br />
-          123 rue des Plantes, 75000 Paris, France
+          123 rue des Plantes, 4000 Liège, Belgique
         </p>
       </section>
       <section className="mb-6">
