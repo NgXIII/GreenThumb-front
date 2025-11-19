@@ -4,10 +4,11 @@ import ErrorPage from "../../pages/ErrorPage.tsx";
 import RegisterPage from "../../pages/RegisterPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
-import AccountDebugPage from "@/pages/AccountDebugPage.tsx";
 import {accountLoader} from "@/app/routes/accountLoader.ts";
 import RequireAuth from "@/shared/components/layout/RequireAuth.tsx";
 import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
+import {userLoader} from "@/app/routes/userLoader.ts";
+import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 
 const router = createBrowserRouter([
     {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             {
+                loader: userLoader,
                 element: <RequireGuest />,
                 children: [
                     {
@@ -26,11 +28,12 @@ const router = createBrowserRouter([
             },
             {
                 element: <RequireAuth />,
+                loader: userLoader,
                 children: [
                     {
                         path: '/dashboard',
                         loader: accountLoader,
-                        element: <AccountDebugPage />
+                        element: <Dashboard />
                     }
                 ]
             },
