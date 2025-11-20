@@ -42,7 +42,7 @@ export default function VerifyEmailForm() {
             setTimeout(() => {
                 navigate("/connexion");
             }, 2000);
-        } catch (error: never) {
+        } catch (error: any) {
             const errorMessage = error?.response?.data?.message || error?.message;
 
             if (errorMessage?.includes("déjà vérifié")) {
