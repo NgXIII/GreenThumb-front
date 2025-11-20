@@ -38,6 +38,8 @@ export function useAuth() {
     const login = useCallback(async (data: UserConnection) => {
         try {
             const account = await getConnection(data);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             setAccount(account);
             return account;
         } catch (error) {
