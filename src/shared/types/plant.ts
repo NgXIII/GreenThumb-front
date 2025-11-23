@@ -6,7 +6,7 @@ export type Plant = {
 }
 
 export type Task = {
-    name: string,
+    title: string,
     description: string,
     endDate: string,
     color: string,

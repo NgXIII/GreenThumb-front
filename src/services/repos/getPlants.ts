@@ -9,3 +9,9 @@ export async function getPlants(username: string | undefined): Promise<Plant[]> 
 
     return response.data;
 }
+
+export async function getCountTask(): Promise<number> {
+    const response = await apiClient.get<number>(`/tasks`);
+
+    return response.data;
+}

@@ -3,9 +3,11 @@ import usePlant from "@/shared/hooks/usePlant.ts";
 import type {Plant} from "@/shared/types/plant.ts";
 import { motion } from "framer-motion";
 import {useState} from "react";
+import useCountTask from "@/shared/hooks/useTaskCount.ts";
 
 export default function Dashboard() {
     const { user } = useUserStore.getState();
+    const { count } = useCountTask();
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
     const isPlantSelected = !!selectedPlant;
 
@@ -16,7 +18,7 @@ export default function Dashboard() {
             </h1>
 
             <p className="text-gray-600 mt-1">
-                Tu a <span className="font-semibold">3 tâches</span> en attende aujourd'hui
+                Tu a <span className="font-semibold">{ count } tâches</span> en attende aujourd'hui
             </p>
 
             <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 h-full min-h-[calc(100vh-200px)] items-start
@@ -109,11 +111,10 @@ function PlantHealth({ plant }: { plant: Plant | null }) {
     );
 }
 
-function PlantTasks( { plant }: { plant: Plant | null }) {
-    console.log(plant?.tasks);
-    if(plant?.tasks.length == 0) {
+function PlantTasks({ plant }: { plant: Plant | null }) {
+    if (!plant?.tasks.length) {
         return (
-            <div className="bg-white p-5 rounded-xl shadow-sm border flex flex-col items-center h-full">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col items-center h-full">
                 <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                     <span>☑️</span> Tâches à effectuer
                 </h2>
@@ -133,49 +134,62 @@ function PlantTasks( { plant }: { plant: Plant | null }) {
     }
 
     return (
-        <div className="bg-white p-5 rounded-xl shadow-sm border flex flex-col items-center h-full">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col h-full">
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                 <span>☑️</span> Tâches à effectuer
             </h2>
-            
-            {plant?.tasks.map((task, index) => (
-                <div
-                    key={index}
-                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden"
-                >
+
+            <div className="flex flex-col gap-4 w-full">
+                {plant.tasks.map((task, index) => (
                     <div
-                        className="h-2"
-                        style={{ backgroundColor: task.color }}
-                    />
-                    <div className="p-5">
-                        <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                            {task.name}
-                        </h3>
-                        <p className="text-gray-600 mb-4">
-                            {task.description}
-                        </p>
-                        <div className="flex items-center text-sm text-gray-500">
-                            <svg
-                                className="w-4 h-4 mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                            </svg>
-                            Date limite : {new Date(task.endDate).toLocaleDateString('fr-FR')}
+                        key={index}
+                        className="rounded-xl border bg-white shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+                    >
+                        <div
+                            className="h-2 rounded-t-xl"
+                            style={{ backgroundColor: task.color }}
+                        />
+
+                        <div className="p-5 flex flex-col gap-4">
+
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                    {task.title}
+                                </h3>
+                            </div>
+
+                            <p className="text-sm text-gray-600 leading-snug ml-1 border-l-2 border-gray-200 pl-3">
+                                {task.description}
+                            </p>
+
+                            <div className="flex justify-between items-center text-sm text-gray-500 pt-2 border-t">
+                                <div className="flex items-center gap-2">
+                                    <svg
+                                        className="w-4 h-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                    {new Date(task.endDate).toLocaleDateString("fr-FR")}
+                                </div>
+
+                                <button className="text-xs px-2 py-1 rounded-md border hover:bg-gray-50">
+                                    Marquer fait ✓
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
-    )
-
+    );
 }
 
 function PlantCards({ username, setSelectedPlant, isPlantSelected }
@@ -192,7 +206,6 @@ function PlantCards({ username, setSelectedPlant, isPlantSelected }
 
     return (
         <motion.div
-            layout
             transition={{ layout: { duration: 0.35, ease: "easeInOut" } }}
             className={`
         ${isPlantSelected
