@@ -6,7 +6,7 @@ import ThemeToggle from "@/shared/components/layout/ThemeToggle.tsx";
 
 export default function RegisterPage() {
     return (
-        <main className="min-h-screen flex flex-col text-gt-text bg-background overflow-hidden transition-colors duration-300">
+        <main className="min-h-screen flex flex-col text-gt-text bg-gt-surface overflow-hidden transition-colors duration-300">
             <LogoHeader />
 
             {/* Theme Toggle Button - Top Right */}

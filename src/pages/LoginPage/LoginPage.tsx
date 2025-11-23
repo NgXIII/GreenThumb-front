@@ -5,7 +5,7 @@ import ThemeToggle from "@/shared/components/layout/ThemeToggle.tsx";
 
 export default function LoginPage() {
     return (
-        <main className="min-h-screen flex flex-col text-gt-text bg-gradient-to-b from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 overflow-hidden transition-colors duration-300">
+        <main className="min-h-screen flex flex-col text-gt-text bg-gt-surface overflow-hidden transition-colors duration-300">
             <LogoHeader />
 
             {/* Theme Toggle Button - Top Right */}

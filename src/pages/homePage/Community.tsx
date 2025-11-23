@@ -8,7 +8,7 @@ export default function CommunitySection() {
     const { messages, error, loading } = useTopMessages();
 
     return (
-        <section className="w-full bg-gt-surface-elevated py-12 px-4 sm:px-6 md:px-10 text-center transition-colors duration-300">
+        <section className="w-full bg-gt-surface py-12 px-4 sm:px-6 md:px-10 text-center transition-colors duration-300">
             <div className="max-w-6xl mx-auto">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gt-text mb-2">
                     Rejoignez la conversation

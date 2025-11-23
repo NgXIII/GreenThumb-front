@@ -2,7 +2,7 @@ import CardBase from "./CardBase.tsx";
 
 export default function AboutMe() {
     return (
-        <section className="w-full flex flex-col items-center text-center px-6 py-16 bg-gt-surface transition-colors duration-300">
+        <section className="w-full flex flex-col items-center text-center px-6 py-16 bg-gt-surface-elevated transition-colors duration-300">
             <h2 className="text-2xl font-bold text-gt-text sm:text-3xl md:text-4xl mb-3">
                 Tout ce que dont vous avez besoin pour réussir
             </h2>

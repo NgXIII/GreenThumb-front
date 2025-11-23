@@ -19,9 +19,9 @@ export default function Footer() {
                 <div>
                     <h3 className="font-bold mb-4 text-gt-text">Légal</h3>
                     <div className="space-y-3">
-                        <Link to="/legal-notice" className="block hover:text-gt-black transition-colors">Mentions légales</Link>
-                        <Link to="/rgpd" className="block hover:text-gt-black transition-colors">Politique de confidentialité</Link>
-                        <Link to="/cgu" className="block hover:text-gt-black transition-colors">CGU</Link>
+                        <Link to="/legal-notice" className="block text-gt-text-muted hover:text-gt-primary transition-colors">Mentions légales</Link>
+                        <Link to="/rgpd" className="block text-gt-text-muted hover:text-gt-primary transition-colors">Politique de confidentialité</Link>
+                        <Link to="/cgu" className="block text-gt-text-muted hover:text-gt-primary transition-colors">CGU</Link>
                     </div>
                 </div>
             </div>
