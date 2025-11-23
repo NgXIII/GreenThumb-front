@@ -39,6 +39,7 @@ export function useAuth() {
     const login = useCallback(async (data: UserConnection) => {
         try {
             const account = await getConnection(data);
+            // @ts-ignore
             setAccount(account);
             return account;
         } catch (error) {

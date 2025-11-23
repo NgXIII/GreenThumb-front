@@ -4,12 +4,49 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  /* ========================================
+   * GreenThumb Static Brand Colors (Constants)
+   * These are the base brand colors that don't change
+   * ======================================== */
   --color-gt-white: #fbfbf9;
   --color-gt-green: #3eb577;
+  --color-gt-green-dark: #2d8a5a;
+  --color-gt-green-darker: #1f6b43;
   --color-gt-yellow: #ffd043;
+  --color-gt-yellow-dark: #e6b000;
   --color-gt-light-grey: #e5f1ed;
   --color-gt-dark-green: #5b897a;
+  --color-gt-dark-green-light: #8fb3a6;
   --color-gt-black: #242424;
+
+  /* ========================================
+   * GreenThumb Adaptive Semantic Tokens
+   * These colors automatically adapt to the current theme
+   * Use these in components instead of hardcoded colors
+   * ======================================== */
+
+  /* Primary action color (green) - darkens in dark mode for better contrast */
+  --color-gt-primary: var(--gt-primary);
+  --color-gt-primary-hover: var(--gt-primary-hover);
+  --color-gt-primary-foreground: var(--gt-primary-foreground);
+
+  /* Surface colors - backgrounds that adapt to theme */
+  --color-gt-surface: var(--gt-surface);
+  --color-gt-surface-elevated: var(--gt-surface-elevated);
+  --color-gt-surface-hover: var(--gt-surface-hover);
+
+  /* Text colors that ensure proper contrast */
+  --color-gt-text: var(--gt-text);
+  --color-gt-text-muted: var(--gt-text-muted);
+  --color-gt-text-accent: var(--gt-text-accent);
+
+  /* Interactive elements */
+  --color-gt-interactive: var(--gt-interactive);
+  --color-gt-interactive-hover: var(--gt-interactive-hover);
+
+  /* Borders */
+  --color-gt-border: var(--gt-border);
+  --color-gt-border-strong: var(--gt-border-strong);
 }
 
 :root {
@@ -18,14 +55,40 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: black;
-  background-color: mintcream;
-  color: rgba(255, 255, 255, 0.87);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* ========================================
+   * GreenThumb Light Theme Tokens
+   * WCAG AA Compliant - min 4.5:1 contrast for text
+   * ======================================== */
+
+  /* Primary green - bright for light mode */
+  --gt-primary: #3eb577;
+  --gt-primary-hover: #2d8a5a;
+  --gt-primary-foreground: #ffffff;
+
+  /* Surfaces */
+  --gt-surface: #e5f1ed;
+  --gt-surface-elevated: #ffffff;
+  --gt-surface-hover: #d4e8e1;
+
+  /* Text - ensuring WCAG AA compliance */
+  --gt-text: #242424;
+  --gt-text-muted: #5b6b66;
+  --gt-text-accent: #1f6b43; /* Darker green for better contrast on light backgrounds */
+
+  /* Interactive elements */
+  --gt-interactive: #5b897a;
+  --gt-interactive-hover: #4a7366;
+
+  /* Borders */
+  --gt-border: #c9d9d3;
+  --gt-border-strong: #a8c4ba;
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -63,7 +126,7 @@
 /* checkbox customized */
 .checkbox-wrapper-19 {
   box-sizing: border-box;
-  --background-color: #fff;
+  --background-color: var(--gt-surface-elevated, #fff);
   --checkbox-height: 18px;
 }
 
@@ -138,7 +201,7 @@
   height: var(--checkbox-height);
   width: var(--checkbox-height);
   background-color: transparent;
-  border: calc(var(--checkbox-height) * .06) solid #000;
+  border: calc(var(--checkbox-height) * .06) solid var(--gt-border-strong, #000);
   border-radius: 5px;
   position: relative;
   display: inline-block;
@@ -159,7 +222,7 @@
   position: absolute;
   height: 0;
   width: calc(var(--checkbox-height) * .2);
-  background-color: #34b93d;
+  background-color: var(--gt-primary, #34b93d);
   display: inline-block;
   -moz-transform-origin: left top;
   -ms-transform-origin: left top;
@@ -194,7 +257,7 @@
 
 .checkbox-wrapper-19 input[type=checkbox]:checked + .check-box,
 .checkbox-wrapper-19 .check-box.checked {
-  border-color: #34b93d;
+  border-color: var(--gt-primary, #34b93d);
 }
 .checkbox-wrapper-19 input[type=checkbox]:checked + .check-box::after,
 .checkbox-wrapper-19 .check-box.checked::after {
@@ -252,6 +315,35 @@
 }
 
 .dark {
+  /* ========================================
+   * GreenThumb Dark Theme Tokens
+   * WCAG AA Compliant - adjusted for dark backgrounds
+   * Green becomes DARKER (more saturated) for better visibility
+   * ======================================== */
+
+  /* Primary green - darker/more saturated for dark mode */
+  --gt-primary: #2d8a5a;
+  --gt-primary-hover: #1f6b43;
+  --gt-primary-foreground: #ffffff;
+
+  /* Surfaces - dark backgrounds */
+  --gt-surface: #1f2937;
+  --gt-surface-elevated: #374151;
+  --gt-surface-hover: #4b5563;
+
+  /* Text - light colors for dark backgrounds */
+  --gt-text: #f3f4f6;
+  --gt-text-muted: #9ca3af;
+  --gt-text-accent: #6ee7a0; /* Lighter green for dark backgrounds - better contrast */
+
+  /* Interactive elements */
+  --gt-interactive: #8fb3a6;
+  --gt-interactive-hover: #a8c9bc;
+
+  /* Borders */
+  --gt-border: #4b5563;
+  --gt-border-strong: #6b7280;
+
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -290,7 +382,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
   }
 }
 

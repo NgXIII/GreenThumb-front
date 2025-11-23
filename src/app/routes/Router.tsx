@@ -6,6 +6,9 @@ import HomePage from "@/pages/homePage/HomePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
 import {accountLoader} from "@/app/routes/accountLoader.ts";
 import VerifyEmailPage from "@/pages/VerifyEmailPage/VerifyEmailPage.tsx";
+import LegalNoticePage from "@/pages/Legal/LegalNoticePage.tsx";
+import PrivacyPolicyPage from "@/pages/Legal/PrivacyPolicyPage.tsx";
+import TermsOfUsePage from "@/pages/Legal/TermsOfUsePage.tsx";
 import RequireAuth from "@/shared/components/layout/RequireAuth.tsx";
 import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
 import {userLoader} from "@/app/routes/userLoader.ts";
@@ -49,6 +52,18 @@ const router = createBrowserRouter([
             {
                 path: '/profile',
                 //element: <ProfilPage/>
+            },
+            {
+                path: "/legal-notice",
+                element: <LegalNoticePage />
+            },
+            {
+                path: "/rgpd",
+                element: <PrivacyPolicyPage />
+            },
+            {
+                path: "/cgu",
+                element: <TermsOfUsePage />
             },
         ],
     },
