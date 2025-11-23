@@ -1,266 +1,129 @@
 import {useUserStore} from "@/app/stores/userStore.ts";
-import usePlant from "@/shared/hooks/usePlant.ts";
 import type {Plant} from "@/shared/types/plant.ts";
 import { motion } from "framer-motion";
 import {useState} from "react";
 import useCountTask from "@/shared/hooks/useTaskCount.ts";
+import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
+import PlantCards from "@/pages/Dashboard/PlantCards.tsx";
+import PlantTasks from "@/pages/Dashboard/PlantTasks.tsx";
+
+interface PlantListProps {
+    username: string | undefined;
+    setSelectedPlant: (plant: Plant | null) => void;
+    selectedPlant: Plant | null;
+}
 
 export default function Dashboard() {
     const { user } = useUserStore.getState();
     const { count } = useCountTask();
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
-    const isPlantSelected = !!selectedPlant;
 
     return (
-        <main className="p-6 min-h-screen">
-            <h1 className="text-4xl fond-semibold flex items-center gap-2">
-                Bonjour, {user?.username}
-            </h1>
-
-            <p className="text-gray-600 mt-1">
-                Tu a <span className="font-semibold">{ count } tâches</span> en attende aujourd'hui
-            </p>
-
-            <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 h-full min-h-[calc(100vh-200px)] items-start
-            transition-all duration-500 ${isPlantSelected 
-                ? "md:grid-cols-[1fr_1fr_1fr]" 
-                : "md:grid-cols-[1.5fr_0fr_0fr]"
-            }`}
-            >
-                <PlantList username={user?.username} setSelectedPlant={setSelectedPlant} isPlantSelected={isPlantSelected} />
-                <div className={`h-full transition-all duration-500 overflow-hidden ${isPlantSelected 
-                    ? "opacity-100 translate-y-0" 
-                    : "opacity-0 -translate-y-4"}`}
+        <main className="min-h-screen bg-gt-surface p-6">
+            <div className="max-w-7xl mx-auto space-y-6">
+                <motion.header
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-gt-surface-elevated rounded-lg p-6 border border-gt-border"
                 >
-                    <PlantHealth plant={selectedPlant} />
-                </div>
+                    <h1 className="text-3xl font-bold text-gt-text mb-2">
+                        Bonjour, {user?.username}
+                    </h1>
+                    <p className="text-gt-text-muted">
+                        Tu as {count} tâche{count > 1 ? 's' : ''} en attente aujourd'hui
+                    </p>
+                </motion.header>
 
-                <div
-                    className={`h-full transition-all duration-500 overflow-hidden ${isPlantSelected 
-                        ? "opacity-100 translate-y-0" 
-                        : "opacity-0 -translate-y-4"
-                    }`}
-                >
-                    <PlantTasks  plant={selectedPlant} />
-                </div>
+                <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <article className="lg:col-span-1">
+                        <PlantList
+                            username={user?.username}
+                            setSelectedPlant={setSelectedPlant}
+                            selectedPlant={selectedPlant}
+                        />
+                    </article>
+
+                    <article className="lg:col-span-2 space-y-6">
+                        <PlantHealth plant={selectedPlant} />
+                        <PlantTasks plant={selectedPlant} />
+                    </article>
+                </section>
             </div>
         </main>
-    )
+    );
 }
 
-function PlantList({ username, setSelectedPlant, isPlantSelected}
-                   : {
-    username: string | undefined,
-    setSelectedPlant: unknown,
-    isPlantSelected: boolean
-}) {
-
+function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps) {
     return (
-        <div className="bg-white p-5 rounded-xl shadow-sm border  h-full
-        overflow-y-auto max-h-[calc(100vh-180px)] scrollbar-none">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                Liste des plantes
-            </h2>
+        <motion.section
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden"
+        >
+            <header className="bg-gt-primary p-4">
+                <h2 className="text-xl font-semibold text-gt-primary-foreground flex items-center gap-2">
+                    🌱 Liste des plantes
+                </h2>
+            </header>
 
-            <PlantCards username={username} setSelectedPlant={setSelectedPlant} isPlantSelected={isPlantSelected} />
+            <article className="p-4">
+                <PlantCards
+                    username={username}
+                    setSelectedPlant={setSelectedPlant}
+                    selectedPlant={selectedPlant}
+                />
 
-            <button className="mt-4 w-full py-2 border rounded-lg flex items-center justify-center gap-1 text-sm hover:bg-gray-50">
-                <span>➕</span> Ajouter une plante
-            </button>
-        </div>
-    )
+                <button className="w-full mt-4 bg-gt-primary hover:bg-gt-primary-hover text-gt-primary-foreground font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                    ➕ Ajouter une plante
+                </button>
+            </article>
+        </motion.section>
+    );
 }
 
 function PlantHealth({ plant }: { plant: Plant | null }) {
-    if (!plant) {
-        return (
-            <div className="bg-white p-5 rounded-xl shadow-sm border flex flex-col items-center h-full">
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                    <span>💗</span> État de santé
-                </h2>
-
-                <div className="flex flex-col items-center text-center mt-8">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                        👁️
-                    </div>
-
-                    <p className="mt-4 font-medium">Sélectionne une plante</p>
-                    <p className="text-sm text-gray-500">
-                        Clique sur une plante pour voir son état de santé
-                    </p>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="bg-white p-5 rounded-xl shadow-sm border flex flex-col items-center h-full">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                Info de la plante
-            </h2>
-
-            <img
-                src={plant.imageUrl}
-                alt={plant.commonName}
-                className="w-24 h-24 rounded-full object-cover border shadow"
-            />
-
-            <p className="mt-4 text-lg font-semibold">{plant.commonName}</p>
-            <p className="text-sm italic text-gray-600">{plant.scientificName}</p>
-        </div>
-    );
-}
-
-function PlantTasks({ plant }: { plant: Plant | null }) {
-    if (!plant?.tasks.length) {
-        return (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col items-center h-full">
-                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                    <span>☑️</span> Tâches à effectuer
+        <motion.section
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden"
+        >
+            <header className="bg-gt-primary p-4">
+                <h2 className="text-xl font-semibold text-gt-primary-foreground flex items-center gap-2">
+                    💗 État de santé
                 </h2>
+            </header>
 
-                <div className="flex flex-col items-center text-center mt-8">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                        ✂️
-                    </div>
-
-                    <p className="mt-4 font-medium">Sélectionne une plante</p>
-                    <p className="text-sm text-gray-500">
-                        Clique sur une plante pour voir ses tâches
-                    </p>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col h-full">
-            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <span>☑️</span> Tâches à effectuer
-            </h2>
-
-            <div className="flex flex-col gap-4 w-full">
-                {plant.tasks.map((task, index) => (
-                    <div
-                        key={index}
-                        className="rounded-xl border bg-white shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
-                    >
-                        <div
-                            className="h-2 rounded-t-xl"
-                            style={{ backgroundColor: task.color }}
-                        />
-
-                        <div className="p-5 flex flex-col gap-4">
-
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-semibold text-gray-800">
-                                    {task.title}
+            <article className="p-6">
+                {!plant ? (
+                    <EmptyState
+                        icon="👁️"
+                        title="Sélectionne une plante"
+                        description="Clique sur une plante pour voir son état de santé"
+                    />
+                ) : (
+                    <div className="space-y-4">
+                        <div className="flex items-start gap-4">
+                            <img
+                                src={plant.imageUrl}
+                                alt={plant.commonName}
+                                className="w-24 h-24 rounded-lg object-cover border-2 border-gt-border flex-shrink-0"
+                            />
+                            <div className="flex-1">
+                                <h3 className="text-2xl font-bold text-gt-text mb-1">
+                                    {plant.commonName}
                                 </h3>
-                            </div>
-
-                            <p className="text-sm text-gray-600 leading-snug ml-1 border-l-2 border-gray-200 pl-3">
-                                {task.description}
-                            </p>
-
-                            <div className="flex justify-between items-center text-sm text-gray-500 pt-2 border-t">
-                                <div className="flex items-center gap-2">
-                                    <svg
-                                        className="w-4 h-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                        />
-                                    </svg>
-                                    {new Date(task.endDate).toLocaleDateString("fr-FR")}
-                                </div>
-
-                                <button className="text-xs px-2 py-1 rounded-md border hover:bg-gray-50">
-                                    Marquer fait ✓
-                                </button>
+                                <p className="text-gt-text-muted italic">
+                                    {plant.scientificName}
+                                </p>
                             </div>
                         </div>
                     </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-function PlantCards({ username, setSelectedPlant, isPlantSelected }
-                    : { username: string | undefined, setSelectedPlant: unknown, isPlantSelected: boolean }) {
-    const { plants, error, loading} = usePlant(username);
-
-    if (loading) {
-        return <div className="p-5">Chargement des plantes...</div>
-    }
-
-    if (error) {
-        return <div className="p-5 text-red-600">Erreur : {error}</div>;
-    }
-
-    return (
-        <motion.div
-            transition={{ layout: { duration: 0.35, ease: "easeInOut" } }}
-            className={`
-        ${isPlantSelected
-                ? "flex flex-col gap-3"
-                : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-            }
-    `}
-        >
-            {plants.map((plant, index) => (
-                <PlantCard
-                    key={index}
-                    plant={plant}
-                    onClick={() => setSelectedPlant(plant)}
-                    isPlantSelected={isPlantSelected}
-                />
-            ))}
-        </motion.div>
-    );
-}
-
-function PlantCard({ plant, onClick, isPlantSelected}
-    : {
-    plant: Plant,
-    onClick: () => void,
-    isPlantSelected: boolean
-}) {
-    return (
-        <motion.div
-            layout
-            onClick={onClick}
-            className={`
-        p-4 rounded-lg border cursor-pointer transition
-        bg-[var(--color-gt-light-grey)]
-        active:scale-95 hover:shadow-[0_0_10px_rgba(0,0,0,0.08)]
-        ${isPlantSelected
-                ? "flex items-center gap-4"
-                : "flex flex-col items-center text-center gap-3"
-            }
-    `}
-            transition={{ layout: { duration: 0.35, ease: "easeInOut" } }}
-        >
-            <img
-                src={plant.imageUrl}
-                alt={plant.commonName}
-                className={`
-                    object-cover border rounded-full
-                    ${isPlantSelected ? "w-12 h-12" : "w-20 h-20"}
-                `}
-            />
-
-            <div className="flex flex-col">
-                <span className="font-medium text-base">{plant.commonName}</span>
-                <span className="text-sm text-gray-500 italic">{plant.scientificName}</span>
-            </div>
-        </motion.div>
+                )}
+            </article>
+        </motion.section>
     );
 }
 
