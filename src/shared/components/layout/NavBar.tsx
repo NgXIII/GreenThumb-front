@@ -121,17 +121,15 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                 {/* Mobile - bottom actions */}
                 <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
                     <div className="flex">
-                        <Link to="/login" className="flex-1 py-3 text-center text-gt-dark-green hover:bg-gt-light-grey transition-colors">
+                        <Link to="/connexion" className="flex-1 py-3 text-center text-gt-dark-green hover:bg-gt-light-grey transition-colors">
                             Connexion
                         </Link>
 
-                        <Link to="/signup" className="flex-1 py-3 text-center bg-gt-green text-white hover:bg-gt-dark-green transition-colors">
+                        <Link to="/inscription" className="flex-1 py-3 text-center bg-gt-green text-white hover:bg-gt-dark-green transition-colors">
                             Inscription
                         </Link>
                     </div>
                 </nav>
-
-                <div className="md:hidden h-16" />
             </>
         )
     }
