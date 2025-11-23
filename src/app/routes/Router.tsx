@@ -7,6 +7,9 @@ import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
 import AccountDebugPage from "@/pages/AccountDebugPage.tsx";
 import {accountLoader} from "@/app/routes/accountLoader.ts";
 import VerifyEmailPage from "@/pages/VerifyEmailPage/VerifyEmailPage.tsx";
+import LegalNoticePage from "@/pages/Legal/LegalNoticePage.tsx";
+import PrivacyPolicyPage from "@/pages/Legal/PrivacyPolicyPage.tsx";
+import TermsOfUsePage from "@/pages/Legal/TermsOfUsePage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -38,7 +41,19 @@ const router = createBrowserRouter([
                 path: '/account',
                 loader: accountLoader,
                 element: <AccountDebugPage />
-            }
+            },
+            {
+                path: "/legal-notice",
+                element: <LegalNoticePage />
+            },
+            {
+                path: "/rgpd",
+                element: <PrivacyPolicyPage />
+            },
+            {
+                path: "/cgu",
+                element: <TermsOfUsePage />
+            },
         ],
     },
     {

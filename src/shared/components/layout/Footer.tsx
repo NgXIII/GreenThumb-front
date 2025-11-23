@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from '../../../assets/logo.png'
 
 export default function Footer() {
@@ -18,12 +19,9 @@ export default function Footer() {
                 <div>
                     <h3 className="font-bold mb-4 text-gt-text">Légal</h3>
                     <div className="space-y-3">
-                        <a href="#" className="block text-gt-text-muted hover:text-gt-text-accent transition-colors">Mentions
-                            légales</a>
-                        <a href="#" className="block text-gt-text-muted hover:text-gt-text-accent transition-colors">Politique
-                            de confidentialité</a>
-                        <a href="#"
-                           className="block text-gt-text-muted hover:text-gt-text-accent transition-colors">CGU</a>
+                        <Link to="/legal-notice" className="block hover:text-gt-black transition-colors">Mentions légales</Link>
+                        <Link to="/rgpd" className="block hover:text-gt-black transition-colors">Politique de confidentialité</Link>
+                        <Link to="/cgu" className="block hover:text-gt-black transition-colors">CGU</Link>
                     </div>
                 </div>
             </div>
