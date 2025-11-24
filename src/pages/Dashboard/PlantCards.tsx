@@ -1,6 +1,7 @@
 import usePlant from "@/shared/hooks/usePlant.ts";
 import {motion} from "framer-motion";
 import type {Plant} from "@/shared/types/plant.ts";
+import {useState} from "react";
 
 interface PlantCardsProps {
     username: string | undefined;
@@ -16,7 +17,15 @@ interface PlantCardProps {
 }
 
 export default function PlantCards({ username, setSelectedPlant, selectedPlant }: PlantCardsProps) {
-    const { plants, error, loading} = usePlant(username);
+    const [page, setPage] = useState(0);
+
+    const {
+        plants,
+        totalPages,
+        currentPage,
+        loading,
+        error
+    } = usePlant(username, page, 5);
 
     if (loading) {
         return (
@@ -54,6 +63,48 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
                     index={index}
                 />
             ))}
+
+            <div className="flex items-center justify-center gap-2 pt-4">
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="p-2 rounded-lg bg-gt-surface border border-gt-border hover:bg-gt-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    disabled={currentPage === 0}
+                    onClick={() => setPage(prev => prev - 1)}
+                >
+                    <svg className="w-5 h-5 text-gt-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                </motion.button>
+
+                <div className="flex items-center gap-1 px-3">
+                    {Array.from({ length: totalPages }, (_, i) => (
+                        <motion.button
+                            key={i}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setPage(i)}
+                            className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                                i === currentPage
+                                    ? 'bg-gt-interactive w-6'
+                                    : 'bg-gt-border hover:bg-gt-text-muted'
+                            }`}
+                        />
+                    ))}
+                </div>
+
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="p-2 rounded-lg bg-gt-surface border border-gt-border hover:bg-gt-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    disabled={currentPage + 1 >= totalPages}
+                    onClick={() => setPage(prev => prev + 1)}
+                >
+                    <svg className="w-5 h-5 text-gt-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                </motion.button>
+            </div>
         </div>
     );
 }

@@ -2,19 +2,30 @@ import {useEffect, useState} from "react";
 import {getPlants} from "@/services/repos/getPlants.ts";
 import type {Plant} from "@/shared/types/plant.ts";
 
-export default function usePlant(username: string | undefined) {
-    const [plants, setPlants] = useState<Plant[]>([]);
+interface PlantPage {
+    content: Plant[];
+    totalPages: number;
+    number: number;
+}
+export default function usePlant(username: string | undefined, page: number, size: number = 5) {
+    const [plantsPage, setPlantsPage] = useState<PlantPage | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setLoading(true);
 
-        getPlants(username)
-            .then((response) => setPlants(response))
+        getPlants(username, page, size)
+            .then((response) => setPlantsPage(response))
             .catch(e => setError(e.message))
             .finally(() => setLoading(false));
-    }, [username]);
+    }, [username, page, size]);
 
-    return { plants, error, loading };
+    return {
+        plants: plantsPage?.content ?? [],
+        totalPages: plantsPage?.totalPages ?? 0,
+        currentPage: plantsPage?.number ?? 0,
+        error,
+        loading
+    };
 }
