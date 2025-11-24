@@ -1,15 +1,16 @@
 import type {UserAccount} from "@/shared/types/user";
 import type {Stat} from "@/shared/types/stat";
 import {StatCard} from "./StatCard";
-import {Mail, Phone, User, FileText, Lock, SquarePen, Camera} from "lucide-react";
+import {Mail, Phone, User, FileText, Lock, SquarePen} from "lucide-react";
 import {Button} from "@/shared/components/ui/button.tsx";
-import React, {useState, useRef} from "react";
+import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {Form} from "@/shared/components/ui/form.tsx";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
 import {toast} from "sonner";
 import {type UserEditPost, UserEditSchema} from "@/shared/types/schemas/UserSchema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
+import InputEditAvatar from "@/shared/components/ui/customs/InputEditAvatar.tsx";
 
 // Mock data - À remplacer par un hook useUser() ou un contexte
 const mockUser: UserAccount = {
@@ -66,12 +67,13 @@ export default function ProfilePage(){
         resolver: zodResolver(UserEditSchema),
         mode: "all",
         defaultValues: {
-            username: "",
-            firstname: "",
-            lastname: "",
-            email: "",
-            phoneNumber: "",
-            biography: ""
+            username: user.username,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            biography: user.biography,
+            avatar: user.avatar
         }
     })
 
@@ -124,13 +126,13 @@ export default function ProfilePage(){
                                 <Button
                                     type="button"
                                     onClick={handleCancel}
-                                    className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 cursor-pointer"
                                 >
                                     Annuler
                                 </Button>
                                 <Button
                                     type="submit"
-                                    className="bg-gt-green hover:bg-green-700 text-white"
+                                    className="bg-gt-green hover:bg-green-700 text-white cursor-pointer"
                                 >
                                     Sauvegarder les modifications
                                 </Button>
@@ -146,21 +148,6 @@ export default function ProfilePage(){
 }
 
 const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, onAvatarChange }: ProfileHeaderProps) => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const handleImageClick = () => {
-        if (isEditMode && fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            onAvatarChange(file);
-        }
-    };
-
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
             <div
@@ -170,58 +157,36 @@ const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, onAvatarC
             />
             <div className="px-8 pb-8">
                 <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12">
-                    <div className="relative">
-                        <img
-                            src={previewAvatar}
-                            alt={`Avatar de ${user.firstname} ${user.lastname}`}
-                            className={`w-32 h-32 rounded-full border-4 border-white shadow-lg bg-white ${isEditMode ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
-                            loading="lazy"
-                            onClick={handleImageClick}
-                        />
-                        {isEditMode && (
-                            <div
-                                className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full cursor-pointer"
-                                onClick={handleImageClick}
-                            >
-                                <Camera className="w-8 h-8 text-white" />
-                            </div>
-                        )}
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={handleFileChange}
-                        />
-                    </div>
+                    <InputEditAvatar
+                        isEditMode={isEditMode}
+                        onAvatarChange={onAvatarChange}
+                        previewAvatar={previewAvatar}
+                    />
 
                     <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left flex-1">
                         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
                             <div>
                                 {isEditMode ? (
-                                    <>
-                                        <div className="flex items-center">
-                                            <InputForm
-                                                name="firstname"
-                                                inputType="text"
-                                                label="Prénom"
-                                                placeholder="Emelie"
-                                            />
-                                            <InputForm
-                                                name="lastname"
-                                                inputType="text"
-                                                label="Nom"
-                                                placeholder="Aerts"
-                                            />
-                                        </div>
-
+                                    <div className="flex items-center gap-10">
+                                        <InputForm
+                                            name="firstname"
+                                            inputType="text"
+                                            label="Prénom"
+                                            placeholder="Emelie"
+                                        />
+                                        <InputForm
+                                            name="lastname"
+                                            inputType="text"
+                                            label="Nom"
+                                            placeholder="Aerts"
+                                        />
                                         <InputForm
                                             name="username"
                                             inputType="text"
                                             label="Nom d'utilisateur"
                                             placeholder="PlantQueen"
                                         />
-                                    </>
+                                    </div>
                                 ) : (
                                     <>
                                         <h1 className="text-3xl font-bold text-gray-900">
@@ -270,7 +235,7 @@ const PersonalInfo = ({ user, isEditMode }: PersonalInfoProps) => (
                         name="phoneNumber"
                         inputType="tel"
                         label="Téléphone*"
-                        placeholder="+32478092427"
+                        placeholder="0123456789"
                     />
                 </>
             ) : (
