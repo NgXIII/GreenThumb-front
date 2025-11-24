@@ -7,10 +7,12 @@ import NavItem from './NavItem'
 import ProfileMenu from './ProfileMenu'
 import ThemeToggle from './ThemeToggle'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
+import {useAuth} from "@/shared/hooks/useAuth.ts";
 
 export default function NavBar({ isAuthenticated = false }: NavBarProps) {
     const location = useLocation()
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { logout } = useAuth()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)
 
     const navItems: NavItemType[] = [
@@ -22,9 +24,12 @@ export default function NavBar({ isAuthenticated = false }: NavBarProps) {
     const isActive = (path: string) => location.pathname === path
 
     const onLogout = () => {
-        // remplacer par la logique réelle
-        console.log('logout')
-        navigate('/')
+        try {
+            logout()
+            navigate('/')
+        } catch {
+            console.error('Logout error')
+        }
     }
 
     function AuthenticatedView() {
