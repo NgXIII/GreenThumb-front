@@ -11,3 +11,9 @@ export type Task = {
     endDate: string,
     color: string,
 }
+
+export interface PlantPage {
+    content: Plant[];
+    totalPages: number;
+    number: number;
+}

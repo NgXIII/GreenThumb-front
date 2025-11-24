@@ -1,4 +1,4 @@
-import type {Plant} from "@/shared/types/plant.ts";
+import type {PlantPage} from "@/shared/types/plant.ts";
 import apiClient from "@/services/http/apiClient.ts";
 
 export async function getPlants(
@@ -10,7 +10,7 @@ export async function getPlants(
         throw new Error("Aucun utilisateur");
     }
 
-    const response = await apiClient.get<Plant[]>(`/users/${username}/plants`, {
+    const response = await apiClient.get<PlantPage>(`/users/${username}/plants`, {
         params: { page, size }
     });
 
