@@ -49,3 +49,36 @@ export const UserConnectionSchema = z
     })
 
 export type UserConnectionPost = z.infer<typeof UserConnectionSchema>
+
+export const UserEditSchema = z
+    .object({
+        username: z.string().min(1, "Le nom d'utilisateur est obligatoire"),
+        firstname: z.string().min(1, "Le prénom est obligatoire"),
+        lastname: z.string().min(1, "Le nom de famille est obligatoire"),
+        email: z.email("L'email n'est pas valide").min(1, "L'email est obligatoire"),
+        phoneNumber: z
+            .string()
+            .min(1, "Le numéro de téléphone est obligatoire")
+            .regex(/^\d{10,}$/, "Veuillez encoder un numéro de téléphone valide"),
+        biography: z
+            .string()
+            .refine(
+                (value) => value.trim().split(/\s+/).length <= 45,
+                {
+                    message: "La biographie ne peut pas dépasser 45 mots.",
+                }
+            ),
+        avatar: z
+            .any()
+            .optional()
+            .refine((file) => !file || file instanceof File, {
+                message: "Fichier invalide",
+                path: ["avatar"],
+            })
+            .refine((file?: File) => !file || allowedImageTypes.includes(file.type), {
+                message: "L'image doit être PNG, JPG ou JPEG",
+                path: ["avatar"],
+            }),
+    })
+
+export type UserEditPost = z.infer<typeof UserEditSchema>
