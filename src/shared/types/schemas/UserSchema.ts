@@ -45,7 +45,8 @@ export const UserConnectionSchema = z
             .string()
             .min(1, "le login est requis"),
         password: z.string()
-            .min(8, "Le mot de passe doit faire au moins 8 caractères")
+            .min(8, "Le mot de passe doit faire au moins 8 caractères"),
+        rememberMe: z.boolean().optional()
     })
 
 export type UserConnectionPost = z.infer<typeof UserConnectionSchema>
