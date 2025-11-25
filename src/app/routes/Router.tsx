@@ -5,9 +5,15 @@ import RegisterPage from "@/pages/registerPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
 import {ProfilePage} from "@/pages/profilePage/ProfilePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
-import AccountDebugPage from "@/pages/AccountDebugPage.tsx";
 import {accountLoader} from "@/app/routes/accountLoader.ts";
 import VerifyEmailPage from "@/pages/VerifyEmailPage/VerifyEmailPage.tsx";
+import LegalNoticePage from "@/pages/Legal/LegalNoticePage.tsx";
+import PrivacyPolicyPage from "@/pages/Legal/PrivacyPolicyPage.tsx";
+import TermsOfUsePage from "@/pages/Legal/TermsOfUsePage.tsx";
+import RequireAuth from "@/shared/components/layout/RequireAuth.tsx";
+import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
+import {userLoader} from "@/app/routes/userLoader.ts";
+import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 
 const router = createBrowserRouter([
     {
@@ -16,12 +22,25 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         children: [
             {
-                index: true,
-                element: <HomePage />
+                loader: userLoader,
+                element: <RequireGuest />,
+                children: [
+                    {
+                        index: true,
+                        element: <HomePage />
+                    }
+                ]
             },
             {
-                path: '/dashboard',
-                //element: <DashboardPage/>
+                element: <RequireAuth />,
+                loader: userLoader,
+                children: [
+                    {
+                        path: '/dashboard',
+                        loader: accountLoader,
+                        element: <Dashboard />
+                    }
+                ]
             },
             {
                 path: '/community',
@@ -36,10 +55,17 @@ const router = createBrowserRouter([
                 element: <ProfilePage/>
             },
             {
-                path: '/account',
-                loader: accountLoader,
-                element: <AccountDebugPage />
-            }
+                path: "/legal-notice",
+                element: <LegalNoticePage />
+            },
+            {
+                path: "/rgpd",
+                element: <PrivacyPolicyPage />
+            },
+            {
+                path: "/cgu",
+                element: <TermsOfUsePage />
+            },
         ],
     },
     {
@@ -47,8 +73,11 @@ const router = createBrowserRouter([
         element: <RegisterPage />,
     },
     {
-        path: "/connexion",
-        element: <LoginPage />
+        element: <RequireGuest />,
+        children: [
+            { path: "/inscription", element: <RegisterPage /> },
+            { path: "/connexion", element: <LoginPage /> },
+        ]
     },
     {
         path: "/verify-email",
