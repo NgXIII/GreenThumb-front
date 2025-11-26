@@ -5,8 +5,9 @@ import type {
 } from "axios";
 import axios from "axios";
 import {useAccountStore} from "@/app/stores/userStore.ts";
+
 const apiClient: AxiosInstance = axios.create({
-    baseURL: "/api",
+    baseURL: `${import.meta.env.VITE_API_URL}/api`,
     headers: { "Content-Type": "application/json" },
     withCredentials: true,
 });
@@ -28,7 +29,11 @@ apiClient.interceptors.response.use(
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-                const refreshResponse = await axios.post("/api/sessions/refresh", {}, { withCredentials: true });
+                const refreshResponse = await axios.post(
+                    `${import.meta.env.VITE_API_URL}/api/sessions/refresh`,
+                    {},
+                    { withCredentials: true }
+                );
                 const newAccessToken = refreshResponse.data;
 
                 useAccountStore.getState().setAccount({ token: newAccessToken });
