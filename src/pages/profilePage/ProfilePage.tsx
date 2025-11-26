@@ -11,15 +11,15 @@ import {toast} from "sonner";
 import {type UserEditPost, UserEditSchema} from "@/shared/types/schemas/UserSchema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import InputEditAvatar from "@/shared/components/ui/customs/InputEditAvatar.tsx";
+import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 
-// Mock data - À remplacer par un hook useUser() ou un contexte
 const mockUser: UserAccount = {
     username: "johndoe",
     firstname: "John",
     lastname: "Doe",
     email: "john.doe@example.com",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-    phoneNumber: "+32478092427",
+    phoneNumber: "0478092427",
     biography: "Passionné de jardinage et de botanique depuis plus de 10 ans. J'adore partager mes connaissances sur les plantes et découvrir de nouvelles espèces. Mon objectif est de créer un jardin durable et respectueux de l'environnement."
 }
 
@@ -34,7 +34,8 @@ type ProfileHeaderProps = {
     isEditMode: boolean;
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
     previewAvatar: string;
-    onAvatarChange: (file: File) => void;
+    defaultAvatar: string;
+    onAvatarChange: (file: File | null) => void;
 }
 
 type PersonalInfoProps = {
@@ -51,17 +52,9 @@ type StatsProps = {
     stats: Stat;
 }
 
-type UserEditForm = {
-    email: string;
-    phoneNumber: string;
-    biography: string;
-}
-
 export default function ProfilePage(){
     const user = mockUser;
     const [isEditMode, setEditMode] = useState<boolean>(false);
-    const [previewAvatar, setPreviewAvatar] = useState<string>(user.avatar);
-    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     const form = useForm<UserEditPost>({
         resolver: zodResolver(UserEditSchema),
@@ -77,20 +70,27 @@ export default function ProfilePage(){
         }
     })
 
-    const handleAvatarChange = (file: File) => {
-        setAvatarFile(file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreviewAvatar(reader.result as string);
+    const handleAvatarChange = (file: File | null) => {
+        if (file === null) {
+            form.setValue('avatar', user.avatar, { shouldValidate: true });
+        } else {
+            form.setValue('avatar', file, { shouldValidate: true });
         }
-        reader.readAsDataURL(file);
     }
 
-    const onSubmit = async (values: UserEditForm) => {
-        try {
-            console.log("Données du formulaire:", values);
-            console.log("Fichier avatar:", avatarFile);
+    const handleCancel = () => {
+        form.reset();
+        setEditMode(false);
+    }
 
+    const onSubmit = async (values: UserEditPost) => {
+        try {
+            if (values.avatar instanceof File) {
+                const base64Avatar = await fileToBase64(values.avatar);
+                console.log("Avatar en base64:", base64Avatar);
+            }
+
+            console.log("Données du formulaire:", values);
             toast.success("Profil mis à jour avec succès !");
             setEditMode(false);
         } catch (error) {
@@ -99,12 +99,14 @@ export default function ProfilePage(){
         }
     }
 
-    const handleCancel = () => {
-        form.reset();
-        setPreviewAvatar(user.avatar);
-        setAvatarFile(null);
-        setEditMode(false);
-    }
+    const avatarValue = form.watch('avatar');
+    const previewAvatar = avatarValue instanceof File
+        ? URL.createObjectURL(avatarValue)
+        : avatarValue || '';
+
+    console.log("Form values:", form.getValues());
+    console.log("Form errors:", form.formState.errors);
+    console.log("Form is valid:", form.formState.isValid);
 
     return (
         <div className="min-h-screen border-gt-light-grey py-12 px-4 sm:px-6 lg:px-8">
@@ -116,6 +118,7 @@ export default function ProfilePage(){
                             isEditMode={isEditMode}
                             setEditMode={setEditMode}
                             previewAvatar={previewAvatar}
+                            defaultAvatar={user.avatar}
                             onAvatarChange={handleAvatarChange}
                         />
                         <PersonalInfo user={user} isEditMode={isEditMode} />
@@ -147,7 +150,7 @@ export default function ProfilePage(){
     )
 }
 
-const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, onAvatarChange }: ProfileHeaderProps) => {
+const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, defaultAvatar, onAvatarChange }: ProfileHeaderProps) => {
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
             <div
@@ -161,6 +164,7 @@ const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, onAvatarC
                         isEditMode={isEditMode}
                         onAvatarChange={onAvatarChange}
                         previewAvatar={previewAvatar}
+                        defaultAvatar={defaultAvatar}
                     />
 
                     <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left flex-1">

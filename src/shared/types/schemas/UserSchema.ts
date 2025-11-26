@@ -69,16 +69,20 @@ export const UserEditSchema = z
                 }
             ),
         avatar: z
-            .any()
+            .union([
+                z.url(),
+                z.instanceof(File),
+            ])
             .optional()
-            .refine((file) => !file || file instanceof File, {
-                message: "Fichier invalide",
-                path: ["avatar"],
-            })
-            .refine((file?: File) => !file || allowedImageTypes.includes(file.type), {
-                message: "L'image doit être PNG, JPG ou JPEG",
-                path: ["avatar"],
-            }),
+            .refine(
+                (file) => {
+                    if (!file || typeof file === 'string') return true;
+                    return allowedImageTypes.includes(file.type);
+                },
+                {
+                    message: "L'image doit être PNG, JPG ou JPEG",
+                }
+            ),
     })
 
 export type UserEditPost = z.infer<typeof UserEditSchema>
