@@ -75,9 +75,7 @@ export default function InputEditAvatar({ isEditMode, onAvatarChange, previewAva
                     <img
                         src={previewAvatar}
                         alt="avatar"
-                        className={`w-full h-full object-cover bg-white ${
-                            isEditMode ? 'group-hover:opacity-80 transition-opacity' : ''
-                        }`}
+                        className="w-full h-full object-cover bg-white"
                         loading="lazy"
                     />
                 )}
@@ -88,7 +86,7 @@ export default function InputEditAvatar({ isEditMode, onAvatarChange, previewAva
                     <button
                         type="button"
                         onClick={handleImageClick}
-                        className="bg-gt-green hover:bg-green-700 text-white p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                        className="bg-gt-green hover:bg-green-700 text-white p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110 cursor-pointer"
                         title="Changer la photo"
                     >
                         <Camera className="w-4 h-4" />
@@ -98,7 +96,7 @@ export default function InputEditAvatar({ isEditMode, onAvatarChange, previewAva
                         <button
                             type="button"
                             onClick={handleDelete}
-                            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110 cursor-pointer"
                             title="Supprimer la photo"
                         >
                             <Trash2 className="w-4 h-4" />

@@ -12,6 +12,8 @@ import {type UserEditPost, UserEditSchema} from "@/shared/types/schemas/UserSche
 import {zodResolver} from "@hookform/resolvers/zod";
 import InputEditAvatar from "@/shared/components/ui/customs/InputEditAvatar.tsx";
 import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
+import {AxiosError} from "axios";
+import {patchEditUser} from "@/services/repos/patchEditUser.ts";
 
 const mockUser: UserAccount = {
     username: "johndoe",
@@ -30,31 +32,31 @@ const mockStats: Stat = {
 }
 
 type ProfileHeaderProps = {
-    user: UserAccount;
-    isEditMode: boolean;
-    setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
-    previewAvatar: string;
-    defaultAvatar: string;
-    onAvatarChange: (file: File | null) => void;
+    user: UserAccount
+    isEditMode: boolean
+    setEditMode: React.Dispatch<React.SetStateAction<boolean>>
+    previewAvatar: string
+    defaultAvatar: string
+    onAvatarChange: (file: File | null) => void
 }
 
 type PersonalInfoProps = {
-    user: UserAccount;
-    isEditMode: boolean;
+    user: UserAccount
+    isEditMode: boolean
 }
 
 type BiographyProps = {
-    user: UserAccount;
-    isEditMode: boolean;
+    user: UserAccount
+    isEditMode: boolean
 }
 
 type StatsProps = {
-    stats: Stat;
+    stats: Stat
 }
 
 export default function ProfilePage(){
-    const user = mockUser;
-    const [isEditMode, setEditMode] = useState<boolean>(false);
+    const user = mockUser
+    const [isEditMode, setEditMode] = useState<boolean>(false)
 
     const form = useForm<UserEditPost>({
         resolver: zodResolver(UserEditSchema),
@@ -86,27 +88,40 @@ export default function ProfilePage(){
     const onSubmit = async (values: UserEditPost) => {
         try {
             if (values.avatar instanceof File) {
-                const base64Avatar = await fileToBase64(values.avatar);
-                console.log("Avatar en base64:", base64Avatar);
+                values.avatar = await fileToBase64(values.avatar)
             }
 
-            console.log("Données du formulaire:", values);
-            toast.success("Profil mis à jour avec succès !");
-            setEditMode(false);
+            const response = await patchEditUser(user.username, values)
+
+            toast.success(response.message)
+            setEditMode(false)
+
+            // Optionnel : rafraîchir les données utilisateur
+            // await refetchUserData();
+
         } catch (error) {
             console.error("Erreur lors de la mise à jour du profil :", error);
-            toast.error("Erreur lors de la mise à jour du profil");
+
+            if (error instanceof AxiosError) {
+                if (error.response?.data?.message) {
+                    toast.error(error.response.data.message)
+                } else if (error.message) {
+                    toast.error(error.message)
+                } else {
+                    toast.error("Erreur lors de la mise à jour du profil")
+                }
+            } else if (error instanceof Error) {
+                toast.error(error.message)
+            } else {
+                toast.error("Erreur lors de la mise à jour du profil")
+            }
         }
     }
 
-    const avatarValue = form.watch('avatar');
+    const avatarValue = form.watch('avatar')
     const previewAvatar = avatarValue instanceof File
         ? URL.createObjectURL(avatarValue)
-        : avatarValue || '';
-
-    console.log("Form values:", form.getValues());
-    console.log("Form errors:", form.formState.errors);
-    console.log("Form is valid:", form.formState.isValid);
+        : avatarValue || ''
 
     return (
         <div className="min-h-screen border-gt-light-grey py-12 px-4 sm:px-6 lg:px-8">
@@ -125,17 +140,17 @@ export default function ProfilePage(){
                         <Biography user={user} isEditMode={isEditMode} />
 
                         {isEditMode && (
-                            <div className="flex gap-4 justify-end mb-8">
+                            <div className="flex flex-col sm:flex-row gap-4 justify-end mb-8">
                                 <Button
                                     type="button"
                                     onClick={handleCancel}
-                                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 cursor-pointer"
+                                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 cursor-pointer w-full sm:w-auto"
                                 >
                                     Annuler
                                 </Button>
                                 <Button
                                     type="submit"
-                                    className="bg-gt-green hover:bg-green-700 text-white cursor-pointer"
+                                    className="bg-gt-green hover:bg-green-700 text-white cursor-pointer w-full sm:w-auto"
                                 >
                                     Sauvegarder les modifications
                                 </Button>
@@ -171,25 +186,27 @@ const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, defaultAv
                         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
                             <div>
                                 {isEditMode ? (
-                                    <div className="flex items-center gap-10">
-                                        <InputForm
-                                            name="firstname"
-                                            inputType="text"
-                                            label="Prénom"
-                                            placeholder="Emelie"
-                                        />
-                                        <InputForm
-                                            name="lastname"
-                                            inputType="text"
-                                            label="Nom"
-                                            placeholder="Aerts"
-                                        />
-                                        <InputForm
-                                            name="username"
-                                            inputType="text"
-                                            label="Nom d'utilisateur"
-                                            placeholder="PlantQueen"
-                                        />
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-10">
+                                            <InputForm
+                                                name="firstname"
+                                                inputType="text"
+                                                label="Prénom"
+                                                placeholder="Emelie"
+                                            />
+                                            <InputForm
+                                                name="lastname"
+                                                inputType="text"
+                                                label="Nom"
+                                                placeholder="Aerts"
+                                            />
+                                            <InputForm
+                                                name="username"
+                                                inputType="text"
+                                                label="Nom d'utilisateur"
+                                                placeholder="PlantQueen"
+                                            />
+                                        </div>
                                     </div>
                                 ) : (
                                     <>
@@ -218,8 +235,8 @@ const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, defaultAv
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
 const PersonalInfo = ({ user, isEditMode }: PersonalInfoProps) => (
     <section className="bg-white rounded-2xl shadow-xl p-8 mb-8" aria-labelledby="personal-info-title">
@@ -290,7 +307,7 @@ const PersonalInfo = ({ user, isEditMode }: PersonalInfoProps) => (
             </div>
         </div>
     </section>
-);
+)
 
 const Biography = ({ user, isEditMode }: BiographyProps) => (
     <section className="bg-white rounded-2xl shadow-xl p-8 mb-8" aria-labelledby="biography-title">
@@ -315,7 +332,7 @@ const Biography = ({ user, isEditMode }: BiographyProps) => (
             </div>
         )}
     </section>
-);
+)
 
 const Stats = ({ stats }: StatsProps) => (
     <section className="bg-white rounded-2xl shadow-xl p-8" aria-labelledby="stats-title">
