@@ -14,8 +14,6 @@ import InputEditAvatar from "@/shared/components/ui/customs/InputEditAvatar.tsx"
 import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 import {AxiosError} from "axios";
 import {useEditUser} from "@/shared/hooks/useUser.ts";
-import {Dialog, DialogTrigger} from "@radix-ui/react-dialog";
-import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 
 const mockUser: UserAccount = {
     username: "robocop",
@@ -295,7 +293,12 @@ const PersonalInfo = ({ user, isEditMode }: PersonalInfoProps) => (
                     </div>
                 </div>
 
-                <EditPassword />
+                <Button
+                    type="button"
+                    className="bg-orange-50 hover:bg-orange-100 border border-orange-500 cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105"
+                >
+                    <SquarePen className="text-orange-700" />
+                </Button>
             </div>
         </div>
     </section>
