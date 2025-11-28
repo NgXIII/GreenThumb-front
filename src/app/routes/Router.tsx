@@ -14,7 +14,7 @@ import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
 import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 import AdminTest from "@/pages/AdminTest.tsx";
-import {adminLoader} from "@/app/routes/adminLoader.ts";
+import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
 
 const router = createBrowserRouter([
     {
@@ -44,7 +44,8 @@ const router = createBrowserRouter([
                 ]
             },
             {
-                loader: adminLoader,
+                element: <RequireAdmin />,
+                loader: userLoader,
                 children: [
                     {
                         path: '/admin',
