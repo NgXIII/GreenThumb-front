@@ -1,24 +1,44 @@
+// typescript
+import { useEffect } from "react";
 import type {UserAccount} from "@/shared/types/user";
 import type {Stat} from "@/shared/types/stat";
 import {StatCard} from "./StatCard";
 import {Mail, Phone, User} from "lucide-react";
 import type {FC} from "react";
+import {useUserStore} from "@/app/stores/userStore.ts";
 
-// Mock data - À remplacer par un hook useUser() ou un contexte
-const mockUser: UserAccount = {
-    username: "johndoe",
-    firstname: "John",
-    lastname: "Doe",
-    email: "john.doe@example.com",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-    phoneNumber: "+33 6 12 34 56 78"
-};
-
+// Mock stats temporaire - À remplacer par un appel API si nécessaire
 const mockStats: Stat = {
-    plants: 12,
-    tasksCompleted: 45,
-    discussions: 23
+    plants: 15,
+    tasksCompleted: 3,
+    discussions: 4
 };
+
+const DEFAULT_AVATAR = "/users/default.png"; // On garde le chemin relatif simple pour l'avatar par défaut
+
+function resolveAvatar(avatar?: string) {
+    if (!avatar) return DEFAULT_AVATAR;
+
+    // 1. Si l'avatar est déjà une URL complète (http://...) ou une chaîne data:
+    if (avatar.startsWith("http") || avatar.startsWith("data:")) return avatar;
+
+    // 🔴 HARDCODE: Définir l'URL de base de l'API ici
+    const BASE_URL = "http://localhost:8080";
+
+    // 2. Si l'avatar commence par un slash, on l'attache directement à la base.
+    // Ex: avatar est "/users/avatar.jpg" -> http://localhost:8080/users/avatar.jpg
+    if (avatar.startsWith("/")) {
+        // base.replace(/\/$/, "") assure qu'il n'y a pas de double slash (//) si BASE_URL finissait par /
+        return `${BASE_URL.replace(/\/$/, "")}${avatar}`;
+    }
+
+    // 3. L'avatar est un chemin relatif "users/b5a19de2-78a9-4175-bcdc-ac40964e8a27.jpg"
+    // On ajoute l'URL de base et le chemin de l'avatar.
+    // Ex: http://localhost:8080/users/b5a19de2-78a9-4175-bcdc-ac40964e8a27.jpg
+
+    // On retire un éventuel slash en début de "avatar" avant de le joindre à la BASE_URL
+    return `${BASE_URL.replace(/\/$/, "")}/${avatar.replace(/^\/+/, "")}`;
+}
 
 type ProfileHeaderProps = {
     user: UserAccount;
@@ -34,10 +54,13 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({ user }) => (
         <div className="px-8 pb-8">
             <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-12">
                 <img
-                    src={user.avatar}
+                    src={resolveAvatar(user.avatar)}
                     alt={`Avatar de ${user.firstname} ${user.lastname}`}
-                    className="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-white"
+                    className="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-white object-cover"
                     loading="lazy"
+                    onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = DEFAULT_AVATAR;
+                    }}
                 />
                 <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
                     <h1 className="text-3xl font-bold text-gray-900">
@@ -122,13 +145,26 @@ const Stats: FC<StatsProps> = ({ stats }) => (
 );
 
 export const ProfilePage: FC = () => {
-    // TODO: Remplacer par un hook personnalisé
-    // const { user, isLoading, error } = useUser();
-    // const { stats } = useUserStats(user?.id);
+    const { user } = useUserStore.getState();
 
-    const user = mockUser;
+    console.log("avatar : ", user?.avatar);
+    console.log("user : ", user);
+    console.log("résolu avatar :", resolveAvatar(user?.avatar));
+
+    useEffect(() => {
+        console.log("user avatar :", user?.avatar);
+    }, [user]);
+
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gt-light-grey flex items-center justify-center">
+                <p className="text-gray-500">Chargement du profil...</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen border-gt-light-grey py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gt-light-grey py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
                 <ProfileHeader user={user} />
                 <PersonalInfo user={user} />

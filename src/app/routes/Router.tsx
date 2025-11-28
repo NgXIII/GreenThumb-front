@@ -39,6 +39,11 @@ const router = createBrowserRouter([
                         path: '/dashboard',
                         loader: accountLoader,
                         element: <Dashboard />
+                    },
+                    {
+                        path: '/profil',
+                        loader: userLoader,
+                        element: <ProfilePage />
                     }
                 ]
             },
@@ -49,10 +54,6 @@ const router = createBrowserRouter([
             {
                 path: '/ressources',
                 //element: <RessourcesPage/>
-            },
-            {
-                path: '/profile',
-                element: <ProfilePage/>
             },
             {
                 path: "/legal-notice",

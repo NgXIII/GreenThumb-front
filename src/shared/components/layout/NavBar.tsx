@@ -51,7 +51,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                 <ThemeToggle />
 
                                 <Link
-                                    to="/profile"
+                                    to="/profil"
                                     className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
                                 >
                                     <User size={20} className="text-gt-primary-foreground" />
