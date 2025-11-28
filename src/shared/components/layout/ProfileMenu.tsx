@@ -17,7 +17,7 @@ export default function ProfileMenu({ isOpen, refProp, onToggle, onClose, onLogo
 
             {isOpen && (
                 <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-44 bg-white rounded-lg shadow-lg z-50">
-                    <Link to="/profile" onClick={onClose} className="flex items-center gap-2 px-4 py-2 hover:bg-gt-light-grey rounded-t-md">
+                    <Link to="/profil" onClick={onClose} className="flex items-center gap-2 px-4 py-2 hover:bg-gt-light-grey rounded-t-md">
                         <User size={18} className="text-gt-dark-green" />
                         <span className="text-sm">Profil</span>
                     </Link>

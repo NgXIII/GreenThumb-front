@@ -18,13 +18,13 @@ export default function InputEditAvatar({ isEditMode, onAvatarChange, previewAva
 
     React.useEffect(() => {
         if (!isEditMode) {
-            setIsDeleted(previewAvatar === '');
+            setIsDeleted(previewAvatar === '')
         }
-    }, [isEditMode, previewAvatar]);
+    }, [isEditMode, previewAvatar])
 
     const handleImageClick = () => {
         if (isEditMode && fileInputRef.current) {
-            fileInputRef.current.click();
+            fileInputRef.current.click()
         }
     }
 
@@ -32,31 +32,31 @@ export default function InputEditAvatar({ isEditMode, onAvatarChange, previewAva
         const file = e.target.files?.[0];
         if (file) {
             if (file.size > MAX_FILE_SIZE) {
-                toast.error(`L'image est trop volumineuse. Taille maximale : ${MAX_FILE_SIZE / (1024 * 1024)}MB`);
-                return;
+                toast.error(`L'image est trop volumineuse. Taille maximale : ${MAX_FILE_SIZE / (1024 * 1024)}MB`)
+                return
             }
 
             if (!file.type.startsWith('image/')) {
-                toast.error("Le fichier doit être une image");
-                return;
+                toast.error("Le fichier doit être une image")
+                return
             }
 
-            setIsDeleted(false);
-            onAvatarChange(file);
-            toast.success("Image sélectionnée avec succès");
+            setIsDeleted(false)
+            onAvatarChange(file)
+            toast.success("Image sélectionnée avec succès")
         }
     }
 
     const handleDelete = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsDeleted(true);
-        onAvatarChange(null);
+        e.stopPropagation()
+        setIsDeleted(true)
+        onAvatarChange(null)
 
         if (fileInputRef.current) {
-            fileInputRef.current.value = '';
+            fileInputRef.current.value = ''
         }
 
-        toast.success("Photo de profil supprimée");
+        toast.success("Photo de profil supprimée")
     }
 
     return (

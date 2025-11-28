@@ -13,10 +13,12 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import InputEditAvatar from "@/shared/components/ui/customs/InputEditAvatar.tsx";
 import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 import {AxiosError} from "axios";
-import {patchEditUser} from "@/services/repos/patchEditUser.ts";
+import {useEditUser} from "@/shared/hooks/useUser.ts";
+import {Dialog, DialogTrigger} from "@radix-ui/react-dialog";
+import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 
 const mockUser: UserAccount = {
-    username: "johndoe",
+    username: "robocop",
     firstname: "John",
     lastname: "Doe",
     email: "john.doe@example.com",
@@ -57,6 +59,7 @@ type StatsProps = {
 export default function ProfilePage(){
     const user = mockUser
     const [isEditMode, setEditMode] = useState<boolean>(false)
+    const { editUser } = useEditUser();
 
     const form = useForm<UserEditPost>({
         resolver: zodResolver(UserEditSchema),
@@ -73,16 +76,12 @@ export default function ProfilePage(){
     })
 
     const handleAvatarChange = (file: File | null) => {
-        if (file === null) {
-            form.setValue('avatar', user.avatar, { shouldValidate: true });
-        } else {
-            form.setValue('avatar', file, { shouldValidate: true });
-        }
+        form.setValue('avatar', file, { shouldValidate: true })
     }
 
     const handleCancel = () => {
-        form.reset();
-        setEditMode(false);
+        form.reset()
+        setEditMode(false)
     }
 
     const onSubmit = async (values: UserEditPost) => {
@@ -91,16 +90,13 @@ export default function ProfilePage(){
                 values.avatar = await fileToBase64(values.avatar)
             }
 
-            const response = await patchEditUser(user.username, values)
+            const response = await editUser(user.username, values)
 
             toast.success(response.message)
             setEditMode(false)
 
-            // Optionnel : rafraîchir les données utilisateur
-            // await refetchUserData();
-
         } catch (error) {
-            console.error("Erreur lors de la mise à jour du profil :", error);
+            console.error(error)
 
             if (error instanceof AxiosError) {
                 if (error.response?.data?.message) {
@@ -116,7 +112,7 @@ export default function ProfilePage(){
                 toast.error("Erreur lors de la mise à jour du profil")
             }
         }
-    }
+    };
 
     const avatarValue = form.watch('avatar')
     const previewAvatar = avatarValue instanceof File
@@ -298,12 +294,8 @@ const PersonalInfo = ({ user, isEditMode }: PersonalInfoProps) => (
                         </div>
                     </div>
                 </div>
-                <Button
-                    type="button"
-                    className="bg-orange-50 hover:bg-orange-100 border border-orange-500 cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105"
-                >
-                    <SquarePen className="text-orange-700" />
-                </Button>
+
+                <EditPassword />
             </div>
         </div>
     </section>

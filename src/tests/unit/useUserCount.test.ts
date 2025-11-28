@@ -1,5 +1,5 @@
 import {describe} from "vitest";
-import {useUserCount} from "../../shared/hooks/useUserCount.ts";
+import {useUser} from "../../shared/hooks/useUser.ts";
 import {renderHook, waitFor} from "@testing-library/react";
 import * as repo from "../../services/repos/getUserCount.ts"
 
@@ -7,7 +7,7 @@ describe("useUserCount", () => {
     it("retourne le userCount", async () => {
         vi.spyOn(repo, "getUserCount").mockResolvedValueOnce(12)
 
-        const { result } = renderHook(() => useUserCount())
+        const { result } = renderHook(() => useUser())
 
         expect(result.current.loading).toBe(true)
 
@@ -22,7 +22,7 @@ describe("useUserCount", () => {
     it("gère une erreur api", async () => {
         vi.spyOn(repo, "getUserCount").mockRejectedValueOnce(new Error("Boom"))
 
-        const { result } = renderHook(() => useUserCount())
+        const { result } = renderHook(() => useUser())
 
         await waitFor(() =>{
             expect(result.current.error).not.toBeNull

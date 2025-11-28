@@ -43,7 +43,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
 
                             <div className="flex items-center gap-4">
                                 <Link
-                                    to="/profile"
+                                    to="/profil"
                                     className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-green hover:bg-gt-dark-green"
                                 >
                                     <User size={20} className="text-white" />
@@ -81,7 +81,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                 onLogout()
                                 closeMobileProfile()
                             }}
-                            isActive={isActive('/profile')}
+                            isActive={isActive('/profil')}
                         />
                     </div>
                 </nav>

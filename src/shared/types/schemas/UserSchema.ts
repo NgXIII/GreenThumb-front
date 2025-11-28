@@ -62,8 +62,12 @@ export const UserEditSchema = z
             .regex(/^\d{10,}$/, "Veuillez encoder un numéro de téléphone valide"),
         biography: z
             .string()
+            .optional()
             .refine(
-                (value) => value.trim().split(/\s+/).length <= 45,
+                (value) => {
+                    if (!value || value.trim() === '') return true;
+                    return value.trim().split(/\s+/).filter(word => word.length > 0).length <= 45;
+                },
                 {
                     message: "La biographie ne peut pas dépasser 45 mots.",
                 }
@@ -72,6 +76,7 @@ export const UserEditSchema = z
             .union([
                 z.url(),
                 z.instanceof(File),
+                z.null()
             ])
             .optional()
             .refine(
