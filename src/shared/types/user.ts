@@ -14,4 +14,5 @@ export type UserAuthentification = {
 export type UserConnection = {
     login: string // email | username
     password: string
+    rememberMe?: boolean
 }
