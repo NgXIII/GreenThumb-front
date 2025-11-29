@@ -6,9 +6,7 @@ export async function getPlants(
     page: number,
     size: number
     ){
-    if (!username) {
-        throw new Error("Aucun utilisateur");
-    }
+    checkUsername(username);
 
     const response = await apiClient.get<PlantPage>(`/users/${username}/plants`, {
         params: { page, size }
@@ -17,8 +15,16 @@ export async function getPlants(
     return response.data;
 }
 
-export async function getCountTask(): Promise<number> {
-    const response = await apiClient.get<number>(`/tasks`);
+export async function getCountTask(username: string | undefined): Promise<number> {
+    checkUsername(username);
+
+    const response = await apiClient.get<number>(`/users/${username}/tasks`);
 
     return response.data;
+}
+
+function checkUsername(username: string | undefined) {
+    if (!username) {
+        throw new Error("Aucun utilisateur");
+    }
 }
