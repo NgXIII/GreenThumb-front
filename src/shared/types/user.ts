@@ -5,6 +5,7 @@ export type UserAccount = {
     email: string
     avatar: string
     phoneNumber: string
+    role: string
 }
 
 export type UserAuthentification = {
