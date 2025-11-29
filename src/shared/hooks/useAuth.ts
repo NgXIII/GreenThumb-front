@@ -1,6 +1,6 @@
 import {useAccountStore} from "@/app/stores/userStore.ts";
 import {useCallback} from "react";
-import {getConnection, getLogout, getRegister, verifyEmail, resendVerificationEmail} from "@/services/auth/getAuthentification.ts";
+import {getConnection, getLogout, getRegister, verifyEmail, resendVerificationEmail, type VerifyEmailResponse} from "@/services/auth/getAuthentification.ts";
 import type {UserConnection} from "@/shared/types/user.ts";
 import type {UserCreationPost} from "@/shared/types/schemas/UserSchema.ts";
 import { AxiosError } from 'axios';
@@ -54,9 +54,10 @@ export function useAuth() {
         }
     }, [setAccount])
 
-    const verify = useCallback(async (token: string) => {
+    const verify = useCallback(async (email: string, code: string): Promise<VerifyEmailResponse> => {
         try {
-            await verifyEmail(token);
+            const response = await verifyEmail(email, code);
+            return response;
         } catch (error) {
             if (error instanceof AxiosError) {
                 throw error;

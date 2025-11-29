@@ -26,7 +26,19 @@ apiClient.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        const noRefreshPaths = [
+            '/api/sessions',
+            '/api/register',
+            '/api/sessions/verify',
+            '/api/sessions/verify/resend',
+        ];
+
+        const isNoRefreshPath = noRefreshPaths.some(path =>
+            originalRequest.url?.includes(path)
+        );
+
+        // Only auto-refresh for protected endpoints, not login/register
+        if (error.response?.status === 401 && !originalRequest._retry && !isNoRefreshPath) {
             originalRequest._retry = true;
             try {
                 const refreshResponse = await axios.post(

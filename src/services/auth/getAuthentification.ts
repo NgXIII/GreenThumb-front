@@ -23,8 +23,14 @@ export async function getRegister(data: UserCreationPost): Promise<void> {
     await apiClient.post<void>("/register", data)
 }
 
-export async function verifyEmail(token: string): Promise<void> {
-    await apiClient.post("/sessions/verify", { token });
+export type VerifyEmailResponse = {
+    message: string;
+    verified: boolean;
+};
+
+export async function verifyEmail(email: string, code: string): Promise<VerifyEmailResponse> {
+    const response = await apiClient.post<VerifyEmailResponse>("/sessions/verify", { email, code });
+    return response.data;
 }
 
 export async function resendVerificationEmail(email: string): Promise<void> {
