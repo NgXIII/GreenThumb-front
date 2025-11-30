@@ -5,6 +5,7 @@ export type UserAccount = {
     email: string
     avatar: string
     phoneNumber: string
+    role: string
 }
 
 export type UserAuthentification = {
@@ -14,4 +15,5 @@ export type UserAuthentification = {
 export type UserConnection = {
     login: string // email | username
     password: string
+    rememberMe?: boolean
 }

@@ -15,7 +15,7 @@ interface PlantListProps {
 
 export default function Dashboard() {
     const { user } = useUserStore.getState();
-    const { count } = useCountTask();
+    const { count } = useCountTask(user?.username);
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
 
     return (
