@@ -5,11 +5,14 @@ import { useOutsideToggle } from '../../hooks/useOutsideToggle'
 import LogoLink from './LogoLink'
 import NavItem from './NavItem'
 import ProfileMenu from './ProfileMenu'
+import ThemeToggle from './ThemeToggle'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
+import {useAuth} from "@/shared/hooks/useAuth.ts";
 
 export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const location = useLocation()
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { logout } = useAuth()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)
 
     const navItems: NavItemType[] = [
@@ -21,16 +24,19 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const isActive = (path: string) => location.pathname === path
 
     const onLogout = () => {
-        // remplacer par la logique réelle
-        console.log('logout')
-        navigate('/')
+        try {
+            logout()
+            navigate('/')
+        } catch {
+            console.error('Logout error')
+        }
     }
 
     function AuthenticatedView() {
         return (
             <>
                 {/* Desktop - connecté */}
-                <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 hidden md:block">
+                <nav className="bg-gt-surface-elevated border-b border-gt-border sticky top-0 z-50 hidden md:block transition-colors duration-300">
                     <div className="px-4">
                         <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
                             <LogoLink />
@@ -41,15 +47,17 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                 ))}
                             </div>
 
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <ThemeToggle />
+
                                 <Link
                                     to="/profil"
-                                    className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-green hover:bg-gt-dark-green"
+                                    className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
                                 >
-                                    <User size={20} className="text-white" />
+                                    <User size={20} className="text-gt-primary-foreground" />
                                 </Link>
 
-                                <button className="flex items-center gap-2 text-gt-dark-green hover:text-red-600 transition-colors" onClick={onLogout}>
+                                <button className="flex items-center gap-2 text-gt-interactive hover:text-red-600 dark:hover:text-red-400 transition-colors" onClick={onLogout}>
                                     <LogOut size={20} />
                                     <span className="font-medium">Déconnexion</span>
                                 </button>
@@ -59,14 +67,16 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                 </nav>
 
                 {/* Mobile - logo top */}
-                <div className="md:hidden bg-white border-b border-gray-200 sticky top-0 z-50">
-                    <div className="px-4 h-16 flex items-center justify-center">
+                <div className="md:hidden bg-gt-surface-elevated border-b border-gt-border sticky top-0 z-50 transition-colors duration-300">
+                    <div className="px-4 h-16 flex items-center justify-between">
+                        <ThemeToggle size={18} />
                         <LogoLink />
+                        <div className="w-10" /> {/* Spacer for balance */}
                     </div>
                 </div>
 
                 {/* Mobile - bottom nav */}
-                <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+                <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gt-surface-elevated border-t border-gt-border z-50 transition-colors duration-300">
                     <div className="flex justify-around items-center h-16">
                         {navItems.map((item) => (
                             <NavItem key={item.name} name={item.name} icon={item.icon} path={item.path} active={isActive(item.path)} compact size={24} />
@@ -95,16 +105,18 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
         return (
             <>
                 {/* Desktop - déconnecté */}
-                <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 hidden md:block">
+                <nav className="bg-gt-surface-elevated border-b border-gt-border sticky top-0 z-50 hidden md:block transition-colors duration-300">
                     <div className="px-4 h-16 flex items-center justify-between max-w-7xl mx-auto">
                         <LogoLink />
 
                         <div className="flex items-center gap-3">
-                            <Link to="/connexion" className="px-3 py-2 rounded-full text-gt-dark-green hover:bg-gt-light-grey transition-colors">
+                            <ThemeToggle />
+
+                            <Link to="/connexion" className="px-3 py-2 rounded-full text-gt-interactive hover:bg-gt-surface-hover transition-colors">
                                 Se connecter
                             </Link>
 
-                            <Link to="/inscription" className="px-3 py-2 rounded-full bg-gt-green text-white hover:bg-gt-dark-green transition-colors">
+                            <Link to="/inscription" className="px-3 py-2 rounded-full bg-gt-primary text-gt-primary-foreground hover:bg-gt-primary-hover transition-colors">
                                 Créer un compte
                             </Link>
                         </div>
@@ -112,19 +124,23 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                 </nav>
 
                 {/* Mobile - logo top */}
-                <div className="md:hidden bg-white border-b border-gray-200 sticky top-0 z-50">
-                    <div className="px-4 h-16 flex items-center justify-center">
+                <div className="md:hidden bg-gt-surface-elevated border-b border-gt-border sticky top-0 z-50 transition-colors duration-300">
+                    <div className="px-4 h-16 flex items-center justify-between">
+                        <ThemeToggle size={18} />
                         <LogoLink />
+                        <div className="w-10" /> {/* Spacer for balance */}
                     </div>
                 </div>
 
                 {/* Mobile - bottom actions */}
-                <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+                <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gt-surface-elevated border-t border-gt-border z-50 transition-colors duration-300">
                     <div className="flex">
+                        <Link to="/login" className="flex-1 py-3 text-center text-gt-interactive hover:bg-gt-surface-hover transition-colors">
                         <Link to="/connexion" className="flex-1 py-3 text-center text-gt-dark-green hover:bg-gt-light-grey transition-colors">
                             Connexion
                         </Link>
 
+                        <Link to="/signup" className="flex-1 py-3 text-center bg-gt-primary text-gt-primary-foreground hover:bg-gt-primary-hover transition-colors">
                         <Link to="/inscription" className="flex-1 py-3 text-center bg-gt-green text-white hover:bg-gt-dark-green transition-colors">
                             Inscription
                         </Link>

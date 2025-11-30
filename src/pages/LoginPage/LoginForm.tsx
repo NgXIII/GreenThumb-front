@@ -1,5 +1,5 @@
 import {useForm} from "react-hook-form";
-import {Form} from "@/shared/components/ui/form.tsx";
+import {Form, FormControl, FormField, FormItem} from "@/shared/components/ui/form.tsx";
 import {type UserConnectionPost, UserConnectionSchema} from "@/shared/types/schemas/UserSchema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
@@ -9,6 +9,7 @@ import {useAuth} from "@/shared/hooks/useAuth.ts";
 import {AxiosError} from "axios";
 import {Button} from "@/shared/components/ui/button.tsx";
 import {Loader2} from "lucide-react";
+import {Label} from "@/shared/components/ui/label.tsx";
 
 export default function LoginForm() {
     const {login} = useAuth()
@@ -19,7 +20,8 @@ export default function LoginForm() {
         mode: "all",
         defaultValues: {
             login: "",
-            password: ""
+            password: "",
+            rememberMe: false
         }
     })
 
@@ -58,12 +60,38 @@ export default function LoginForm() {
                     </section>
                 </div>
 
-                <a
-                    href="#"
-                    className="text-xs text-gt-green text-left mt-1 hover:underline"
-                >
-                    Mot de passe oublié ?
-                </a>
+                <div className="flex items-center justify-between mt-1">
+                    <FormField
+                        control={form.control}
+                        name="rememberMe"
+                        render={({ field }) => (
+                            <FormItem className="flex items-center space-x-2 space-y-0">
+                                <FormControl>
+                                    <input
+                                        type="checkbox"
+                                        id="rememberMe"
+                                        checked={field.value}
+                                        onChange={field.onChange}
+                                        className="h-4 w-4 rounded border-gt-border text-gt-primary focus:ring-gt-primary focus:ring-offset-0 cursor-pointer"
+                                    />
+                                </FormControl>
+                                <Label
+                                    htmlFor="rememberMe"
+                                    className="text-sm text-gt-text cursor-pointer font-normal"
+                                >
+                                    Se souvenir de moi
+                                </Label>
+                            </FormItem>
+                        )}
+                    />
+
+                    <a
+                        href="#"
+                        className="text-xs text-gt-text-accent hover:underline hover:text-gt-primary transition-colors"
+                    >
+                        Mot de passe oublié ?
+                    </a>
+                </div>
 
                 <SubmitButton isSubmitting={isSubmitting}/>
                 <SeparatorWithText />
@@ -79,8 +107,8 @@ function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
             <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full px-8 py-2 rounded-md bg-gt-green hover:bg-green-500
-                text-gt-white cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105"
+                className="w-full px-8 py-2 rounded-md bg-gt-primary hover:bg-gt-primary-hover
+                text-gt-primary-foreground cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105"
             >
                 { isSubmitting ? (
                     <>
@@ -99,9 +127,9 @@ function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
 function SeparatorWithText() {
     return (
         <div className="flex items-center w-full my-1">
-            <div className="flex-grow border-t border-gray-300" />
-            <span className="mx-3 text-gray-500 text-sm select-none">ou</span>
-            <div className="flex-grow border-t border-gray-300" />
+            <div className="flex-grow border-t border-gt-border" />
+            <span className="mx-3 text-gt-text-muted text-sm select-none">ou</span>
+            <div className="flex-grow border-t border-gt-border" />
         </div>
     );
 }
@@ -111,10 +139,10 @@ function InscriptionLink() {
         <div className="flex justify-center">
             <Link
                 to="/inscription"
-                className="w-full px-8 py-2 rounded-md bg-gt-yellow hover:bg-yellow-400
-                text-gt-white cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105 text-center"
+                className="w-full px-8 py-2 rounded-md bg-gt-yellow hover:bg-gt-yellow-dark
+                text-gt-black cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105 text-center font-medium"
             >
-                S’inscrire
+                S'inscrire
             </Link>
         </div>
     );

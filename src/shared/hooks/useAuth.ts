@@ -1,6 +1,6 @@
 import {useAccountStore} from "@/app/stores/userStore.ts";
 import {useCallback} from "react";
-import {getAuthenticate, getConnection, getLogout, getRegister, verifyEmail, resendVerificationEmail} from "@/services/auth/getAuthentification.ts";
+import {getConnection, getLogout, getRegister, verifyEmail, resendVerificationEmail} from "@/services/auth/getAuthentification.ts";
 import type {UserConnection} from "@/shared/types/user.ts";
 import type {UserCreationPost} from "@/shared/types/schemas/UserSchema.ts";
 import { AxiosError } from 'axios';
@@ -30,30 +30,28 @@ export function useAuth() {
             break
     }
 
-    const authenticate = useCallback(() => {
-        getAuthenticate()
-            .then(setAccount)
-            .catch(() => setAccount(null))
-    }, [setAccount])
-
     const login = useCallback(async (data: UserConnection) => {
         try {
-            const account = await getConnection(data);
-            setAccount(account);
+            const response  = await getConnection(data);
+            setAccount(response.token);
             return account;
         } catch (error) {
             setAccount(null);
             throw error;
         }
-    }, [setAccount]);
+    }, [account, setAccount]);
 
     const register = useCallback(async (data: UserCreationPost) => {
         await getRegister(data);
-    }, [setAccount])
+    }, [])
 
-    const logout = useCallback(() => {
-        getLogout()
-            .then(setAccount)
+    const logout = useCallback(async () => {
+        try {
+            await getLogout()
+            setAccount(null)
+        } catch {
+            setAccount(null)
+        }
     }, [setAccount])
 
     const verify = useCallback(async (token: string) => {
@@ -74,7 +72,6 @@ export function useAuth() {
     return {
         account,
         status,
-        authenticate,
         login,
         register,
         logout,

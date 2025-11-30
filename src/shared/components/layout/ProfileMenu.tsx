@@ -10,26 +10,26 @@ export default function ProfileMenu({ isOpen, refProp, onToggle, onClose, onLogo
                 aria-haspopup="menu"
                 aria-expanded={isOpen}
                 onClick={onToggle}
-                className={`px-3 py-2 rounded-full transition-colors ${isActive ? 'bg-gt-green' : ''}`}
+                className={`px-3 py-2 rounded-full transition-colors ${isActive ? 'bg-gt-primary' : ''}`}
             >
-                <User size={24} className={isActive ? 'text-white' : 'text-gt-dark-green'} />
+                <User size={24} className={isActive ? 'text-gt-primary-foreground' : 'text-gt-interactive'} />
             </button>
 
             {isOpen && (
-                <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-44 bg-white rounded-lg shadow-lg z-50">
-                    <Link to="/profil" onClick={onClose} className="flex items-center gap-2 px-4 py-2 hover:bg-gt-light-grey rounded-t-md">
-                        <User size={18} className="text-gt-dark-green" />
-                        <span className="text-sm">Profil</span>
+                <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 w-44 bg-gt-surface-elevated rounded-lg shadow-lg z-50 transition-colors border border-gt-border">
+                    <Link to="/profil" onClick={onClose} className="flex items-center gap-2 px-4 py-2 hover:bg-gt-surface-hover rounded-t-md transition-colors">
+                        <User size={18} className="text-gt-interactive" />
+                        <span className="text-sm text-gt-text">Profil</span>
                     </Link>
                     <button
                         onClick={() => {
                             onLogout()
                             onClose()
                         }}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gt-light-grey rounded-b-md"
+                        className="w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gt-surface-hover rounded-b-md transition-colors"
                     >
-                        <LogOut size={18} className="text-gt-dark-green" />
-                        <span className="text-sm">Déconnexion</span>
+                        <LogOut size={18} className="text-gt-interactive" />
+                        <span className="text-sm text-gt-text">Déconnexion</span>
                     </button>
                 </div>
             )}

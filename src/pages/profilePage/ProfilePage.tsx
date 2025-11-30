@@ -14,22 +14,47 @@ import InputEditAvatar from "@/shared/components/ui/customs/InputEditAvatar.tsx"
 import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 import {AxiosError} from "axios";
 import {useEditUser} from "@/shared/hooks/useUser.ts";
+// typescript
+    import { useEffect } from "react";
+    import type {UserAccount} from "@/shared/types/user";
+    import type {Stat} from "@/shared/types/stat";
+    import {StatCard} from "./StatCard";
+    import {Mail, Phone, User} from "lucide-react";
+    import type {FC} from "react";
+    import {useUserStore} from "@/app/stores/userStore.ts";
 
-const mockUser: UserAccount = {
-    username: "robocop",
-    firstname: "John",
-    lastname: "Doe",
-    email: "john.doe@example.com",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-    phoneNumber: "0478092427",
-    biography: "Passionné de jardinage et de botanique depuis plus de 10 ans. J'adore partager mes connaissances sur les plantes et découvrir de nouvelles espèces. Mon objectif est de créer un jardin durable et respectueux de l'environnement."
-}
+    // Mock stats temporaire - À remplacer par un appel API si nécessaire
+    const mockStats: Stat = {
+        plants: 15,
+        tasksCompleted: 3,
+        discussions: 4
+    };
 
-const mockStats: Stat = {
-    plants: 12,
-    tasksCompleted: 45,
-    discussions: 23
-}
+    const DEFAULT_AVATAR = "/users/default.png"; // On garde le chemin relatif simple pour l'avatar par défaut
+
+    function resolveAvatar(avatar?: string) {
+        if (!avatar) return DEFAULT_AVATAR;
+
+        // 1. Si l'avatar est déjà une URL complète (http://...) ou une chaîne data:
+        if (avatar.startsWith("http") || avatar.startsWith("data:")) return avatar;
+
+        // 🔴 HARDCODE: Définir l'URL de base de l'API ici
+        const BASE_URL = "http://localhost:8080";
+
+        // 2. Si l'avatar commence par un slash, on l'attache directement à la base.
+        // Ex: avatar est "/users/avatar.jpg" -> http://localhost:8080/users/avatar.jpg
+        if (avatar.startsWith("/")) {
+            // base.replace(/\/$/, "") assure qu'il n'y a pas de double slash (//) si BASE_URL finissait par /
+            return `${BASE_URL.replace(/\/$/, "")}${avatar}`;
+        }
+
+        // 3. L'avatar est un chemin relatif "users/b5a19de2-78a9-4175-bcdc-ac40964e8a27.jpg"
+        // On ajoute l'URL de base et le chemin de l'avatar.
+        // Ex: http://localhost:8080/users/b5a19de2-78a9-4175-bcdc-ac40964e8a27.jpg
+
+        // On retire un éventuel slash en début de "avatar" avant de le joindre à la BASE_URL
+        return `${BASE_URL.replace(/\/$/, "")}/${avatar.replace(/^\/+/, "")}`;
+    }
 
 type ProfileHeaderProps = {
     user: UserAccount

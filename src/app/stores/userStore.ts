@@ -1,7 +1,6 @@
 import {create} from "zustand";
 import {combine, persist} from "zustand/middleware";
-import type {UserAuthentification} from "@/shared/types/user.ts";
-
+import type {UserAccount, UserAuthentification} from "@/shared/types/user.ts";
 export const useAccountStore = create(
     persist(
         combine(
@@ -15,3 +14,15 @@ export const useAccountStore = create(
         { name: "account" }
     )
 )
+
+interface UserStore {
+    user: UserAccount | null
+    setUser: (user: UserAccount | null) => void;
+    clearUser: () => void;
+}
+
+export const useUserStore = create<UserStore>((set) => ({
+    user: null,
+    setUser: (user) => set({ user }),
+    clearUser: () => set({ user: null }),
+}));

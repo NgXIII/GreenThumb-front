@@ -1,9 +1,9 @@
-import type {UserAuthentification, UserConnection} from "@/shared/types/user.ts";
+import type {UserAccount, UserAuthentification, UserConnection} from "@/shared/types/user.ts";
 import apiClient from "@/services/http/apiClient.ts";
 import type {UserCreationPost} from "@/shared/types/schemas/UserSchema.ts";
 
-export async function getAuthenticate(): Promise<UserAuthentification> {
-    const response = await apiClient.get<UserAuthentification>("/me")
+export async function getAuthenticate(): Promise<UserAccount> {
+    const response = await apiClient.get<UserAccount>("/users/me")
 
     return response.data
 }
@@ -14,7 +14,7 @@ export async function getConnection(data: UserConnection): Promise<{ token: User
 }
 
 export async function getLogout(): Promise<UserAuthentification> {
-    const response = await apiClient.delete<UserAuthentification>("/logout")
+    const response = await apiClient.delete<UserAuthentification>("/sessions")
 
     return response.data
 }
