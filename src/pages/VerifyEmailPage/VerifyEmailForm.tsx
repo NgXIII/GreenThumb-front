@@ -192,7 +192,7 @@ export default function VerifyEmailForm() {
             }
 
             if (error instanceof AxiosError) {
-                const errorMessage = error?.response?.data?.message || "";
+                const errorMessage = error?.response?.data?.message || error?.response?.data?.error || "";
 
                 if (errorMessage.includes("déjà vérifié") || errorMessage.includes("already verified")) {
                     toast.info(ERROR_MESSAGES.ALREADY_VERIFIED);
@@ -237,7 +237,7 @@ export default function VerifyEmailForm() {
             }
         } catch (error) {
             if (error instanceof AxiosError) {
-                const errorMessage = error?.response?.data?.message || "";
+                const errorMessage = error?.response?.data?.message || error?.response?.data?.error || "";
 
                 if (errorMessage.includes("rate limit") || errorMessage.includes("trop de")) {
                     toast.error(ERROR_MESSAGES.RATE_LIMIT_EXCEEDED);
