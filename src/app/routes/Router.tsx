@@ -1,8 +1,9 @@
 import { createBrowserRouter  } from "react-router-dom"
 import Layout from "../../shared/components/layout/Layout.tsx";
 import ErrorPage from "../../pages/ErrorPage.tsx";
-import RegisterPage from "../../pages/RegisterPage/RegisterPage.tsx";
+import RegisterPage from "@/pages/registerPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
+import {ProfilePage} from "@/pages/profilePage/ProfilePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
 import {accountLoader} from "@/app/routes/accountLoader.ts";
 import VerifyEmailPage from "@/pages/VerifyEmailPage/VerifyEmailPage.tsx";
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
                         path: '/dashboard',
                         loader: accountLoader,
                         element: <Dashboard />
+                    },
+                    {
+                        path: '/profil',
+                        loader: userLoader,
+                        element: <ProfilePage />
                     }
                 ]
             },
@@ -61,10 +67,6 @@ const router = createBrowserRouter([
             {
                 path: '/ressources',
                 //element: <RessourcesPage/>
-            },
-            {
-                path: '/profile',
-                //element: <ProfilPage/>
             },
             {
                 path: "/legal-notice",

@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import QuartetLeaves from "@/shared/components/ui/customs/QuartetLeaves.tsx";
-import RegisterForm from "@/pages/RegisterPage/RegisterForm.tsx";
+import RegisterForm from "@/pages/registerPage/RegisterForm.tsx";
 import LogoHeader from "@/shared/components/ui/customs/LogoHeader.tsx";
 import ThemeToggle from "@/shared/components/layout/ThemeToggle.tsx";
 
