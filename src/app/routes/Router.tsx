@@ -16,6 +16,7 @@ import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 import AdminTest from "@/pages/AdminTest.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
+import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 
 const router = createBrowserRouter([
     {
@@ -44,8 +45,13 @@ const router = createBrowserRouter([
                     },
                     {
                         path: '/profil',
-                        loader: userLoader,
+                        loader: accountLoader,
                         element: <ProfilePage />
+                    },
+                    {
+                        path: '/modification-mot-de-passe',
+                        loader: accountLoader,
+                        element: <EditPassword />
                     }
                 ]
             },
@@ -69,15 +75,6 @@ const router = createBrowserRouter([
                 //element: <RessourcesPage/>
             },
             {
-                path: '/profil',
-                element: <ProfilePage/>
-            },
-            {
-                path: '/account',
-                loader: accountLoader,
-                element: <AccountDebugPage />
-            },
-            {
                 path: "/legal-notice",
                 element: <LegalNoticePage />
             },
@@ -90,10 +87,6 @@ const router = createBrowserRouter([
                 element: <TermsOfUsePage />
             },
         ],
-    },
-    {
-        path: "/inscription",
-        element: <RegisterPage />,
     },
     {
         element: <RequireGuest />,

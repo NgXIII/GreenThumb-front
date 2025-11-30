@@ -14,64 +14,31 @@ import InputEditAvatar from "@/shared/components/ui/customs/InputEditAvatar.tsx"
 import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 import {AxiosError} from "axios";
 import {useEditUser} from "@/shared/hooks/useUser.ts";
-// typescript
-    import { useEffect } from "react";
-    import type {UserAccount} from "@/shared/types/user";
-    import type {Stat} from "@/shared/types/stat";
-    import {StatCard} from "./StatCard";
-    import {Mail, Phone, User} from "lucide-react";
-    import type {FC} from "react";
-    import {useUserStore} from "@/app/stores/userStore.ts";
+import {useUserStore} from "@/app/stores/userStore.ts";
+import {useNavigate} from "react-router-dom";
 
-    // Mock stats temporaire - À remplacer par un appel API si nécessaire
-    const mockStats: Stat = {
-        plants: 15,
-        tasksCompleted: 3,
-        discussions: 4
-    };
-
-    const DEFAULT_AVATAR = "/users/default.png"; // On garde le chemin relatif simple pour l'avatar par défaut
-
-    function resolveAvatar(avatar?: string) {
-        if (!avatar) return DEFAULT_AVATAR;
-
-        // 1. Si l'avatar est déjà une URL complète (http://...) ou une chaîne data:
-        if (avatar.startsWith("http") || avatar.startsWith("data:")) return avatar;
-
-        // 🔴 HARDCODE: Définir l'URL de base de l'API ici
-        const BASE_URL = "http://localhost:8080";
-
-        // 2. Si l'avatar commence par un slash, on l'attache directement à la base.
-        // Ex: avatar est "/users/avatar.jpg" -> http://localhost:8080/users/avatar.jpg
-        if (avatar.startsWith("/")) {
-            // base.replace(/\/$/, "") assure qu'il n'y a pas de double slash (//) si BASE_URL finissait par /
-            return `${BASE_URL.replace(/\/$/, "")}${avatar}`;
-        }
-
-        // 3. L'avatar est un chemin relatif "users/b5a19de2-78a9-4175-bcdc-ac40964e8a27.jpg"
-        // On ajoute l'URL de base et le chemin de l'avatar.
-        // Ex: http://localhost:8080/users/b5a19de2-78a9-4175-bcdc-ac40964e8a27.jpg
-
-        // On retire un éventuel slash en début de "avatar" avant de le joindre à la BASE_URL
-        return `${BASE_URL.replace(/\/$/, "")}/${avatar.replace(/^\/+/, "")}`;
-    }
+const mockStats: Stat = {
+    plants: 15,
+    tasksCompleted: 3,
+    discussions: 4
+}
 
 type ProfileHeaderProps = {
-    user: UserAccount
+    user: UserAccount | null
     isEditMode: boolean
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>
     previewAvatar: string
-    defaultAvatar: string
+    defaultAvatar: string | undefined
     onAvatarChange: (file: File | null) => void
 }
 
 type PersonalInfoProps = {
-    user: UserAccount
+    user: UserAccount | null
     isEditMode: boolean
 }
 
 type BiographyProps = {
-    user: UserAccount
+    user: UserAccount | null
     isEditMode: boolean
 }
 
@@ -80,7 +47,7 @@ type StatsProps = {
 }
 
 export default function ProfilePage(){
-    const user = mockUser
+    const { user } = useUserStore.getState();
     const [isEditMode, setEditMode] = useState<boolean>(false)
     const { editUser } = useEditUser();
 
@@ -88,13 +55,13 @@ export default function ProfilePage(){
         resolver: zodResolver(UserEditSchema),
         mode: "all",
         defaultValues: {
-            username: user.username,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            biography: user.biography,
-            avatar: user.avatar
+            username: user?.username,
+            firstname: user?.firstname,
+            lastname: user?.lastname,
+            email: user?.email,
+            phoneNumber: user?.phoneNumber,
+            biography: user?.biography,
+            avatar: user?.avatar
         }
     })
 
@@ -113,7 +80,7 @@ export default function ProfilePage(){
                 values.avatar = await fileToBase64(values.avatar)
             }
 
-            const response = await editUser(user.username, values)
+            const response = await editUser(user?.username, values)
 
             toast.success(response.message)
             setEditMode(false)
@@ -135,7 +102,7 @@ export default function ProfilePage(){
                 toast.error("Erreur lors de la mise à jour du profil")
             }
         }
-    };
+    }
 
     const avatarValue = form.watch('avatar')
     const previewAvatar = avatarValue instanceof File
@@ -143,7 +110,7 @@ export default function ProfilePage(){
         : avatarValue || ''
 
     return (
-        <div className="min-h-screen border-gt-light-grey py-12 px-4 sm:px-6 lg:px-8">
+        <main className="min-h-screen bg-gt-surface border-gt-light-grey py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
             <div className="max-w-4xl mx-auto">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -152,7 +119,7 @@ export default function ProfilePage(){
                             isEditMode={isEditMode}
                             setEditMode={setEditMode}
                             previewAvatar={previewAvatar}
-                            defaultAvatar={user.avatar}
+                            defaultAvatar={user?.avatar}
                             onAvatarChange={handleAvatarChange}
                         />
                         <PersonalInfo user={user} isEditMode={isEditMode} />
@@ -180,13 +147,13 @@ export default function ProfilePage(){
 
                 <Stats stats={mockStats} />
             </div>
-        </div>
+        </main>
     )
 }
 
 const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, defaultAvatar, onAvatarChange }: ProfileHeaderProps) => {
     return (
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+        <div className="bg-gt-surface-elevated rounded-2xl shadow-xl overflow-hidden mb-8 transition-colors duration-300">
             <div
                 className="bg-gt-green h-32"
                 role="presentation"
@@ -229,12 +196,12 @@ const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, defaultAv
                                     </div>
                                 ) : (
                                     <>
-                                        <h1 className="text-3xl font-bold text-gray-900">
-                                            {user.firstname} {user.lastname}
+                                        <h1 className="text-3xl font-bold text-gt-text">
+                                            {user?.firstname} {user?.lastname}
                                         </h1>
-                                        <p className="text-gray-500 flex items-center justify-center sm:justify-start gap-1">
+                                        <p className="text-gt-text-muted flex items-center justify-center sm:justify-start gap-1">
                                             <User className="w-4 h-4" aria-hidden="true"/>
-                                            <span>@{user.username}</span>
+                                            <span>@{user?.username}</span>
                                         </p>
                                     </>
                                 )}
@@ -243,7 +210,7 @@ const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, defaultAv
                             {!isEditMode && (
                                 <Button
                                     type="button"
-                                    className="bg-orange-50 hover:bg-orange-100 border border-orange-500 text-orange-700 cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105 whitespace-nowrap"
+                                    className="bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 border-2 border-orange-500 dark:border-orange-600 text-orange-700 dark:text-orange-400 cursor-pointer shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 whitespace-nowrap rounded-xl"
                                     onClick={() => setEditMode(true)}
                                 >
                                     Éditer votre profil
@@ -257,81 +224,92 @@ const ProfileHeader = ({ user, isEditMode, setEditMode, previewAvatar, defaultAv
     )
 }
 
-const PersonalInfo = ({ user, isEditMode }: PersonalInfoProps) => (
-    <section className="bg-white rounded-2xl shadow-xl p-8 mb-8" aria-labelledby="personal-info-title">
-        <h2 id="personal-info-title" className="text-2xl font-bold text-gray-900 mb-6">
-            Informations personnelles
-        </h2>
-        <div className="space-y-4">
-            {isEditMode ? (
-                <>
-                    <InputForm
-                        name="email"
-                        inputType="email"
-                        label="Email*"
-                        placeholder="votre.email@example.com"
-                    />
-                    <InputForm
-                        name="phoneNumber"
-                        inputType="tel"
-                        label="Téléphone*"
-                        placeholder="0123456789"
-                    />
-                </>
-            ) : (
-                <>
-                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                        <Mail className="hidden lg:block w-5 h-5 text-green-600" aria-hidden="true" />
-                        <div>
-                            <p className="text-sm text-gray-500">Email</p>
-                            <p className="text-gray-900 font-medium">
-                                <a href={`mailto:${user.email}`} className="hover:underline">
-                                    {user.email}
-                                </a>
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                        <Phone className="hidden lg:block w-5 h-5 text-green-600" aria-hidden="true" />
-                        <div>
-                            <p className="text-sm text-gray-500">Téléphone</p>
-                            <p className="text-gray-900 font-medium">
-                                <a href={`tel:${user.phoneNumber.replace(/\s/g, '')}`} className="hover:underline">
-                                    {user.phoneNumber}
-                                </a>
-                            </p>
-                        </div>
-                    </div>
-                </>
-            )}
+const PersonalInfo = ({ user, isEditMode }: PersonalInfoProps) => {
+    const navigate = useNavigate();
 
-            <div className="flex items-center justify-between gap-3 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                    <Lock className="hidden lg:block w-5 h-5 text-green-600" aria-hidden="true" />
-                    <div>
-                        <p className="text-sm text-gray-500">Mot de passe</p>
-                        <div className="flex items-center gap-3">
-                            <p className="text-gray-900 font-medium">
-                                *************
-                            </p>
+    const changePassword = () => {
+        navigate('/modification-mot-de-passe')
+    }
+
+    return <>
+        <section className="bg-gt-surface-elevated rounded-2xl shadow-xl p-8 mb-8 transition-colors duration-300" aria-labelledby="personal-info-title">
+            <h2 id="personal-info-title" className="text-2xl font-bold text-gt-text mb-6">
+                Informations personnelles
+            </h2>
+            <div className="space-y-4">
+                {isEditMode ? (
+                    <>
+                        <InputForm
+                            name="email"
+                            inputType="email"
+                            label="Email*"
+                            placeholder="votre.email@example.com"
+                        />
+                        <InputForm
+                            name="phoneNumber"
+                            inputType="tel"
+                            label="Téléphone*"
+                            placeholder="0123456789"
+                        />
+                    </>
+                ) : (
+                    <>
+                        <div className="flex items-center gap-3 p-4 bg-gt-surface rounded-lg">
+                            <Mail className="hidden lg:block w-5 h-5 text-green-600" aria-hidden="true" />
+                            <div>
+                                <p className="text-sm text-gt-text-muted">Email</p>
+                                <p className="text-gt-text font-medium">
+                                    <a href={`mailto:${user?.email}`} className="hover:underline">
+                                        {user?.email}
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 bg-gt-surface rounded-lg">
+                            <Phone className="hidden lg:block w-5 h-5 text-green-600" aria-hidden="true" />
+                            <div>
+                                <p className="text-sm text-gt-text-muted">Téléphone</p>
+                                <p className="text-gt-text font-medium">
+                                    <a href={`tel:${user?.phoneNumber.replace(/\s/g, '')}`} className="hover:underline">
+                                        {user?.phoneNumber}
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </>
+                )}
+
+                <div className="flex items-center justify-between gap-3 p-4 bg-gt-surface rounded-lg">
+                    <div className="flex items-center gap-3">
+                        <Lock className="hidden lg:block w-5 h-5 text-green-600" aria-hidden="true" />
+                        <div>
+                            <p className="text-sm text-gt-text-muted">Mot de passe</p>
+                            <div className="flex items-center gap-3">
+                                <p className="text-gt-text font-medium">
+                                    *************
+                                </p>
+                            </div>
                         </div>
                     </div>
+
+                    <Button
+                        type="button"
+                        onClick={changePassword}
+                        className="bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 border-2 border-orange-500 dark:border-orange-600 cursor-pointer shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
+                    >
+                        <SquarePen className="text-orange-700 dark:text-orange-400" />
+                    </Button>
                 </div>
-
-                <Button
-                    type="button"
-                    className="bg-orange-50 hover:bg-orange-100 border border-orange-500 cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-105"
-                >
-                    <SquarePen className="text-orange-700" />
-                </Button>
             </div>
-        </div>
-    </section>
-)
+        </section>
+    </>
+}
+
+
 
 const Biography = ({ user, isEditMode }: BiographyProps) => (
-    <section className="bg-white rounded-2xl shadow-xl p-8 mb-8" aria-labelledby="biography-title">
-        <h2 id="biography-title" className="text-2xl font-bold text-gray-900 mb-6">
+    <section className="bg-gt-surface-elevated rounded-2xl shadow-xl p-8 mb-8 transition-colors duration-300" aria-labelledby="biography-title">
+        <h2 id="biography-title" className="text-2xl font-bold text-gt-text mb-6">
             Biographie
         </h2>
         {isEditMode ? (
@@ -342,11 +320,11 @@ const Biography = ({ user, isEditMode }: BiographyProps) => (
                 placeholder="votre.email@example.com"
             />
         ) : (
-            <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-start gap-3 p-4 bg-gt-surface rounded-lg">
                 <FileText className="hidden lg:block w-5 h-5 text-green-600 mt-1 flex-shrink-0" aria-hidden="true" />
                 <div className="flex-1">
-                    <p className="text-gray-900 leading-relaxed">
-                        {user.biography || "Aucune biographie renseignée."}
+                    <p className="text-gt-text leading-relaxed">
+                        {user?.biography || "Aucune biographie renseignée."}
                     </p>
                 </div>
             </div>
@@ -355,8 +333,8 @@ const Biography = ({ user, isEditMode }: BiographyProps) => (
 )
 
 const Stats = ({ stats }: StatsProps) => (
-    <section className="bg-white rounded-2xl shadow-xl p-8" aria-labelledby="stats-title">
-        <h2 id="stats-title" className="text-2xl font-bold text-gray-900 mb-6">
+    <section className="bg-gt-surface-elevated rounded-2xl shadow-xl p-8 transition-colors duration-300" aria-labelledby="stats-title">
+        <h2 id="stats-title" className="text-2xl font-bold text-gt-text mb-6">
             Mes statistiques
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

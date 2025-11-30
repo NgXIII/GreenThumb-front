@@ -5,9 +5,21 @@ import { toast } from "sonner";
 type props = {
     isEditMode: boolean
     onAvatarChange: (file: File | null) => void
-    previewAvatar: string
-    defaultAvatar: string
+    previewAvatar: string | undefined
+    defaultAvatar: string | undefined
     onReset?: () => void
+}
+
+function resolveAvatar(avatar?: string) {
+    if (avatar?.startsWith("http") || avatar?.startsWith("data:")) return avatar
+
+    const BASE_URL = "http://localhost:8080";
+
+    if (avatar?.startsWith("/")) {
+        return `${BASE_URL.replace(/\/$/, "")}${avatar}`
+    }
+
+    return `${BASE_URL.replace(/\/$/, "")}/${avatar?.replace(/^\/+/, "")}`
 }
 
 export default function InputEditAvatar({ isEditMode, onAvatarChange, previewAvatar }: props) {
@@ -73,7 +85,7 @@ export default function InputEditAvatar({ isEditMode, onAvatarChange, previewAva
                     </div>
                 ) : (
                     <img
-                        src={previewAvatar}
+                        src={resolveAvatar(previewAvatar)}
                         alt="avatar"
                         className="w-full h-full object-cover bg-white"
                         loading="lazy"

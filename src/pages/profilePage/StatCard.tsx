@@ -27,25 +27,25 @@ const ICONS: Record<IconType, LucideIcon> = {
 
 const COLORS: Record<ColorType, ColorScheme> = {
     green: {
-        bg: "bg-green-50",
-        border: "border-green-500",
-        text: "text-green-700",
-        iconBg: "bg-green-100",
-        iconColor: "text-green-600"
+        bg: "bg-green-50 dark:bg-green-900/20",
+        border: "border-green-500 dark:border-green-600",
+        text: "text-green-700 dark:text-green-400",
+        iconBg: "bg-green-100 dark:bg-green-800/30",
+        iconColor: "text-green-600 dark:text-green-400"
     },
     blue: {
-        bg: "bg-blue-50",
-        border: "border-blue-500",
-        text: "text-blue-700",
-        iconBg: "bg-blue-100",
-        iconColor: "text-blue-600"
+        bg: "bg-blue-50 dark:bg-blue-900/20",
+        border: "border-blue-500 dark:border-blue-600",
+        text: "text-blue-700 dark:text-blue-400",
+        iconBg: "bg-blue-100 dark:bg-blue-800/30",
+        iconColor: "text-blue-600 dark:text-blue-400"
     },
     purple: {
-        bg: "bg-purple-50",
-        border: "border-purple-500",
-        text: "text-purple-700",
-        iconBg: "bg-purple-100",
-        iconColor: "text-purple-600"
+        bg: "bg-purple-50 dark:bg-purple-900/20",
+        border: "border-purple-500 dark:border-purple-600",
+        text: "text-purple-700 dark:text-purple-400",
+        iconBg: "bg-purple-100 dark:bg-purple-800/30",
+        iconColor: "text-purple-600 dark:text-purple-400"
     }
 } as const;
 
@@ -60,7 +60,7 @@ export const StatCard: FC<StatCardProps> = memo(({ title, value, icon, color }) 
         >
             <div className="flex items-center justify-between">
                 <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">{title}</p>
+                    <p className="text-sm font-medium text-gt-text-muted mb-1">{title}</p>
                     <p className={`text-4xl font-bold ${colorScheme.text}`} aria-live="polite">
                         {value}
                     </p>

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import logo from '../../../assets/logo.png'
 
 export default function Footer() {
-    return <footer className="bg-gt-surface text-gt-text py-16 border-t border-gt-border transition-colors duration-300">
+    return <footer className="bg-gt-surface text-gt-text py-16 border-gt-border transition-colors duration-300">
         <div className="container mx-auto px-4">
             <div className="flex flex-col lg:justify-between md:flex-row gap-12 mb-12 ">
                 <div className="md:col-span-2">
@@ -26,7 +26,7 @@ export default function Footer() {
                 </div>
             </div>
 
-            <div className="pt-8 border-t border-gt-border text-center text-sm text-gt-text-muted">
+            <div className=" pb-3 md:pb-0 pt-8 border-t border-gt-border text-center text-sm text-gt-text-muted">
                 <p>© 2025 GreenThumb. Tous droits réservés. Cultivé avec 💚</p>
             </div>
         </div>
