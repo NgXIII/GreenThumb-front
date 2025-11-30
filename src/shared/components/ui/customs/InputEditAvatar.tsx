@@ -11,7 +11,7 @@ type props = {
 }
 
 function resolveAvatar(avatar?: string) {
-    if (avatar?.startsWith("http") || avatar?.startsWith("data:")) return avatar
+    if (avatar?.startsWith("http") || avatar?.startsWith("data:") || avatar?.startsWith("blob:")) return avatar
 
     const BASE_URL = "http://localhost:8080";
 

@@ -76,15 +76,16 @@ export default function ProfilePage(){
 
     const onSubmit = async (values: UserEditPost) => {
         try {
+            let avatarBase64: string | undefined = user?.avatar;
+
             if (values.avatar instanceof File) {
-                values.avatar = await fileToBase64(values.avatar)
+                avatarBase64 = await fileToBase64(values.avatar)
+                values.avatar = avatarBase64
             }
 
-            const response = await editUser(user?.username, values)
+            await editUser(user?.username, values)
 
-            toast.success(response.message)
-            setEditMode(false)
-
+            window.location.reload()
         } catch (error) {
             console.error(error)
 
