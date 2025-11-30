@@ -27,10 +27,10 @@ apiClient.interceptors.response.use(
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         const noRefreshPaths = [
-            '/api/sessions',
-            '/api/register',
-            '/api/sessions/verify',
-            '/api/sessions/verify/resend',
+            '/sessions',
+            '/register',
+            '/sessions/verify',
+            '/sessions/verify/resend',
         ];
 
         const isNoRefreshPath = noRefreshPaths.some(path =>

@@ -33,8 +33,35 @@ export default function LoginForm() {
             toast.success("Connexion réussie !", { duration: 2000 });
             navigate("/");
         } catch (error: unknown) {
-            const message = (error instanceof AxiosError ? error.response?.data.error: "Erreur de connexion.");
-            toast.error(message, { duration: 2000 });
+            if (error instanceof AxiosError) {
+                const errorCode = error.response?.data?.error;
+                const errorMessage = error.response?.data?.message || "Erreur de connexion.";
+
+                if (errorCode === "account_not_verified") {
+                    toast.error(errorMessage, { duration: 4000 });
+                    
+                    let userEmail = error.response?.data?.email;
+                    if (!userEmail && values.login.includes('@')) {
+                        userEmail = values.login;
+                    }
+                    if (!userEmail) {
+                        userEmail = localStorage.getItem("pendingVerificationEmail") || '';
+                    }
+
+                    const redirectUrl = userEmail
+                        ? `/verifier-email?email=${encodeURIComponent(userEmail)}`
+                        : '/verifier-email';
+
+                    setTimeout(() => {
+                        navigate(redirectUrl);
+                    }, 1500);
+                    return;
+                }
+
+                toast.error(errorMessage, { duration: 2000 });
+            } else {
+                toast.error("Erreur de connexion.", { duration: 2000 });
+            }
         }
     }
     /**/
