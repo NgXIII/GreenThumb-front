@@ -53,14 +53,14 @@ export default function ProfilePage(){
 
     const form = useForm<UserEditPost>({
         resolver: zodResolver(UserEditSchema),
-        mode: "all",
+        mode: "onSubmit",
         defaultValues: {
             username: user?.username,
             firstname: user?.firstname,
             lastname: user?.lastname,
             email: user?.email,
             phoneNumber: user?.phoneNumber,
-            biography: user?.biography,
+            biography: user?.biography || undefined,
             avatar: user?.avatar
         }
     })
@@ -108,6 +108,9 @@ export default function ProfilePage(){
     const previewAvatar = avatarValue instanceof File
         ? URL.createObjectURL(avatarValue)
         : avatarValue || ''
+
+    console.log(form.formState.isValid)
+    console.log(form.getValues())
 
     return (
         <main className="min-h-screen bg-gt-surface border-gt-light-grey py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
@@ -316,8 +319,8 @@ const Biography = ({ user, isEditMode }: BiographyProps) => (
             <InputForm
                 name="biography"
                 inputType="textarea"
-                label="Email*"
-                placeholder="votre.email@example.com"
+                label="Biographie"
+                placeholder="Votre biographie"
             />
         ) : (
             <div className="flex items-start gap-3 p-4 bg-gt-surface rounded-lg">
