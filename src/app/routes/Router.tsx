@@ -16,6 +16,7 @@ import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 import AdminTest from "@/pages/AdminTest.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
+import ForgetPasswordPage from "@/pages/forgetPassword/ForgetPasswordPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -90,7 +91,14 @@ const router = createBrowserRouter([
         element: <RequireGuest />,
         children: [
             { path: "/inscription", element: <RegisterPage /> },
-            { path: "/connexion", element: <LoginPage /> },
+            {
+                path: "/connexion",
+                element: <LoginPage /> ,
+            },
+            {
+                path: "/connexion/forgetPassword",
+                element: <ForgetPasswordPage/>
+            }
         ]
     },
     {
