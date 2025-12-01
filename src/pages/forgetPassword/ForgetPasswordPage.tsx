@@ -1,8 +1,10 @@
 import ThemeToggle from "@/shared/components/layout/ThemeToggle.tsx";
 import LogoHeader from "@/shared/components/ui/customs/LogoHeader.tsx";
 import {useForm} from "react-hook-form";
-import {Form, FormControl, FormField, FormItem} from "@/shared/components/ui/form.tsx";
+import {Form} from "@/shared/components/ui/form.tsx";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
+import {type UserResetPasswordEmailPost, UserResetPasswordEmailSchema} from "@/shared/types/schemas/UserSchema.ts";
+import {zodResolver} from "@hookform/resolvers/zod";
 
 
 export default function ForgetPasswordPage() {
@@ -32,7 +34,8 @@ function ContentPage() {
 }
 
 function EmailForm() {
-    const form = useForm({
+    const form = useForm<UserResetPasswordEmailPost>({
+        resolver: zodResolver(UserResetPasswordEmailSchema),
         defaultValues: {
             email: ""
         }
@@ -42,7 +45,7 @@ function EmailForm() {
         <Form {...form}>
             <form className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4">
-                    <InputForm
+                    <InputForm<UserResetPasswordEmailPost>
                         name="email"
                         inputType="email"
                         placeholder="Adresse mail"

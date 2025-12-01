@@ -50,3 +50,12 @@ export const UserConnectionSchema = z
     })
 
 export type UserConnectionPost = z.infer<typeof UserConnectionSchema>
+
+export const UserResetPasswordEmailSchema = z
+    .object({
+        email: z
+            .email("L'email n'est pas valide")
+            .min(1, "L'email est obligatoire"),
+    })
+
+export type UserResetPasswordEmailPost = z.infer<typeof UserResetPasswordEmailSchema>
