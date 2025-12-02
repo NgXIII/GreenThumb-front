@@ -1,7 +1,7 @@
 import useThreeResources from "../../shared/hooks/useThreeResources.ts";
-import type {Resource} from "../../shared/types/resource.ts";
+import type {Resource} from "@/shared/types/resource.ts";
 import CardBase from "./CardBase.tsx";
-import {formatDateFr} from "../../shared/utils/date.ts";
+import {formatDateFr} from "@/shared/utils/date.ts";
 
 export default function TutorialSession() {
     const { messages, error, loading } = useThreeResources();

@@ -8,7 +8,7 @@ import {ArrowRight} from "lucide-react";
 import AboutMe from "./About.tsx";
 import CommunitySection from "./Community.tsx";
 import TutorialSession from "./Tutorial.tsx";
-import {useUserCount} from "@/shared/hooks/useUserCount.ts";
+import {useUser} from "@/shared/hooks/useUser.ts";
 
 /**
  * Base component that displays the home page.
@@ -41,7 +41,7 @@ export default function HomePage(): JSX.Element {
  */
 function HeaderHome(): JSX.Element {
     const season = useSeason();
-    const { userCount, error, loading } = useUserCount();
+    const { userCount, error, loading } = useUser();
 
     const plural = userCount && userCount > 1 ? "s" : "";
 

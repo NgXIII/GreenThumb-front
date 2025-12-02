@@ -3,7 +3,7 @@ import Layout from "../../shared/components/layout/Layout.tsx";
 import ErrorPage from "../../pages/ErrorPage.tsx";
 import RegisterPage from "@/pages/registerPage/RegisterPage.tsx";
 import HomePage from "@/pages/homePage/HomePage.tsx";
-import {ProfilePage} from "@/pages/profilePage/ProfilePage.tsx";
+import ProfilePage from "@/pages/profilePage/ProfilePage.tsx";
 import LoginPage from "@/pages/LoginPage/LoginPage.tsx";
 import {accountLoader} from "@/app/routes/accountLoader.ts";
 import VerifyEmailPage from "@/pages/VerifyEmailPage/VerifyEmailPage.tsx";
@@ -16,6 +16,7 @@ import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 import AdminTest from "@/pages/AdminTest.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
+import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 
 const router = createBrowserRouter([
     {
@@ -44,8 +45,13 @@ const router = createBrowserRouter([
                     },
                     {
                         path: '/profil',
-                        loader: userLoader,
+                        loader: accountLoader,
                         element: <ProfilePage />
+                    },
+                    {
+                        path: '/modification-mot-de-passe',
+                        loader: accountLoader,
+                        element: <EditPassword />
                     }
                 ]
             },
@@ -81,10 +87,6 @@ const router = createBrowserRouter([
                 element: <TermsOfUsePage />
             },
         ],
-    },
-    {
-        path: "/inscription",
-        element: <RegisterPage />,
     },
     {
         element: <RequireGuest />,

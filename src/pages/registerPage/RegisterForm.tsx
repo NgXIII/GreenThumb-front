@@ -35,7 +35,6 @@ export default function RegisterForm() {
             await register(values)
             toast.success("Inscription réussie ! Veuillez vérifier votre adresse e-mail.")
             navigate(`/verifier-email?email=${encodeURIComponent(values.email)}`)
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch {
             toast.error("Erreur lors de l'inscription. Veuillez réessayer.")
         }

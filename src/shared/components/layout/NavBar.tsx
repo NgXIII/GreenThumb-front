@@ -91,12 +91,10 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                 onLogout()
                                 closeMobileProfile()
                             }}
-                            isActive={isActive('/profile')}
+                            isActive={isActive('/profil')}
                         />
                     </div>
                 </nav>
-
-                <div className="md:hidden h-16"></div>
             </>
         )
     }
@@ -135,11 +133,11 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                 {/* Mobile - bottom actions */}
                 <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gt-surface-elevated border-t border-gt-border z-50 transition-colors duration-300">
                     <div className="flex">
-                        <Link to="/login" className="flex-1 py-3 text-center text-gt-interactive hover:bg-gt-surface-hover transition-colors">
+                        <Link to="/connexion" className="flex-1 py-3 text-center text-gt-interactive hover:bg-gt-surface-hover transition-colors">
                             Connexion
                         </Link>
 
-                        <Link to="/signup" className="flex-1 py-3 text-center bg-gt-primary text-gt-primary-foreground hover:bg-gt-primary-hover transition-colors">
+                        <Link to="/inscription" className="flex-1 py-3 text-center bg-gt-primary text-gt-primary-foreground hover:bg-gt-primary-hover transition-colors">
                             Inscription
                         </Link>
                     </div>
