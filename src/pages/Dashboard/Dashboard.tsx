@@ -1,6 +1,5 @@
 import {useUserStore} from "@/app/stores/userStore.ts";
 import type {Plant} from "@/shared/types/plant.ts";
-import { motion } from "framer-motion";
 import {useState} from "react";
 import useCountTask from "@/shared/hooks/useTaskCount.ts";
 import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
@@ -21,10 +20,9 @@ export default function Dashboard() {
     return (
         <main className="min-h-screen bg-gt-surface p-6">
             <div className="max-w-7xl mx-auto space-y-6">
-                <motion.header
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-gt-surface-elevated rounded-lg p-6 border border-gt-border"
+                <header
+                    className="bg-gt-surface-elevated rounded-lg p-6 border border-gt-border opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
+                    style={{ animationDelay: '0.1s' }}
                 >
                     <h1 className="text-3xl font-bold text-gt-text mb-2">
                         Bonjour, {user?.username}
@@ -32,10 +30,13 @@ export default function Dashboard() {
                     <p className="text-gt-text-muted">
                         Tu as {count} tâche{count > 1 ? 's' : ''} en attente aujourd'hui
                     </p>
-                </motion.header>
+                </header>
 
                 <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <article className="lg:col-span-1">
+                    <article
+                        className="lg:col-span-1 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
+                        style={{ animationDelay: '0.2s' }}
+                    >
                         <PlantList
                             username={user?.username}
                             setSelectedPlant={setSelectedPlant}
@@ -43,24 +44,35 @@ export default function Dashboard() {
                         />
                     </article>
 
-                    <article className="lg:col-span-2 space-y-6">
+                    <article
+                        className="lg:col-span-2 space-y-6 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
+                        style={{ animationDelay: '0.3s' }}
+                    >
                         <PlantHealth plant={selectedPlant} />
                         <PlantTasks plant={selectedPlant} />
                     </article>
                 </section>
             </div>
+
+            <style>{`
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `}</style>
         </main>
     );
 }
 
 function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps) {
     return (
-        <motion.section
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden"
-        >
+        <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             <header className="bg-gt-primary p-4">
                 <h2 className="text-xl font-semibold text-gt-primary-foreground flex items-center gap-2">
                     🌱 Liste des plantes
@@ -78,18 +90,13 @@ function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps
                     ➕ Ajouter une plante
                 </button>
             </article>
-        </motion.section>
+        </section>
     );
 }
 
 function PlantHealth({ plant }: { plant: Plant | null }) {
     return (
-        <motion.section
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden"
-        >
+        <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             <header className="bg-gt-primary p-4">
                 <h2 className="text-xl font-semibold text-gt-primary-foreground flex items-center gap-2">
                     💗 État de santé
@@ -123,7 +130,7 @@ function PlantHealth({ plant }: { plant: Plant | null }) {
                     </div>
                 )}
             </article>
-        </motion.section>
+        </section>
     );
 }
 
