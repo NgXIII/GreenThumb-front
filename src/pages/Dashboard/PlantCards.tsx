@@ -1,5 +1,4 @@
 import usePlant from "@/shared/hooks/usePlant.ts";
-import {motion} from "framer-motion";
 import type {Plant} from "@/shared/types/plant.ts";
 import {useState} from "react";
 
@@ -13,7 +12,6 @@ interface PlantCardProps {
     plant: Plant;
     onClick: () => void;
     isSelected: boolean;
-    index: number;
 }
 
 export default function PlantCards({ username, setSelectedPlant, selectedPlant }: PlantCardsProps) {
@@ -55,19 +53,24 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
     return (
         <div className="space-y-3">
             {plants.map((plant, index) => (
-                <PlantCard
+                <div
                     key={index}
-                    plant={plant}
-                    onClick={() => setSelectedPlant(plant)}
-                    isSelected={selectedPlant === plant}
-                    index={index}
-                />
+                    className="opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
+                    style={{ animationDelay: `${0.1 + index * 0.1}s` }}
+                >
+                    <PlantCard
+                        plant={plant}
+                        onClick={() => setSelectedPlant(plant)}
+                        isSelected={selectedPlant === plant}
+                    />
+                </div>
             ))}
 
-            <div className="flex items-center justify-center gap-2 pt-4">
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+            <div
+                className="flex items-center justify-center gap-2 pt-4 opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
+                style={{ animationDelay: `${0.1 + plants.length * 0.1}s` }}
+            >
+                <button
                     className="p-2 rounded-lg bg-gt-surface border border-gt-border hover:bg-gt-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     disabled={currentPage === 0}
                     onClick={() => setPage(prev => prev - 1)}
@@ -75,14 +78,12 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
                     <svg className="w-5 h-5 text-gt-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
-                </motion.button>
+                </button>
 
                 <div className="flex items-center gap-1 px-3">
                     {Array.from({ length: totalPages }, (_, i) => (
-                        <motion.button
+                        <button
                             key={i}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
                             onClick={() => setPage(i)}
                             className={`w-2 h-2 rounded-full transition-all duration-200 ${
                                 i === currentPage
@@ -93,9 +94,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
                     ))}
                 </div>
 
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                <button
                     className="p-2 rounded-lg bg-gt-surface border border-gt-border hover:bg-gt-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                     disabled={currentPage + 1 >= totalPages}
                     onClick={() => setPage(prev => prev + 1)}
@@ -103,18 +102,28 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
                     <svg className="w-5 h-5 text-gt-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                </motion.button>
+                </button>
             </div>
+
+            <style>{`
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `}</style>
         </div>
     );
 }
 
-function PlantCard({ plant, onClick, isSelected, index }: PlantCardProps) {
+function PlantCard({ plant, onClick, isSelected }: PlantCardProps) {
     return (
-        <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
+        <button
             onClick={onClick}
             className={`
         w-full text-left p-4 rounded-lg border-2 transition-all duration-200
@@ -139,6 +148,6 @@ function PlantCard({ plant, onClick, isSelected, index }: PlantCardProps) {
                     </p>
                 </div>
             </div>
-        </motion.button>
+        </button>
     );
 }

@@ -10,7 +10,7 @@ function setupCanvasResize(canvas: HTMLCanvasElement) {
 }
 
 function generatePetals(canvas: HTMLCanvasElement) {
-    return Array.from({ length: 50 }, () => ({
+    return Array.from({ length: 25 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         size: 8 + Math.random() * 8,
@@ -38,8 +38,6 @@ function drawPetal(
     ctx.rotate((rotation * Math.PI) / 180);
 
     ctx.fillStyle = color;
-    ctx.shadowColor = "rgba(255, 105, 180, 0.4)";
-    ctx.shadowBlur = 6;
 
     ctx.beginPath();
     ctx.moveTo(0, 0);
@@ -64,6 +62,7 @@ function startPetalAnimation(
         color: string;
     }[]
 ) {
+    let animationId: number;
     const animate = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -80,10 +79,11 @@ function startPetalAnimation(
             }
         }
 
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     };
 
     animate();
+    return () => cancelAnimationFrame(animationId);
 }
 
 export default function SakuraPetals() {
@@ -100,9 +100,12 @@ export default function SakuraPetals() {
         window.addEventListener("resize", resize);
 
         const petals = generatePetals(canvas);
-        startPetalAnimation(ctx, canvas, petals);
+        const cancelAnimation = startPetalAnimation(ctx, canvas, petals);
 
-        return () => window.removeEventListener("resize", resize);
+        return () => {
+            window.removeEventListener("resize", resize);
+            cancelAnimation();
+        };
     }, []);
 
     return (

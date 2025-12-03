@@ -1,20 +1,13 @@
 import type {Plant, Task} from "@/shared/types/plant.ts";
-import {motion} from "framer-motion";
 import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
 
 interface TaskCardProps {
     task: Task
-    index: number;
 }
 
 export default function PlantTasks({ plant }: { plant: Plant | null }) {
     return (
-        <motion.section
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden"
-        >
+        <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             {/* Header */}
             <div className="bg-gt-primary p-4">
                 <h2 className="text-xl font-semibold text-gt-primary-foreground flex items-center gap-2">
@@ -33,23 +26,37 @@ export default function PlantTasks({ plant }: { plant: Plant | null }) {
                 ) : (
                     <div className="space-y-3">
                         {plant.tasks.map((task, index) => (
-                            <TaskCard key={index} task={task} index={index} />
+                            <div
+                                key={index}
+                                className="opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
+                                style={{ animationDelay: `${0.1 + index * 0.08}s` }}
+                            >
+                                <TaskCard task={task} />
+                            </div>
                         ))}
                     </div>
                 )}
             </div>
-        </motion.section>
+
+            <style>{`
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `}</style>
+        </section>
     );
 }
 
-function TaskCard({ task, index }: TaskCardProps) {
+function TaskCard({ task }: TaskCardProps) {
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="bg-gt-surface rounded-lg p-4 border border-gt-border hover:bg-gt-surface-hover transition-colors duration-200"
-        >
+        <div className="bg-gt-surface rounded-lg p-4 border border-gt-border hover:bg-gt-surface-hover transition-colors duration-200">
             <div className="flex items-start justify-between gap-4">
                 <div
                     className="w-1 rounded-full flex-shrink-0 self-stretch"
@@ -76,6 +83,6 @@ function TaskCard({ task, index }: TaskCardProps) {
                     Marquer fait ✓
                 </button>
             </div>
-        </motion.div>
+        </div>
     );
 }
