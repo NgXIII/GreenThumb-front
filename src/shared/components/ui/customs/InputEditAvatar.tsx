@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Camera, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
+import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 
 type props = {
     isEditMode: boolean
@@ -8,18 +9,6 @@ type props = {
     previewAvatar: string | undefined
     defaultAvatar: string | undefined
     onReset?: () => void
-}
-
-function resolveAvatar(avatar?: string) {
-    if (avatar?.startsWith("http") || avatar?.startsWith("data:") || avatar?.startsWith("blob:")) return avatar
-
-    const BASE_URL = "http://localhost:8080";
-
-    if (avatar?.startsWith("/")) {
-        return `${BASE_URL.replace(/\/$/, "")}${avatar}`
-    }
-
-    return `${BASE_URL.replace(/\/$/, "")}/${avatar?.replace(/^\/+/, "")}`
 }
 
 export default function InputEditAvatar({ isEditMode, onAvatarChange, previewAvatar }: props) {
