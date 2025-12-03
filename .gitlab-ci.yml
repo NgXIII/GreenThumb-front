@@ -1,5 +1,23 @@
 stages:
+  - test
   - build
+
+test-frontend:
+  stage: test
+  tags:
+    - ue25
+  image: node:22
+  
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+
+  script:
+    - npm ci
+    - npm run test -- run
 
 build-frontend:
   stage: build

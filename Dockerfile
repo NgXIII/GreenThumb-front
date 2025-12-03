@@ -10,6 +10,6 @@ RUN npm run build
 FROM node:18-alpine
 WORKDIR /app
 COPY --from=builder /app/dist .
-RUN npm install -g http-server
+RUN npm install -g serve
 EXPOSE 80
-CMD ["http-server", "-p", "80"]
+CMD ["serve", "-s", ".", "-l", "80"]

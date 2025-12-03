@@ -1,13 +1,14 @@
 import { useFormContext, type Path } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
-import HoverInfoError from "@/shared/components/ui/customs/HoverInfoError"; // <-- ton composant
+import HoverInfoError from "@/shared/components/ui/customs/HoverInfoError";
+import {Textarea} from "@/shared/components/ui/textarea.tsx";
 
 type InputFormProps<T extends Record<string, unknown>> = {
     name: Path<T>
     label: string
     placeholder?: string
-    inputType?: "text" | "password" | "email" | "number" | "tel"
+    inputType?: "text" | "password" | "email" | "number" | "tel" | "textarea"
     autoComplete?: string
 };
 
@@ -38,14 +39,26 @@ export default function InputForm<T extends Record<string, unknown>>(
                     </div>
 
                     <FormControl>
-                        <Input
-                            {...field}
-                            value={field.value as string | number | readonly string[] | undefined}
-                            type={inputType}
-                            placeholder={placeholder}
-                            autoComplete={autoComplete}
-                            className="w-full"
-                        />
+                        {inputType == "textarea" ? (
+                            <Textarea
+                                placeholder="Parlez-nous de vous..."
+                                className="min-h-[120px] resize-none"
+                                value={(field.value ?? "") as string}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                onBlur={field.onBlur}
+                                name={field.name}
+                                ref={field.ref}
+                            />
+                        ) : (
+                            <Input
+                                {...field}
+                                value={field.value as string | number | readonly string[] | undefined}
+                                type={inputType}
+                                placeholder={placeholder}
+                                autoComplete={autoComplete}
+                                className="w-full"
+                            />
+                        )}
                     </FormControl>
                 </FormItem>
             )}

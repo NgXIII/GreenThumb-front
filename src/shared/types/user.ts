@@ -3,8 +3,9 @@ export type UserAccount = {
     firstname: string
     lastname: string
     email: string
-    avatar: string
+    avatar: string | undefined
     phoneNumber: string
+    biography: string | undefined
     role: string
 }
 

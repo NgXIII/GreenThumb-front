@@ -45,6 +45,7 @@ function startLeafAnimation(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasEle
     drift: number;
     rotation: number
 }[], drawLeaf: (x: number, y: number, size: number, rotation: number, color: string) => void) {
+    let animationId: number;
     const animate = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (const leaf of leaves) {
@@ -57,9 +58,10 @@ function startLeafAnimation(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasEle
                 leaf.x = Math.random() * canvas.width;
             }
         }
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     };
     animate();
+    return () => cancelAnimationFrame(animationId);
 }
 
 export default function FallingLeaves(){
@@ -84,9 +86,12 @@ export default function FallingLeaves(){
 
         const drawLeaf = createLeafDrawer(ctx);
 
-        startLeafAnimation(ctx, canvas, leaves, drawLeaf);
+        const cancelAnimation = startLeafAnimation(ctx, canvas, leaves, drawLeaf);
 
-        return () => window.removeEventListener("resize", resize);
+        return () => {
+            window.removeEventListener("resize", resize);
+            cancelAnimation();
+        };
     }, []);
 
     return (

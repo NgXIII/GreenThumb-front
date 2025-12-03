@@ -10,7 +10,7 @@ function setupCanvasResize(canvas: HTMLCanvasElement) {
 }
 
 function generateFlakes(canvas: HTMLCanvasElement) {
-    return Array.from({ length: 100 }, () => ({
+    return Array.from({ length: 30 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         size: 3 + Math.random() * 3,
@@ -32,8 +32,6 @@ function drawFlake(
     ctx.rotate((rotation * Math.PI) / 180);
 
     ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
-    ctx.shadowColor = "rgba(0, 120, 255, 0.4)";
-    ctx.shadowBlur = 8;
     ctx.lineWidth = 1.4;
 
     for (let i = 0; i < 6; i++) {
@@ -67,6 +65,7 @@ function startFlakesAnimation(
         rotation: number;
     }[]
 ) {
+    let animationId: number;
     const animate = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -82,10 +81,11 @@ function startFlakesAnimation(
             }
         }
 
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     };
 
     animate();
+    return () => cancelAnimationFrame(animationId);
 }
 
 export default function Snowflakes(){
@@ -106,9 +106,12 @@ export default function Snowflakes(){
         window.addEventListener('resize', resize);
 
         const flakes = generateFlakes(canvas);
-        startFlakesAnimation(ctx, canvas, flakes);
+        const cancelAnimation = startFlakesAnimation(ctx, canvas, flakes);
 
-        return () => window.removeEventListener("resize", resize);
+        return () => {
+            window.removeEventListener("resize", resize);
+            cancelAnimation();
+        };
     }, []);
 
     return (
