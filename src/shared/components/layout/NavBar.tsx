@@ -8,12 +8,17 @@ import ProfileMenu from './ProfileMenu'
 import ThemeToggle from './ThemeToggle'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
 import {useAuth} from "@/shared/hooks/useAuth.ts";
+import { useUserStore } from '@/app/stores/userStore.ts' // ajouté
+import resolveAvatar from '@/shared/utils/resolveAvatar.ts' // ajouté
 
 export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const location = useLocation()
     const navigate = useNavigate();
     const { logout } = useAuth()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)
+
+    // récupérer l'utilisateur (cohérent avec l'usage dans ProfilePage)
+    const { user } = useUserStore.getState()
 
     const navItems: NavItemType[] = [
         { name: 'Dashboard', icon: Home, path: '/dashboard' },
@@ -52,9 +57,17 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
 
                                 <Link
                                     to="/profil"
-                                    className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
+                                    className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
                                 >
-                                    <User size={20} className="text-gt-primary-foreground" />
+                                    {user?.avatar ? (
+                                        <img
+                                            src={resolveAvatar(user.avatar)}
+                                            alt={`${user?.username ?? 'user'} avatar`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <User size={20} className="text-gt-primary-foreground" />
+                                    )}
                                 </Link>
 
                                 <button className="flex items-center gap-2 text-gt-interactive hover:text-red-600 dark:hover:text-red-400 transition-colors" onClick={onLogout}>
