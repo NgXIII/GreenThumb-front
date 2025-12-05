@@ -18,6 +18,7 @@ import AdminTest from "@/pages/AdminTest.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
 import ForgetPasswordPage from "@/pages/forgetPassword/ForgetPasswordPage.tsx";
 import EditPassword from "@/pages/profilePage/EditPassword.tsx";
+import ResetPassword from "@/pages/forgetPassword/ResetPassword.tsx";
 
 const router = createBrowserRouter([
     {
@@ -100,6 +101,10 @@ const router = createBrowserRouter([
             {
                 path: "/connexion/forgetPassword",
                 element: <ForgetPasswordPage/>
+            },
+            {
+                path: "/connexion/reset-password",
+                element: <ResetPassword />
             }
         ]
     },

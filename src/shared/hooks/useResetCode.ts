@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {postCodeRefreshPassword} from "@/services/repos/postCodeRefreshPassword.ts";
+import {postRefreshCode} from "@/services/repos/RefreshPassword.ts";
 
 export default function useResetCode() {
     const [error, setError] = useState<Error | null>(null);
@@ -10,7 +10,7 @@ export default function useResetCode() {
         setError(null);
 
         try {
-            await postCodeRefreshPassword(mail);
+            await postRefreshCode(mail);
             return true
         } catch (err) {
             setError(err instanceof Error ? err : new Error("Une erreur est survenue"));
