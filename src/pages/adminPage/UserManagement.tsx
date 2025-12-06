@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Users, RefreshCw, Loader2, AlertCircle, UserX } from "lucide-react";
+import { Users, RefreshCw, Loader2, AlertCircle, UserX, Search, X } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import useAdminUsers from "@/shared/hooks/useAdminUsers";
 import UserTable from "./components/UserTable";
@@ -18,6 +18,7 @@ const filterOptions: { value: UserFilter; label: string }[] = [
 
 export default function UserManagement() {
     const [searchParams, setSearchParams] = useSearchParams();
+    const [searchQuery, setSearchQuery] = useState("");
 
     const {
         users,
@@ -55,6 +56,19 @@ export default function UserManagement() {
         setSearchParams(searchParams);
     };
 
+    // Filter users based on search query (frontend filtering)
+    const filteredUsers = useMemo(() => {
+        if (!searchQuery.trim()) {
+            return users;
+        }
+        const query = searchQuery.toLowerCase().trim();
+        return users.filter(
+            (user) =>
+                user.username.toLowerCase().includes(query) ||
+                user.email.toLowerCase().includes(query)
+        );
+    }, [users, searchQuery]);
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -83,23 +97,50 @@ export default function UserManagement() {
                 </Button>
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap gap-2">
-                {filterOptions.map((option) => (
-                    <Button
-                        key={option.value}
-                        variant={filter === option.value ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handleFilterChange(option.value)}
-                        className={cn(
-                            filter === option.value
-                                ? "bg-gt-primary hover:bg-gt-primary-hover text-gt-primary-foreground"
-                                : "border-gt-border text-gt-text"
-                        )}
-                    >
-                        {option.label}
-                    </Button>
-                ))}
+            {/* Filters & Search */}
+            <div className="flex flex-col sm:flex-row gap-4">
+                {/* Filters */}
+                <div className="flex flex-wrap gap-2">
+                    {filterOptions.map((option) => (
+                        <Button
+                            key={option.value}
+                            variant={filter === option.value ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handleFilterChange(option.value)}
+                            className={cn(
+                                filter === option.value
+                                    ? "bg-gt-primary hover:bg-gt-primary-hover text-gt-primary-foreground"
+                                    : "border-gt-border text-gt-text"
+                            )}
+                        >
+                            {option.label}
+                        </Button>
+                    ))}
+                </div>
+
+                {/* Search */}
+                <div className="relative flex-1 max-w-md">
+                    <Search
+                        size={18}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gt-text-muted"
+                    />
+                    <input
+                        type="text"
+                        placeholder="Rechercher par nom d'utilisateur ou email..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-10 py-2 rounded-lg border border-gt-border bg-gt-surface text-gt-text placeholder:text-gt-text-muted focus:outline-none focus:ring-2 focus:ring-gt-primary focus:border-transparent transition-all"
+                    />
+                    {searchQuery && (
+                        <button
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gt-text-muted hover:text-gt-text transition-colors"
+                            aria-label="Effacer la recherche"
+                        >
+                            <X size={18} />
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Content */}
@@ -128,33 +169,48 @@ export default function UserManagement() {
                 )}
 
                 {/* Empty state */}
-                {!loading && !error && users.length === 0 && (
+                {!loading && !error && filteredUsers.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                         <UserX size={48} className="text-gt-text-muted mb-4" />
                         <h3 className="text-lg font-semibold text-gt-text mb-2">
                             Aucun utilisateur trouvé
                         </h3>
                         <p className="text-gt-text-muted">
-                            {filter !== "all"
+                            {searchQuery
+                                ? `Aucun résultat pour "${searchQuery}"`
+                                : filter !== "all"
                                 ? `Aucun utilisateur ${filter === "active" ? "actif" : "supprimé"} pour le moment.`
                                 : "Il n'y a pas encore d'utilisateurs enregistrés."}
                         </p>
-                        {filter !== "all" && (
-                            <Button
-                                variant="outline"
-                                onClick={() => handleFilterChange("all")}
-                                className="mt-4 border-gt-border"
-                            >
-                                Voir tous les utilisateurs
-                            </Button>
+                        {(filter !== "all" || searchQuery) && (
+                            <div className="flex gap-2 mt-4">
+                                {searchQuery && (
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setSearchQuery("")}
+                                        className="border-gt-border"
+                                    >
+                                        Effacer la recherche
+                                    </Button>
+                                )}
+                                {filter !== "all" && (
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => handleFilterChange("all")}
+                                        className="border-gt-border"
+                                    >
+                                        Voir tous les utilisateurs
+                                    </Button>
+                                )}
+                            </div>
                         )}
                     </div>
                 )}
 
                 {/* User table */}
-                {!loading && !error && users.length > 0 && (
+                {!loading && !error && filteredUsers.length > 0 && (
                     <UserTable
-                        users={users}
+                        users={filteredUsers}
                         onToggleActivation={handleToggleActivation}
                         onSoftDelete={handleSoftDelete}
                         onHardDelete={handleHardDelete}

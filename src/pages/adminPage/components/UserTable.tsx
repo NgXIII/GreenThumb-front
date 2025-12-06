@@ -1,4 +1,4 @@
-import { Shield, User, Mail, Calendar, CheckCircle, XCircle, Trash2 } from "lucide-react";
+import { Shield, User, Mail, CheckCircle, XCircle, Trash2 } from "lucide-react";
 import type { AdminUserDto } from "@/shared/types/admin";
 import UserActions from "./UserActions";
 import { cn } from "@/shared/lib/utils";
@@ -54,21 +54,6 @@ function UserRoleBadge({ role }: { role: string }) {
     );
 }
 
-function formatDate(dateString: string | null | undefined): string {
-    if (!dateString) {
-        return "N/A";
-    }
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-        return "N/A";
-    }
-    return new Intl.DateTimeFormat("fr-FR", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    }).format(date);
-}
-
 // Desktop Table Row
 function TableRow({
     user,
@@ -118,11 +103,6 @@ function TableRow({
             </td>
             <td className="px-4 py-3">
                 <UserStatusBadge user={user} />
-            </td>
-            <td className="px-4 py-3">
-                <span className="text-sm text-gt-text-muted whitespace-nowrap">
-                    {formatDate(user.createdAt)}
-                </span>
             </td>
             <td className="px-4 py-3">
                 <UserActions
@@ -184,14 +164,10 @@ function UserCard({
             </div>
 
             {/* Details */}
-            <div className="space-y-2 text-sm">
+            <div className="text-sm">
                 <div className="flex items-center gap-2 text-gt-text-muted">
                     <Mail size={14} />
                     <span className="truncate">{user.email}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gt-text-muted">
-                    <Calendar size={14} />
-                    <span>Inscrit le {formatDate(user.createdAt)}</span>
                 </div>
             </div>
 
@@ -236,9 +212,6 @@ export default function UserTable({
                             </th>
                             <th className="px-4 py-3 text-left text-sm font-semibold text-gt-text">
                                 Statut
-                            </th>
-                            <th className="px-4 py-3 text-left text-sm font-semibold text-gt-text">
-                                Création
                             </th>
                             <th className="px-4 py-3 text-left text-sm font-semibold text-gt-text">
                                 Actions

@@ -60,7 +60,6 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                         className="flex items-center gap-2 px-3 py-2 rounded-full text-gt-interactive hover:bg-gt-surface-hover transition-colors"
                                     >
                                         <Shield size={20} />
-                                        <span className="font-medium">Admin</span>
                                     </Link>
                                 )}
 

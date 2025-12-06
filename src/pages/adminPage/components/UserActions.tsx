@@ -167,11 +167,11 @@ export default function UserActions({
                 {/* Restore button - only for deleted users */}
                 {user.deleted && (
                     <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
                         onClick={() => setModalOpen("restore")}
                         disabled={isLoading}
-                        className="gap-1 border-gt-primary text-gt-primary hover:bg-gt-surface-hover"
+                        className="gap-1 bg-teal-600 hover:bg-teal-700 text-white"
                         title="Restaurer"
                     >
                         {isLoading ? (
@@ -190,7 +190,7 @@ export default function UserActions({
                         size="sm"
                         onClick={() => setModalOpen("hardDelete")}
                         disabled={isLoading}
-                        className="gap-1"
+                        className="gap-1 bg-red-600 hover:bg-red-700"
                         title="Supprimer définitivement"
                     >
                         {isLoading ? (
