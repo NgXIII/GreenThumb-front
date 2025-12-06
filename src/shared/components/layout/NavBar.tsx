@@ -1,19 +1,23 @@
 import type { RefObject } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Users, BookOpen, User, LogOut } from 'lucide-react'
+import { Home, Users, BookOpen, User, LogOut, Shield } from 'lucide-react'
 import { useOutsideToggle } from '../../hooks/useOutsideToggle'
 import LogoLink from './LogoLink'
 import NavItem from './NavItem'
 import ProfileMenu from './ProfileMenu'
 import ThemeToggle from './ThemeToggle'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
-import {useAuth} from "@/shared/hooks/useAuth.ts";
+import {useAuth} from "@/shared/hooks/useAuth.ts"
+import {useUserStore} from "@/app/stores/userStore.ts"
 
 export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const location = useLocation()
     const navigate = useNavigate();
     const { logout } = useAuth()
+    const { user } = useUserStore()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)
+
+    const isAdmin = user?.role === 'ADMIN'
 
     const navItems: NavItemType[] = [
         { name: 'Dashboard', icon: Home, path: '/dashboard' },
@@ -50,6 +54,16 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                             <div className="flex items-center gap-2">
                                 <ThemeToggle />
 
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="flex items-center gap-2 px-3 py-2 rounded-full text-gt-interactive hover:bg-gt-surface-hover transition-colors"
+                                    >
+                                        <Shield size={20} />
+                                        <span className="font-medium">Admin</span>
+                                    </Link>
+                                )}
+
                                 <Link
                                     to="/profil"
                                     className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
@@ -81,6 +95,10 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                         {navItems.map((item) => (
                             <NavItem key={item.name} name={item.name} icon={item.icon} path={item.path} active={isActive(item.path)} compact size={24} />
                         ))}
+
+                        {isAdmin && (
+                            <NavItem name="Admin" icon={Shield} path="/admin" active={isActive('/admin')} compact size={24} />
+                        )}
 
                         <ProfileMenu
                             refProp={profileRef as unknown as RefObject<HTMLDivElement>}

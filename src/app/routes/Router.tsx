@@ -14,7 +14,7 @@ import RequireAuth from "@/shared/components/layout/RequireAuth.tsx";
 import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
 import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
-import AdminTest from "@/pages/AdminTest.tsx";
+import AdminPage from "@/pages/adminPage/AdminPage.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
 import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
                     {
                         path: '/admin',
                         loader: accountLoader,
-                        element: <AdminTest />
+                        element: <AdminPage />
                     }
                 ]
             },

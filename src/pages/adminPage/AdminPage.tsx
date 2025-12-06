@@ -1,4 +1,4 @@
-export default function AdminTest() {
+export default function AdminPage() {
     return (
         <div>
             <h1>Page Admin Test</h1>
