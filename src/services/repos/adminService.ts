@@ -1,13 +1,26 @@
 import apiClient from "@/services/http/apiClient";
-import type { AdminUserDto, AdminUserPage, UserActionResponse, UserFilter } from "@/shared/types/admin";
+import type { AdminUserDto, AdminUserPage, UserActionResponse, UserSearchParams } from "@/shared/types/admin";
 
-export async function getAdminUsers(
-    page: number = 0,
-    size: number = 10,
-    filter: UserFilter = 'all'
-): Promise<AdminUserPage> {
-    const response = await apiClient.get<AdminUserPage>('/admin/users', {
-        params: { page, size, filter }
+export async function searchAdminUsers(params: UserSearchParams = {}): Promise<AdminUserPage> {
+    const { q, status = 'all', enabled, role, page = 0, size = 20 } = params;
+
+    const queryParams: Record<string, string | number | boolean> = { page, size };
+
+    if (q?.trim()) {
+        queryParams.q = q.trim();
+    }
+    if (status !== 'all') {
+        queryParams.status = status;
+    }
+    if (enabled !== undefined) {
+        queryParams.enabled = enabled;
+    }
+    if (role && role !== 'all') {
+        queryParams.role = role;
+    }
+
+    const response = await apiClient.get<AdminUserPage>('/admin/users/search', {
+        params: queryParams
     });
     return response.data;
 }

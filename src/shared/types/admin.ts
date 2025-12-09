@@ -14,13 +14,24 @@ export interface AdminUserPage {
     content: AdminUserDto[];
     totalPages: number;
     totalElements: number;
-    number: number;
-    size: number;
-    first: boolean;
-    last: boolean;
+    currentPage: number;
+    pageSize: number;
 }
 
-export type UserFilter = 'all' | 'active' | 'deleted';
+export type UserStatusFilter = 'all' | 'active' | 'deleted';
+export type UserRoleFilter = 'all' | 'ADMIN' | 'MODERATEUR' | 'UTILISATEUR';
+export type UserEnabledFilter = 'all' | 'true' | 'false';
+
+export type UserFilter = UserStatusFilter;
+
+export interface UserSearchParams {
+    q?: string;
+    status?: UserStatusFilter;
+    enabled?: boolean;
+    role?: string;
+    page?: number;
+    size?: number;
+}
 
 export interface UserActionResponse {
     message: string;
