@@ -17,3 +17,20 @@ export interface PlantPage {
     totalPages: number;
     number: number;
 }
+
+export type PlantSearchResult = {
+    id: number;
+    commonName: string;
+    scientificName: string;
+    family: string;
+    familyCommonName: string;
+    imageUrl: string;
+}
+
+export interface PlantSearchPage {
+    content: PlantSearchResult[];
+    totalPages: number;
+    totalElements: number;
+    number: number;
+    size: number;
+}
