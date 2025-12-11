@@ -19,7 +19,6 @@ export interface PlantPage {
 }
 
 export type PlantSearchResult = {
-    id: number;
     commonName: string;
     scientificName: string;
     family: string;

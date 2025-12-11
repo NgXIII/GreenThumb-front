@@ -108,12 +108,12 @@ export default function AddPlantDialog() {
                             <div className="flex-1 overflow-y-auto space-y-2 pr-2">
                                 {plants.map((plant) => (
                                     <div
-                                        key={plant.id}
+                                        key={plant.scientificName}
                                         onClick={() => setSelectedPlant(plant)}
                                         className={`flex items-center gap-4 p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
-                                            selectedPlant?.id === plant.id
-                                                ? 'border-gt-primary bg-gt-primary/5'
-                                                : 'border-gt-border hover:border-gt-primary/50'
+                                            selectedPlant?.scientificName === plant.scientificName
+                                                ? 'border-gt-border bg-gt-green'
+                                                : 'border-gt-primary bg-gt-primary/10 hover:border-gt-primary/50 hover:bg-gt-surface'
                                         }`}
                                     >
                                         <img
@@ -141,7 +141,6 @@ export default function AddPlantDialog() {
                                 ))}
                             </div>
 
-                            {/* Pagination */}
                             {totalPages > 1 && (
                                 <div className="flex items-center justify-between border-t pt-4 border-gt-border">
                                     <p className="text-sm text-gt-text-muted">

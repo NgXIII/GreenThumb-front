@@ -45,6 +45,10 @@ export function useSearchPlants() {
         try {
             const response: PlantSearchPage = await searchPlants(query.trim(), page);
 
+            console.log('API Response:', response);
+            console.log('Plants content:', response.content);
+            console.log('First plant:', response.content[0]);
+
             setPlants(response.content);
             setCurrentPage(response.number + 1);
             setTotalPages(response.totalPages);
