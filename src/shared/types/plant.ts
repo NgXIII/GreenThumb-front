@@ -19,17 +19,16 @@ export interface PlantPage {
 }
 
 export type PlantSearchResult = {
-    commonName: string;
-    scientificName: string;
-    family: string;
-    familyCommonName: string;
-    imageUrl: string;
+    commonName: string
+    scientificName: string
+    slug: string
+    imageUrl: string
 }
 
 export interface PlantSearchPage {
-    content: PlantSearchResult[];
-    totalPages: number;
-    totalElements: number;
-    number: number;
-    size: number;
+    content: PlantSearchResult[]
+    totalPages: number
+    totalElements: number
+    number: number
+    size: number
 }

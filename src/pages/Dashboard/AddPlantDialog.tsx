@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     Dialog,
     DialogContent,
@@ -16,6 +17,7 @@ import {useSearchPlants} from "@/shared/hooks/usePlant.ts";
 export default function AddPlantDialog() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedPlant, setSelectedPlant] = useState<PlantSearchResult | null>(null);
+    const navigate = useNavigate();
 
     const { plants, isLoading, error, currentPage, totalPages, totalElements, search, clearError } = useSearchPlants();
 
@@ -27,6 +29,14 @@ export default function AddPlantDialog() {
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             handleSearch(newPage);
+        }
+    };
+
+    const handleAddPlant = () => {
+        if (selectedPlant) {
+            navigate(`/creer-plante/${selectedPlant.slug}`, {
+                state: { selectedPlant }
+            });
         }
     };
 
@@ -131,11 +141,6 @@ export default function AddPlantDialog() {
                                             <p className="text-sm text-gt-text-muted italic">
                                                 {plant.scientificName}
                                             </p>
-                                            {plant.familyCommonName && (
-                                                <p className="text-xs text-gt-text-muted mt-1">
-                                                    Famille: {plant.familyCommonName}
-                                                </p>
-                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -175,14 +180,13 @@ export default function AddPlantDialog() {
                     <DialogClose asChild>
                         <Button variant="outline">Annuler</Button>
                     </DialogClose>
-                    <DialogClose asChild>
-                        <Button
-                            type="submit"
-                            disabled={!selectedPlant}
-                        >
-                            Ajouter la plante
-                        </Button>
-                    </DialogClose>
+                    <Button
+                        type="submit"
+                        disabled={!selectedPlant}
+                        onClick={handleAddPlant}
+                    >
+                        Ajouter la plante
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

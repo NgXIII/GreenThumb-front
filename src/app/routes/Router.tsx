@@ -17,6 +17,7 @@ import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 import AdminTest from "@/pages/AdminTest.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
 import EditPassword from "@/pages/profilePage/EditPassword.tsx";
+import CreateApiPlantPage from "@/pages/plantCreationPage/CreateApiPlantPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -52,6 +53,11 @@ const router = createBrowserRouter([
                         path: '/modification-mot-de-passe',
                         loader: accountLoader,
                         element: <EditPassword />
+                    },
+                    {
+                        path: '/creer-plante/:plantSlug',
+                        loader: accountLoader,
+                        element: <CreateApiPlantPage />
                     }
                 ]
             },
