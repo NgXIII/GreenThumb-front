@@ -1,11 +1,12 @@
 import usePlant from "@/shared/hooks/usePlant.ts";
-import type {Plant} from "@/shared/types/plant.ts";
-import {useState} from "react";
+import type { Plant } from "@/shared/types/plant.ts";
+import { useState, useMemo } from "react";
 
 interface PlantCardsProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
+    search?: string;
 }
 
 interface PlantCardProps {
@@ -14,7 +15,7 @@ interface PlantCardProps {
     isSelected: boolean;
 }
 
-export default function PlantCards({ username, setSelectedPlant, selectedPlant }: PlantCardsProps) {
+export default function PlantCards({ username, setSelectedPlant, selectedPlant, search }: PlantCardsProps) {
     const [page, setPage] = useState(0);
 
     const {
@@ -25,6 +26,19 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
         error
     } = usePlant(username, page, 5);
 
+    const normalizedQuery = (search ?? "").trim().toLowerCase();
+
+    const filteredPlants = useMemo(() => {
+        if (!normalizedQuery) return plants;
+        return plants.filter((p) => {
+            const common = p.commonName ?? "";
+            const sci = p.scientificName ?? "";
+            const desc = p.description ?? "";
+            const haystack = `${common} ${sci} ${desc}`.toLowerCase();
+            return haystack.includes(normalizedQuery);
+        });
+    }, [plants, normalizedQuery]);
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-8">
@@ -32,7 +46,6 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
             </div>
         );
     }
-
 
     if (error) {
         return (
@@ -42,7 +55,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
         );
     }
 
-    if (plants.length === 0) {
+    if (plants.length === 0 && !normalizedQuery) {
         return (
             <div className="text-center py-8 text-gt-text-muted">
                 Aucune plante pour le moment
@@ -50,9 +63,17 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
         );
     }
 
+    if (normalizedQuery && filteredPlants.length === 0) {
+        return (
+            <div className="text-center py-8 text-gt-text-muted">
+                Aucune plante trouvée pour « {search} »
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-3">
-            {plants.map((plant, index) => (
+            {filteredPlants.map((plant, index) => (
                 <div
                     key={index}
                     className="opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
@@ -68,7 +89,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
 
             <div
                 className="flex items-center justify-center gap-2 pt-4 opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
-                style={{ animationDelay: `${0.1 + plants.length * 0.1}s` }}
+                style={{ animationDelay: `${0.1 + (filteredPlants.length || plants.length) * 0.1}s` }}
             >
                 <button
                     className="p-2 rounded-lg bg-gt-surface border border-gt-border hover:bg-gt-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
@@ -106,17 +127,17 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
             </div>
 
             <style>{`
-                @keyframes fadeInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            `}</style>
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
         </div>
     );
 }
