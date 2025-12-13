@@ -1,27 +1,42 @@
-import {useResources} from "@/shared/hooks/useResources.ts";
+import {useResources} from "@/shared/hooks/resource/useResources.ts";
 import type {Resource} from "@/shared/types/resource.ts";
 import {formatDateFr} from "@/shared/utils/date.ts";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 import {useState, type MouseEvent} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, Link} from "react-router-dom";
 import {useLikeResource} from "@/shared/hooks/useLike.ts";
+import {useUserStore} from "@/app/stores/userStore.ts";
 
 export default function ResourcePage() {
     const { resources, error, loading } = useResources();
+    const { user } = useUserStore.getState();
 
     return (
         <div className="min-h-screen bg-gt-surface transition-colors duration-300 p-6">
             <div className="max-w-7xl mx-auto space-y-6">
                 <header
-                    className="bg-gt-surface-elevated rounded-lg p-6 border border-gt-border opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards] text-center"
+                    className="bg-gt-surface-elevated rounded-lg p-6 border border-gt-border opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
                     style={{ animationDelay: '0.1s' }}
                 >
-                    <h1 className="text-3xl font-bold text-gt-text mb-2">
-                        Bibliothèque de ressources
-                    </h1>
-                    <p className="text-gt-text-muted">
-                        Découvrez tous nos guides, tutoriels et conseils pour devenir un expert en jardinage
-                    </p>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="text-center md:text-left flex-1">
+                            <h1 className="text-3xl font-bold text-gt-text mb-2">
+                                Bibliothèque de ressources
+                            </h1>
+                            <p className="text-gt-text-muted">
+                                Découvrez tous nos guides, tutoriels et conseils pour devenir un expert en jardinage
+                            </p>
+                        </div>
+                        {user?.role === 'ADMIN' && (
+                            <Link
+                                to="/ressources/ajouter"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gt-primary hover:bg-gt-primary/90 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 shrink-0"
+                            >
+                                <span className="text-xl">+</span>
+                                <span>Ajouter un article</span>
+                            </Link>
+                        )}
+                    </div>
                 </header>
 
                 <section>
@@ -34,7 +49,7 @@ export default function ResourcePage() {
 
                     {error && (
                         <div className="text-center py-20 bg-gt-surface-elevated rounded-lg border border-gt-border p-8">
-                            <p className="text-red-500 text-lg">⚠️ Erreur : {error}</p>
+                            <p className="text-red-500 text-lg">Erreur : {error}</p>
                         </div>
                     )}
 
@@ -44,7 +59,6 @@ export default function ResourcePage() {
 
                     {!loading && !error && (!resources || resources.length === 0) && (
                         <div className="text-center py-20 bg-gt-surface-elevated rounded-lg border border-gt-border">
-                            <span className="text-6xl mb-4 block">🌱</span>
                             <p className="text-gt-text-muted text-lg">Aucune ressource disponible pour le moment</p>
                         </div>
                     )}
@@ -58,11 +72,11 @@ function ResourceGrid({ resources }: { resources: Resource[] }) {
     const navigate = useNavigate();
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-6">
             {resources.map((resource, index) => (
                 <article
                     key={resource.slug}
-                    className="opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
+                    className="opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards] w-full md:w-[calc(50%-12px)] xl:w-[calc(33.333%-16px)]"
                     style={{ animationDelay: `${0.2 + index * 0.1}s` }}
                 >
                     <ResourceCard

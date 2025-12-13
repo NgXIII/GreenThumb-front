@@ -1,5 +1,6 @@
 import type {LikeResponse, Resource} from "@/shared/types/resource.ts";
 import apiClient from "@/services/http/apiClient.ts";
+import type {ResourceCreationPost} from "@/shared/types/schemas/ResourceSchema.ts";
 
 export async function getResources(): Promise<Resource[]> {
     const resources = await apiClient.get<Resource[]>("/resources")
@@ -23,4 +24,14 @@ export async function likeResource(slug: string): Promise<LikeResponse> {
     const response = await apiClient.patch(`/resources/${slug}/like`)
 
     return response.data;
+}
+
+export async function postResource(data: ResourceCreationPost) {
+    return await apiClient.post("/resources", data);
+}
+
+export async function deleteResource(slug: string): Promise<string> {
+    const result = await apiClient.delete(`/resources/${slug}`);
+
+    return result.data;
 }

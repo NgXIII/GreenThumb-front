@@ -23,6 +23,7 @@ import ResourcePage from "@/pages/Resource/ResourcePage.tsx";
 import ResourcePageDetail from "@/pages/Resource/ResourcePageDetail.tsx";
 import {combineLoaders} from "@/app/routes/combineLoaders.ts";
 import {articleLoader} from "@/app/routes/articleLoader.ts";
+import ResourceFormulairePage from "@/pages/Resource/formulaire/ResourceFormulairePage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -70,7 +71,7 @@ const router = createBrowserRouter([
                         loader: combineLoaders(accountLoader, articleLoader),
 
                         element: <ResourcePageDetail />
-                    }
+                    },
                 ]
             },
             {
@@ -81,6 +82,11 @@ const router = createBrowserRouter([
                         path: '/admin',
                         loader: accountLoader,
                         element: <AdminTest />
+                    },
+                    {
+                        path:'/ressources/ajouter',
+                        loader: accountLoader,
+                        element: <ResourceFormulairePage />
                     }
                 ]
             },
