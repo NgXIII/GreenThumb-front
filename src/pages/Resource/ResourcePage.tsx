@@ -2,7 +2,7 @@ import {useResources} from "@/shared/hooks/resource/useResources.ts";
 import type {Resource} from "@/shared/types/resource.ts";
 import {formatDateFr} from "@/shared/utils/date.ts";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
-import {useState, type MouseEvent} from "react";
+import {useState, useEffect, type MouseEvent} from "react";
 import {useNavigate, Link} from "react-router-dom";
 import {useLikeResource} from "@/shared/hooks/useLike.ts";
 import {useUserStore} from "@/app/stores/userStore.ts";
@@ -10,6 +10,10 @@ import {useUserStore} from "@/app/stores/userStore.ts";
 export default function ResourcePage() {
     const { resources, error, loading } = useResources();
     const { user } = useUserStore.getState();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <div className="min-h-screen bg-gt-surface transition-colors duration-300 p-6">

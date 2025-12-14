@@ -4,16 +4,22 @@ import useDeleteResource from "@/shared/hooks/resource/useDeleteResource.ts";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from "remark-gfm";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {toast} from "sonner";
+import {useUserStore} from "@/app/stores/userStore.ts";
 
 export default function ResourcePageDetail() {
     const { slug } = useParams();
+    const { user } = useUserStore.getState();
     const navigate = useNavigate();
 
     const { resource, error, loading } = useResource(slug ?? "");
     const { mutate: deleteResourceMutation, loading: deleting, error: deleteError } = useDeleteResource();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [slug]);
 
     if (!slug) {
         return <Navigate to="/ressources" replace />;
@@ -108,21 +114,23 @@ export default function ResourcePageDetail() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={handleEdit}
-                                    className="flex items-center gap-2 px-5 py-2.5 bg-gt-primary text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-gt-primary/90 transition-all duration-200 border border-gt-primary/20"
-                                >
-                                    <span>Modifier</span>
-                                </button>
+                            {user?.role === 'ADMIN' && (
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={handleEdit}
+                                        className="flex items-center gap-2 px-5 py-2.5 bg-gt-primary text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-gt-primary/90 transition-all duration-200 border border-gt-primary/20"
+                                    >
+                                        <span>Modifier</span>
+                                    </button>
 
-                                <button
-                                    onClick={handleDeleteClick}
-                                    className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transition-all duration-200 border border-red-500/20"
-                                >
-                                    <span>Supprimer</span>
-                                </button>
-                            </div>
+                                    <button
+                                        onClick={handleDeleteClick}
+                                        className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transition-all duration-200 border border-red-500/20"
+                                    >
+                                        <span>Supprimer</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </header>
 
