@@ -17,6 +17,7 @@ import {useNavigate} from "react-router-dom";
 import {type PlantPost, PlantSchema} from "@/shared/types/schemas/plantSchema.ts";
 import {useCreatePlant} from "@/shared/hooks/usePlant.ts";
 import { useEffect } from "react";
+import {useUserStore} from "@/app/stores/userStore.ts";
 
 export type CreateApiPlantFormProps = {
     selectedPlant: PlantSearchResult | undefined;
@@ -25,6 +26,7 @@ export type CreateApiPlantFormProps = {
 
 export default function CreateApiPlantForm({ selectedPlant, isManualCreation }: CreateApiPlantFormProps) {
     const navigate = useNavigate();
+    const { user } = useUserStore.getState();
     const { createPlant, isLoading, error } = useCreatePlant();
 
     const form = useForm<PlantPost>({
@@ -42,6 +44,7 @@ export default function CreateApiPlantForm({ selectedPlant, isManualCreation }: 
             soilType: "",
             soilPhMin: 6.5,
             soilPhMax: 7.0,
+            username: user?.username,
             temperatureMin: 15,
             temperatureMax: 25,
             humidityNeed: false,
@@ -68,6 +71,7 @@ export default function CreateApiPlantForm({ selectedPlant, isManualCreation }: 
     }, [form, isManualCreation]);
 
     const submit = async (values: PlantPost) => {
+        console.log(values.username)
         const success = await createPlant(values);
 
         if (success) {
