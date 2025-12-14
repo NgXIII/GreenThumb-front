@@ -87,6 +87,11 @@ const router = createBrowserRouter([
                         path:'/ressources/ajouter',
                         loader: accountLoader,
                         element: <ResourceFormulairePage />
+                    },
+                    {
+                        path:'/ressources/:slug/modifier',
+                        loader: accountLoader,
+                        element: <ResourceFormulairePage />
                     }
                 ]
             },

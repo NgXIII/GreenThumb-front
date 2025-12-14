@@ -30,6 +30,10 @@ export async function postResource(data: ResourceCreationPost) {
     return await apiClient.post("/resources", data);
 }
 
+export async function patchResource(data: ResourceCreationPost, slug: string): Promise<void> {
+    return await apiClient.patch(`/resources/${slug}`, data);
+}
+
 export async function deleteResource(slug: string): Promise<string> {
     const result = await apiClient.delete(`/resources/${slug}`);
 

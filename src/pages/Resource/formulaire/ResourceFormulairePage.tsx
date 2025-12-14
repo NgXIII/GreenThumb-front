@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {FormProvider, useController, useForm, useFormContext} from "react-hook-form";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {zodResolver} from "@hookform/resolvers/zod";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from "remark-gfm";
@@ -13,13 +13,26 @@ import HoverInfoError from "@/shared/components/ui/customs/HoverInfoError";
 import {Textarea} from "@/shared/components/ui/textarea";
 import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 import useAddResource from "@/shared/hooks/resource/useAddResource.ts";
+import {useResource} from "@/shared/hooks/resource/useResources.ts";
+import usePatchResource from "@/shared/hooks/resource/usePatchResource.ts";
+import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 
 const SUMMARY_MAX_LENGTH = 255;
 const CONTENT_EDITOR_HEIGHT = "600px";
 
 export default function ResourceFormulairePage() {
+    const { slug } = useParams();
     const navigate = useNavigate();
-    const { addResource, error, loading } = useAddResource();
+    const isEdit = !!slug;
+
+    const { addResource, error: addError, loading: addLoading } = useAddResource();
+    const { resource, loading: fetchLoading } = useResource(slug ?? "");
+    const { editResource, error: updateError, loading: updateLoading} = usePatchResource();
+    const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+
+    const loading = addLoading || updateLoading;
+    const error = addError || updateError;
+
     const methods = useForm<ResourceCreationPost>({
         resolver: zodResolver(ResourceCreationSchema),
         mode: "all",
@@ -31,6 +44,18 @@ export default function ResourceFormulairePage() {
         },
     });
 
+    useEffect(() => {
+        if (isEdit && resource) {
+            methods.reset({
+                title: resource.title,
+                summary: resource.summary,
+                content: resource.description,
+                picture: undefined,
+            });
+            setExistingImageUrl(resource.pictureUrl);
+        }
+    }, [isEdit, methods, resource]);
+
     const handleSubmit = async (data: ResourceCreationPost) => {
         const resourceData = { ...data };
 
@@ -38,15 +63,24 @@ export default function ResourceFormulairePage() {
             resourceData.picture = await fileToBase64(resourceData.picture);
         }
 
-        const success = await addResource(resourceData);
+        let success: boolean;
+
+        if (isEdit) {
+            success = await editResource(resourceData, slug!);
+        } else {
+            success = await addResource(resourceData);
+        }
+
 
         if (success) {
-            toast.success("Article publié avec succès", {
-                description: "Votre article est maintenant visible par la communauté"
+            toast.success(isEdit ? "Article modifié avec succès" : "Article publié avec succès", {
+                description: isEdit
+                    ? "Vos modifications ont été enregistrées"
+                    : "Votre article est maintenant visible par la communauté"
             });
             navigate('/ressources');
         } else if (error) {
-            toast.error("Erreur lors de la publication", {
+            toast.error(isEdit ? "Erreur lors de la modification" : "Erreur lors de la publication", {
                 description: error
             });
         }
@@ -55,6 +89,17 @@ export default function ResourceFormulairePage() {
     const handleCancel = () => {
         navigate('/ressources');
     };
+
+    if (isEdit && fetchLoading) {
+        return (
+            <main className="min-h-screen bg-gt-surface flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gt-primary mx-auto"></div>
+                    <p className="text-gt-text-muted">Chargement de l'article...</p>
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="min-h-screen bg-gt-surface transition-colors duration-300 p-6">
@@ -66,10 +111,13 @@ export default function ResourceFormulairePage() {
                     <div className="flex items-center justify-between gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-gt-text mb-2">
-                                Créer un article
+                                {isEdit ? "Modifier l'article" : "Créer un article"}
                             </h1>
                             <p className="text-gt-text-muted">
-                                Partagez vos connaissances avec la communauté
+                                {isEdit
+                                    ? "Modifiez les informations de votre article"
+                                    : "Partagez vos connaissances avec la communauté"
+                                }
                             </p>
                         </div>
                         <button
@@ -101,7 +149,7 @@ export default function ResourceFormulairePage() {
 
                                     <SummaryInput />
 
-                                    <ResourceImageUpload />
+                                    <ResourceImageUpload existingImageUrl={existingImageUrl} />
                                 </section>
 
                                 <section className="space-y-6" aria-label="Contenu de l'article">
@@ -119,10 +167,10 @@ export default function ResourceFormulairePage() {
                                     {loading ? (
                                         <>
                                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" aria-hidden="true"></div>
-                                            <span>Publication en cours...</span>
+                                            <span>{isEdit ? "Modification en cours..." : "Publication en cours..."}</span>
                                         </>
                                     ) : (
-                                        <span>Publier l'article</span>
+                                        <span>{isEdit ? "Enregistrer les modifications" : "Publier l'article"}</span>
                                     )}
                                 </button>
                                 <button
@@ -273,16 +321,29 @@ function ContentEditor() {
     );
 }
 
-function ResourceImageUpload() {
+interface ResourceImageUploadProps {
+    existingImageUrl?: string | null;
+}
+
+function ResourceImageUpload({ existingImageUrl }: ResourceImageUploadProps) {
     const { control } = useFormContext<ResourceCreationPost>();
     const { field, fieldState } = useController({ name: "picture", control });
     const [previewUrl, setPreviewUrl] = useState<string | undefined>();
     const [isDragging, setIsDragging] = useState(false);
+    const [hasUserRemovedImage, setHasUserRemovedImage] = useState(false);
+
+
+    useEffect(() => {
+        if (existingImageUrl && !previewUrl && !hasUserRemovedImage) {
+            setPreviewUrl(existingImageUrl);
+        }
+    }, [existingImageUrl, previewUrl, hasUserRemovedImage]);
 
     const processFile = (file: File) => {
         if (file && file.type.startsWith('image/')) {
             field.onChange(file);
             setPreviewUrl(URL.createObjectURL(file));
+            setHasUserRemovedImage(false);
         }
     };
 
@@ -294,8 +355,9 @@ function ResourceImageUpload() {
     };
 
     const handleRemoveImage = () => {
-        field.onChange(undefined);
+        field.onChange(null);
         setPreviewUrl(undefined);
+        setHasUserRemovedImage(true);
     };
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -338,7 +400,7 @@ function ResourceImageUpload() {
                 {previewUrl ? (
                     <figure className="relative w-full h-52 rounded-lg border border-gt-border overflow-hidden bg-gradient-to-br from-gt-primary/10 to-gt-primary/5">
                         <img
-                            src={previewUrl}
+                            src={resolveAvatar(previewUrl)}
                             alt="Aperçu de l'image de l'article"
                             className="w-full h-full object-cover"
                         />

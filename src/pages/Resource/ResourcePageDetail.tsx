@@ -10,6 +10,7 @@ import {toast} from "sonner";
 export default function ResourcePageDetail() {
     const { slug } = useParams();
     const navigate = useNavigate();
+
     const { resource, error, loading } = useResource(slug ?? "");
     const { mutate: deleteResourceMutation, loading: deleting, error: deleteError } = useDeleteResource();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -66,7 +67,7 @@ export default function ResourcePageDetail() {
             });
             setShowDeleteModal(false);
             navigate("/ressources");
-        } catch (err) {
+        } catch {
             toast.error("Erreur lors de la suppression", {
                 description: deleteError || "Une erreur est survenue lors de la suppression de la ressource"
             });
