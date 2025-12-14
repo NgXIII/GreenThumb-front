@@ -1,5 +1,6 @@
-import type {PlantPage, PlantSearchPage} from "@/shared/types/plant.ts";
+import type {PlantPage, PlantSearchPage, PlantSearchResult} from "@/shared/types/plant.ts";
 import apiClient from "@/services/http/apiClient.ts";
+import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 
 export async function getPlants(
     username: string | undefined,
@@ -34,6 +35,13 @@ export async function searchPlants(query: string, page: number = 1): Promise<Pla
     return response.data;
 }
 
+export async function postPlant(newPlant: PlantPost): Promise<void> {
+    await apiClient.post("/plants", newPlant);
+}
+
+export async function postPlantApi(newPlantApi: PlantSearchResult): Promise<void> {
+    await apiClient.post("/plants/api", newPlantApi);
+}
 
 function checkUsername(username: string | undefined) {
     if (!username) {

@@ -12,7 +12,8 @@ import {
 import { Input } from "@/shared/components/ui/input.tsx";
 import { Button } from "@/shared/components/ui/button.tsx";
 import type {PlantSearchResult} from "@/shared/types/plant.ts";
-import {useSearchPlants} from "@/shared/hooks/usePlant.ts";
+import {useCreatePlantApi, useSearchPlants} from "@/shared/hooks/usePlant.ts";
+import {toast} from "sonner";
 
 export default function AddPlantDialog() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -20,6 +21,7 @@ export default function AddPlantDialog() {
     const navigate = useNavigate();
 
     const { plants, isLoading, error, currentPage, totalPages, totalElements, search, clearError } = useSearchPlants();
+    const { createPlantApi, error: createError } = useCreatePlantApi();
 
     const handleSearch = async (page: number = 1) => {
         setSelectedPlant(null);
@@ -32,11 +34,17 @@ export default function AddPlantDialog() {
         }
     };
 
-    const handleAddPlant = () => {
+    const handleAddPlant = async () => {
         if (selectedPlant) {
-            navigate(`/creer-plante/${selectedPlant.slug}`, {
-                state: { selectedPlant }
-            });
+            const success = await createPlantApi(selectedPlant);
+
+            if (success) {
+                navigate(`/creation-plante/${selectedPlant.slug}`, {
+                    state: { selectedPlant }
+                });
+            } else {
+                toast.error(createError || "Erreur lors de la création de la plante. Veuillez réessayer.")
+            }
         }
     };
 
@@ -177,16 +185,29 @@ export default function AddPlantDialog() {
                 </div>
 
                 <DialogFooter>
-                    <DialogClose asChild>
-                        <Button variant="outline">Annuler</Button>
-                    </DialogClose>
-                    <Button
-                        type="submit"
-                        disabled={!selectedPlant}
-                        onClick={handleAddPlant}
-                    >
-                        Ajouter la plante
-                    </Button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 w-full">
+                        <Button
+                            type="button"
+                            onClick={() => navigate("/creation-plante")}
+                            className="cursor-pointer w-full sm:w-auto"
+                        >
+                            Créer une plante
+                        </Button>
+
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <DialogClose asChild>
+                                <Button variant="outline" className="cursor-pointer flex-1 sm:flex-none">Annuler</Button>
+                            </DialogClose>
+                            <Button
+                                type="submit"
+                                disabled={!selectedPlant}
+                                onClick={handleAddPlant}
+                                className="flex-1 sm:flex-none"
+                            >
+                                Ajouter la plante
+                            </Button>
+                        </div>
+                    </div>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

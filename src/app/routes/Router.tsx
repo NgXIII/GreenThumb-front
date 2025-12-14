@@ -55,7 +55,7 @@ const router = createBrowserRouter([
                         element: <EditPassword />
                     },
                     {
-                        path: '/creer-plante/:plantSlug',
+                        path: '/creation-plante/:plantSlug?',
                         loader: accountLoader,
                         element: <CreateApiPlantPage />
                     }

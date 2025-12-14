@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const PlantApiSchema = z.object({
+export const PlantSchema = z.object({
     slug: z.string().min(1, "Le slug est obligatoire"),
     scientificName: z.string().min(1, "Le nom scientifique est obligatoire"),
     commonName: z.string().min(1, "Le nom de la plante est obligatoire"),
@@ -17,19 +17,20 @@ export const PlantApiSchema = z.object({
             }
         )
         .optional(),
-    lifeCycle: z.string().max(100, "Le cycle de vie est trop grand").optional(),
-    waterNeed: z.string().max(100, "Le besoin d'eau est trop grand").optional(),
-    light: z.boolean().default(false),
-    soilType: z.string().max(100, "Le soil est trop grand").optional(),
+    lifeCycle: z.string(),
+    waterNeed: z.string(),
+    lightLevel: z.string(),
+    soilType: z.string(),
     soilPhMin: z.number(),
     soilPhMax: z.number(),
-    temperatureMin: z.number().optional(),
-    temperatureMax: z.number().optional(),
+    temperatureMin: z.number(),
+    temperatureMax: z.number(),
     humidityNeed: z.boolean().default(false),
-    bloomMonth: z.string().max(100, "Le nom bloom"),
+    bloomMonthStart: z.string(),
+    bloomMonthEnd: z.string(),
     petToxic: z.boolean().default(false),
     humanToxic: z.boolean().default(false),
     indoorFriendly: z.boolean().default(false),
 });
 
-export type PlantApiPost = z.input<typeof PlantApiSchema>;
+export type PlantPost = z.input<typeof PlantSchema>;
