@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -416,4 +418,114 @@
 
 .animate-fadeInUp {
   animation: fadeInUp 0.25s ease-out;
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+/* Markdown Content Styling */
+.markdown-content {
+  @apply prose prose-lg max-w-none dark:prose-invert;
+
+  /* Headings */
+  @apply prose-headings:text-gt-text prose-headings:font-bold;
+  @apply prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl;
+
+  /* Paragraphs */
+  @apply prose-p:text-gt-text prose-p:leading-relaxed;
+
+  /* Text formatting */
+  @apply prose-strong:text-gt-text prose-strong:font-bold;
+  @apply prose-em:text-gt-text prose-em:italic;
+
+  /* Code */
+  @apply prose-code:text-gt-text prose-code:bg-gt-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded;
+  @apply prose-code:before:content-[''] prose-code:after:content-[''];
+  @apply prose-pre:bg-gt-surface-elevated prose-pre:border prose-pre:border-gt-border prose-pre:text-gt-text prose-pre:shadow-md;
+  @apply prose-pre:rounded-lg prose-pre:p-4;
+
+  /* Lists */
+  @apply prose-li:text-gt-text prose-li:marker:text-gt-primary;
+  @apply prose-ul:list-disc prose-ol:list-decimal;
+
+  /* Links */
+  @apply prose-a:text-gt-primary prose-a:no-underline hover:prose-a:underline prose-a:font-medium;
+
+  /* Blockquotes */
+  @apply prose-blockquote:border-l-4 prose-blockquote:border-gt-primary prose-blockquote:bg-gt-primary/5;
+  @apply prose-blockquote:italic prose-blockquote:text-gt-text prose-blockquote:pl-6 prose-blockquote:py-2;
+
+  /* Horizontal rules */
+  @apply prose-hr:border-gt-border;
+
+  /* Tables */
+  @apply prose-table:border-collapse prose-table:w-full;
+  @apply prose-thead:bg-gt-primary/10 prose-thead:border-b prose-thead:border-gt-border;
+  @apply prose-th:text-gt-text prose-th:font-bold prose-th:p-3 prose-th:text-left;
+  @apply prose-td:text-gt-text prose-td:p-3 prose-td:border-b prose-td:border-gt-border;
+  @apply prose-tr:border-gt-border;
+
+  /* Images */
+  @apply prose-img:rounded-lg prose-img:shadow-md prose-img:border prose-img:border-gt-border;
+}
+
+/* Remove borders/lines from code blocks */
+.markdown-content pre code {
+  @apply bg-transparent border-0 p-0;
 }

@@ -16,7 +16,14 @@ import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 import AdminTest from "@/pages/AdminTest.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
+import ForgetPasswordPage from "@/pages/forgetPassword/ForgetPasswordPage.tsx";
 import EditPassword from "@/pages/profilePage/EditPassword.tsx";
+import ResetPassword from "@/pages/forgetPassword/ResetPassword.tsx";
+import ResourcePage from "@/pages/Resource/ResourcePage.tsx";
+import ResourcePageDetail from "@/pages/Resource/ResourcePageDetail.tsx";
+import {combineLoaders} from "@/app/routes/combineLoaders.ts";
+import {articleLoader} from "@/app/routes/articleLoader.ts";
+import ResourceFormulairePage from "@/pages/Resource/formulaire/ResourceFormulairePage.tsx";
 import CreateApiPlantPage from "@/pages/plantCreationPage/CreateApiPlantPage.tsx";
 
 const router = createBrowserRouter([
@@ -59,6 +66,19 @@ const router = createBrowserRouter([
                         loader: accountLoader,
                         element: <CreateApiPlantPage />
                     }
+                    },
+                    {
+                        path: '/ressources',
+                        loader: accountLoader,
+
+                        element: <ResourcePage/>
+                    },
+                    {
+                        path: '/ressources/:slug',
+                        loader: combineLoaders(accountLoader, articleLoader),
+
+                        element: <ResourcePageDetail />
+                    },
                 ]
             },
             {
@@ -69,16 +89,22 @@ const router = createBrowserRouter([
                         path: '/admin',
                         loader: accountLoader,
                         element: <AdminTest />
+                    },
+                    {
+                        path:'/ressources/ajouter',
+                        loader: accountLoader,
+                        element: <ResourceFormulairePage />
+                    },
+                    {
+                        path:'/ressources/:slug/modifier',
+                        loader: accountLoader,
+                        element: <ResourceFormulairePage />
                     }
                 ]
             },
             {
                 path: '/community',
                 //element: <CommunautePage/>
-            },
-            {
-                path: '/ressources',
-                //element: <RessourcesPage/>
             },
             {
                 path: "/legal-notice",
@@ -98,7 +124,18 @@ const router = createBrowserRouter([
         element: <RequireGuest />,
         children: [
             { path: "/inscription", element: <RegisterPage /> },
-            { path: "/connexion", element: <LoginPage /> },
+            {
+                path: "/connexion",
+                element: <LoginPage /> ,
+            },
+            {
+                path: "/connexion/forgetPassword",
+                element: <ForgetPasswordPage/>
+            },
+            {
+                path: "/connexion/reset-password",
+                element: <ResetPassword />
+            }
         ]
     },
     {

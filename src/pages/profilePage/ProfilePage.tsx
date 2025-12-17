@@ -80,6 +80,7 @@ export default function ProfilePage(){
 
             if (values.avatar instanceof File) {
                 avatarBase64 = await fileToBase64(values.avatar)
+                console.log(avatarBase64)
                 values.avatar = avatarBase64
             }
 
