@@ -110,9 +110,6 @@ export default function ProfilePage(){
         ? URL.createObjectURL(avatarValue)
         : avatarValue || ''
 
-    console.log(form.formState.isValid)
-    console.log(form.getValues())
-
     return (
         <main className="min-h-screen bg-gt-surface border-gt-light-grey py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
             <div className="max-w-4xl mx-auto">

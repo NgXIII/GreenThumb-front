@@ -5,6 +5,7 @@ import useCountTask from "@/shared/hooks/useTaskCount.ts";
 import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
 import PlantCards from "@/pages/Dashboard/PlantCards.tsx";
 import PlantTasks from "@/pages/Dashboard/PlantTasks.tsx";
+import AddPlantDialog from "@/pages/Dashboard/AddPlantDialog.tsx";
 import { Search } from "lucide-react";
 
 interface PlantListProps {
@@ -116,9 +117,7 @@ function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps
                     search={debouncedQuery}
                 />
 
-                <button className="w-full mt-4 bg-gt-primary hover:bg-gt-primary-hover text-gt-primary-foreground font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
-                    ➕ Ajouter une plante
-                </button>
+                <AddPlantDialog />
             </article>
         </section>
     );
