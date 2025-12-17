@@ -64,8 +64,7 @@ const router = createBrowserRouter([
                     {
                         path: '/creation-plante/:plantSlug?',
                         loader: accountLoader,
-                        element: <CreateApiPlantPage />
-                    }
+                        element: <CreateApiPlantPage/>
                     },
                     {
                         path: '/ressources',
