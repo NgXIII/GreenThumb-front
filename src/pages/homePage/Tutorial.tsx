@@ -1,5 +1,5 @@
 import useThreeResources from "../../shared/hooks/useThreeResources.ts";
-import type {Resource} from "@/shared/types/resource.ts";
+import type {HomeResource} from "@/shared/types/homeResource.ts";
 import CardBase from "./CardBase.tsx";
 import {formatDateFr} from "@/shared/utils/date.ts";
 
@@ -24,7 +24,7 @@ export default function TutorialSession() {
     );
 }
 
-function TutorialCards({ data }: { data: Resource[]}) {
+function TutorialCards({ data }: { data: HomeResource[]}) {
     return (
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
             {data.map((item, index) => (
@@ -34,7 +34,7 @@ function TutorialCards({ data }: { data: Resource[]}) {
     );
 }
 
-function TutorialCard({title, date, imageUrl }: Resource) {
+function TutorialCard({title, date, imageUrl }: HomeResource) {
     const urlImage = "src/assets/resourceImage/" + imageUrl;
 
     return (
