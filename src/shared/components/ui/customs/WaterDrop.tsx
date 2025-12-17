@@ -3,6 +3,7 @@ interface WaterDropIconProps {
 }
 
 export default function WaterDrop({level}: WaterDropIconProps) {
+    console.log("Voici l'eau: ", level);
     const getWaterLevel = () => {
         switch (level) {
             case "Élevé":
