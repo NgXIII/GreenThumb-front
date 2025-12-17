@@ -318,7 +318,7 @@ const Biography = ({ user, isEditMode }: BiographyProps) => (
                 name="biography"
                 inputType="textarea"
                 label="Biographie"
-                placeholder="Votre biographie"
+                placeholder="Parlez de vous..."
             />
         ) : (
             <div className="flex items-start gap-3 p-4 bg-gt-surface rounded-lg">

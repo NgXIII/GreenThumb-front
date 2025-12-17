@@ -111,7 +111,7 @@ function PlantHealth({ plant }: { plant: Plant | null }) {
                         description="Clique sur une plante pour voir son état de santé"
                     />
                 ) : (
-                    <PlantDetails/>
+                    <PlantDetails plant={plant} />
                 )}
             </article>
         </section>
