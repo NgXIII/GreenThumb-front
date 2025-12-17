@@ -1,6 +1,7 @@
 import usePlant from "@/shared/hooks/usePlant.ts";
 import type {Plant} from "@/shared/types/plant.ts";
 import {useState} from "react";
+import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 
 interface PlantCardsProps {
     username: string | undefined;
@@ -49,6 +50,10 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
             </div>
         );
     }
+
+    console.log(plants.map((plant: Plant) => {
+        console.log(plant.imageUrl);
+    }))
 
     return (
         <div className="space-y-3">
@@ -135,7 +140,7 @@ function PlantCard({ plant, onClick, isSelected }: PlantCardProps) {
         >
             <div className="flex items-start gap-3">
                 <img
-                    src={plant.imageUrl}
+                    src={resolveAvatar(plant.imageUrl)}
                     alt={plant.commonName}
                     className="w-12 h-12 rounded-lg object-cover border border-gt-border flex-shrink-0"
                 />

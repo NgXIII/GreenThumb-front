@@ -1,35 +1,41 @@
 import { useState } from "react";
 import * as React from "react";
-import { useController, useFormContext, type Path } from "react-hook-form";
-import type { UserCreationPost } from "@/shared/types/schemas/UserSchema";
+import { useController, useFormContext, type Path, type FieldValues } from "react-hook-form";
 import {FormLabel} from "@/shared/components/ui/form.tsx";
 import HoverInfoError from "@/shared/components/ui/customs/HoverInfoError.tsx";
 
-type InputFileProps = {
+type InputFileProps<T extends FieldValues> = {
     label: string;
-    name: Path<UserCreationPost>;
+    name: Path<T>;
 };
 
-export default function InputFile({ label, name }: InputFileProps) {
-    const { control } = useFormContext<UserCreationPost>()
+export default function InputFile<T extends FieldValues>({ label, name }: InputFileProps<T>) {
+    const { control } = useFormContext<T>()
     const { field, fieldState } = useController({ name, control })
     const [previewUrl, setPreviewUrl] = useState<string | undefined>()
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        field.onChange(file ?? undefined)
-        setPreviewUrl(file ? URL.createObjectURL(file) : undefined)
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result as string;
+                setPreviewUrl(base64String);
+                field.onChange(base64String);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleRemoveImage = () => {
-        field.onChange(undefined)
+        field.onChange('')
         setPreviewUrl(undefined)
     }
 
     return (
         <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1 min-w-0">
-                <FormLabel className="whitespace-nowrap">{label}</FormLabel>
+                <FormLabel className={`whitespace-nowrap ${fieldState.error ? 'text-red-400' : ''}`}>{label}</FormLabel>
 
                 <span className="inline-flex w-5 h-5 shrink-0 items-center justify-center">
                     {fieldState.error ? (

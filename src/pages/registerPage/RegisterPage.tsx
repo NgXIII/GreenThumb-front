@@ -9,7 +9,6 @@ export default function RegisterPage() {
         <main className="min-h-screen flex flex-col text-gt-text bg-gt-surface overflow-hidden transition-colors duration-300">
             <LogoHeader />
 
-            {/* Theme Toggle Button - Top Right */}
             <div className="absolute top-4 right-4 z-50">
                 <ThemeToggle />
             </div>

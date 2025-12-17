@@ -5,7 +5,6 @@ import {Form, FormField, FormItem} from "@/shared/components/ui/form.tsx";
 import InputForm from "@/shared/components/ui/customs/InputForm.tsx";
 import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
 import {useAuth} from "@/shared/hooks/useAuth.ts";
-import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 import {useNavigate} from "react-router-dom";
 import {toast} from "sonner";
 
@@ -27,10 +26,6 @@ export default function RegisterForm() {
     })
 
     const submit = async (values: UserCreationPost) => {
-        if (values.avatar instanceof File) {
-            values.avatar = await fileToBase64(values.avatar);
-        }
-
         try {
             await register(values)
             toast.success("Inscription réussie ! Veuillez vérifier votre adresse e-mail.")
