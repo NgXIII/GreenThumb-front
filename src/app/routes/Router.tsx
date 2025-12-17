@@ -24,6 +24,7 @@ import ResourcePageDetail from "@/pages/Resource/ResourcePageDetail.tsx";
 import {combineLoaders} from "@/app/routes/combineLoaders.ts";
 import {articleLoader} from "@/app/routes/articleLoader.ts";
 import ResourceFormulairePage from "@/pages/Resource/formulaire/ResourceFormulairePage.tsx";
+import CreateApiPlantPage from "@/pages/plantCreationPage/CreateApiPlantPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -59,6 +60,12 @@ const router = createBrowserRouter([
                         path: '/modification-mot-de-passe',
                         loader: accountLoader,
                         element: <EditPassword />
+                    },
+                    {
+                        path: '/creation-plante/:plantSlug?',
+                        loader: accountLoader,
+                        element: <CreateApiPlantPage />
+                    }
                     },
                     {
                         path: '/ressources',

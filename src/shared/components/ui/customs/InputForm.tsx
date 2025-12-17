@@ -57,6 +57,12 @@ export default function InputForm<T extends Record<string, unknown>>(
                                 placeholder={placeholder}
                                 autoComplete={autoComplete}
                                 className="w-full"
+                                onChange={(e) => {
+                                    const value = inputType === "number"
+                                        ? (e.target.value === "" ? "" : Number(e.target.value))
+                                        : e.target.value;
+                                    field.onChange(value);
+                                }}
                             />
                         )}
                     </FormControl>
