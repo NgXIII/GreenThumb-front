@@ -97,38 +97,59 @@ export default function ResourcePageDetail() {
 
                 <div className="bg-gt-surface-elevated rounded-lg border border-gt-border p-8 mb-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <header className="mb-8">
-                        <h1 className="text-4xl font-bold text-gt-text mb-6">
-                            {resource.title}
-                        </h1>
-
-                        <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
-                            <div className="flex items-center gap-4 flex-wrap">
-                                <div className="flex items-center gap-2 bg-gt-primary/10 px-4 py-2 rounded-full border border-gt-border shadow-sm">
-                                    <span className="text-lg" aria-hidden="true">👤</span>
-                                    <span className="font-medium text-gt-text text-sm">{resource.username}</span>
-                                </div>
-
-                                <div className="flex items-center gap-2 bg-gt-primary/10 px-4 py-2 rounded-full border border-gt-border shadow-sm">
-                                    <span className="text-lg" aria-hidden="true">📅</span>
-                                    <span className="text-gt-text text-sm">{formattedDate}</span>
-                                </div>
-                            </div>
+                        <div className="flex items-start justify-between gap-4 mb-4">
+                            <h1 className="text-4xl font-bold text-gt-text flex-1">
+                                {resource.title}
+                            </h1>
 
                             {user?.role === 'ADMIN' && (
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2 shrink-0">
                                     <button
                                         onClick={handleEdit}
-                                        className="flex items-center gap-2 px-5 py-2.5 bg-gt-primary text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-gt-primary/90 transition-all duration-200 border border-gt-primary/20"
+                                        className="flex items-center gap-2 px-4 py-2 bg-gt-primary text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-gt-primary/90 transition-all duration-200 border border-gt-primary/20"
+                                        title="Modifier l'article"
                                     >
-                                        <span>Modifier</span>
+                                        <span className="text-base">✏️</span>
+                                        <span className="hidden sm:inline">Modifier</span>
                                     </button>
 
                                     <button
                                         onClick={handleDeleteClick}
-                                        className="flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transition-all duration-200 border border-red-500/20"
+                                        className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transition-all duration-200 border border-red-500/20"
+                                        title="Supprimer l'article"
                                     >
-                                        <span>Supprimer</span>
+                                        <span className="text-base">🗑️</span>
+                                        <span className="hidden sm:inline">Supprimer</span>
                                     </button>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <div className="flex items-center gap-2 bg-gt-primary/10 px-4 py-2 rounded-full border border-gt-border shadow-sm">
+                                    <span className="text-base" aria-hidden="true">👤</span>
+                                    <span className="font-medium text-gt-text text-sm">{resource.username}</span>
+                                </div>
+
+                                <div className="flex items-center gap-2 bg-gt-primary/10 px-4 py-2 rounded-full border border-gt-border shadow-sm">
+                                    <span className="text-base" aria-hidden="true">📅</span>
+                                    <span className="text-gt-text text-sm">{formattedDate}</span>
+                                </div>
+                            </div>
+
+                            {resource.categories && resource.categories.length > 0 && (
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-sm font-medium text-gt-text-muted">Catégories:</span>
+                                    {resource.categories.map((category, index) => (
+                                        <span
+                                            key={index}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-gt-primary/15 to-gt-primary/10 text-gt-primary rounded-lg text-sm font-semibold border border-gt-primary/30 shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200"
+                                        >
+                                            <span className="text-base">#</span>
+                                            {category.name}
+                                        </span>
+                                    ))}
                                 </div>
                             )}
                         </div>
