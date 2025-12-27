@@ -37,3 +37,20 @@ export interface UserActionResponse {
     message: string;
     enabled?: boolean;
 }
+
+export type RecipientType = 'ALL_USERS' | 'STAFF_ONLY' | 'SPECIFIC_USERS';
+
+export interface BulkEmailRequest {
+    subject: string;
+    content: string;
+    recipientType: RecipientType;
+    recipientUsernames?: string[];
+}
+
+export interface BulkEmailResponse {
+    message: string;
+    totalRecipients: number;
+    successCount: number;
+    failureCount: number;
+    failedEmails: string[];
+}

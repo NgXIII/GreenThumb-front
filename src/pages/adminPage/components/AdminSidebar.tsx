@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, ArrowLeft, X, Shield } from "lucide-react";
+import { Home, Users, ArrowLeft, X, Shield, Mail } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
 interface AdminSidebarProps {
@@ -16,6 +16,7 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
     { name: "Accueil", icon: Home, path: "/admin" },
     { name: "Utilisateurs", icon: Users, path: "/admin/users" },
+    { name: "Communications", icon: Mail, path: "/admin/communications" },
 ];
 
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {

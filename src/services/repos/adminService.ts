@@ -1,5 +1,7 @@
 import apiClient from "@/services/http/apiClient";
-import type { AdminUserDto, AdminUserPage, UserActionResponse, UserSearchParams } from "@/shared/types/admin";
+import type { AdminUserDto, AdminUserPage, UserActionResponse, UserSearchParams, BulkEmailRequest, BulkEmailResponse, RecipientType } from "@/shared/types/admin";
+
+export type { RecipientType, BulkEmailRequest, BulkEmailResponse };
 
 export async function searchAdminUsers(params: UserSearchParams = {}): Promise<AdminUserPage> {
     const { q, status = 'all', enabled, role, page = 0, size = 20 } = params;
@@ -54,5 +56,13 @@ export async function hardDeleteUser(username: string): Promise<UserActionRespon
 
 export async function restoreUser(username: string): Promise<UserActionResponse> {
     const response = await apiClient.patch<UserActionResponse>(`/admin/users/${username}/restore`);
+    return response.data;
+}
+
+export async function sendBulkEmail(data: BulkEmailRequest): Promise<BulkEmailResponse> {
+    const response = await apiClient.post<BulkEmailResponse>(
+        '/admin/users/communications/send-bulk-email',
+        data
+    );
     return response.data;
 }

@@ -18,6 +18,7 @@ import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
 import AdminLayout from "@/pages/adminPage/components/AdminLayout.tsx";
 import AdminDashboard from "@/pages/adminPage/AdminDashboard.tsx";
 import UserManagement from "@/pages/adminPage/UserManagement.tsx";
+import BulkEmail from "@/pages/adminPage/BulkEmail.tsx";
 import ForgetPasswordPage from "@/pages/forgetPassword/ForgetPasswordPage.tsx";
 import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 import ResetPassword from "@/pages/forgetPassword/ResetPassword.tsx";
@@ -154,6 +155,10 @@ const router = createBrowserRouter([
                     {
                         path: 'users',
                         element: <UserManagement />
+                    },
+                    {
+                        path: 'communications',
+                        element: <BulkEmail />
                     }
                 ]
             }
