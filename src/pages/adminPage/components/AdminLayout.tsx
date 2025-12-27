@@ -7,7 +7,7 @@ export default function AdminLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gt-surface flex">
+        <div className="h-screen bg-gt-surface flex overflow-hidden">
             {/* Sidebar */}
             <AdminSidebar
                 isOpen={sidebarOpen}
@@ -15,12 +15,12 @@ export default function AdminLayout() {
             />
 
             {/* Main content area */}
-            <div className="flex-1 flex flex-col min-h-screen lg:ml-0">
+            <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Navbar */}
                 <AdminNavbar onMenuClick={() => setSidebarOpen(true)} />
 
                 {/* Page content */}
-                <main className="flex-1 p-4 md:p-6">
+                <main className="flex-1 p-4 md:p-6 overflow-y-auto">
                     <Outlet />
                 </main>
             </div>
