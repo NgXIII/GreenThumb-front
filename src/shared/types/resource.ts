@@ -7,6 +7,11 @@ export type Resource = {
     description: string,
     creationDate: string,
     username: string,
+    categories: Category[]
+}
+
+export type Category = {
+    name: string,
 }
 
 export type LikeResponse = {

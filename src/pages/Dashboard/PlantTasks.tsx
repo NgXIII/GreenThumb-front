@@ -55,6 +55,47 @@ export default function PlantTasks({ plant }: { plant: Plant | null }) {
 }
 
 function TaskCard({ task }: TaskCardProps) {
+    const getStatusStyle = (status: string) => {
+        const statusLower = status.toLowerCase();
+
+        if (statusLower.includes('attente')) {
+            return {
+                bg: 'bg-blue-500/20',
+                text: 'text-blue-400',
+                border: 'border-blue-500/30',
+            };
+        }
+        if (statusLower.includes('terminé')) {
+            return {
+                bg: 'bg-green-500/20',
+                text: 'text-green-400',
+                border: 'border-green-500/30',
+            };
+        }
+        if (statusLower.includes('retard')) {
+            return {
+                bg: 'bg-red-500/20',
+                text: 'text-red-400',
+                border: 'border-red-500/30',
+            };
+        }
+        if (statusLower.includes('annulée')) {
+            return {
+                bg: 'bg-yellow-500/20',
+                text: 'text-yellow-400',
+                border: 'border-yellow-500/30',
+            };
+        }
+        // Default style
+        return {
+            bg: 'bg-gray-500/20',
+            text: 'text-gray-400',
+            border: 'border-gray-500/30',
+        };
+    };
+
+    const statusStyle = getStatusStyle(task.statusDisplay);
+
     return (
         <div className="bg-gt-surface rounded-lg p-4 border border-gt-border hover:bg-gt-surface-hover transition-colors duration-200">
             <div className="flex items-start justify-between gap-4">
@@ -65,10 +106,15 @@ function TaskCard({ task }: TaskCardProps) {
                 />
 
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-2 mb-1">
+                    <div className="flex items-start gap-2 mb-2">
                         <h3 className="font-semibold text-gt-text flex-1">
                             {task.title}
                         </h3>
+                        <span
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border} whitespace-nowrap`}
+                        >
+                            <span>{task.statusDisplay}</span>
+                        </span>
                     </div>
 
                     <p className="text-sm text-gt-text-muted mb-2">
