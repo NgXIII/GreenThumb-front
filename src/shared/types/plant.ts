@@ -10,6 +10,7 @@ export type Task = {
     description: string,
     endDate: string,
     color: string,
+    statusDisplay: string,
 }
 
 export interface PlantPage {
