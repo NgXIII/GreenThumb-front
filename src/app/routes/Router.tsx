@@ -14,8 +14,11 @@ import RequireAuth from "@/shared/components/layout/RequireAuth.tsx";
 import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
 import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
-import AdminTest from "@/pages/AdminTest.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
+import AdminLayout from "@/pages/adminPage/components/AdminLayout.tsx";
+import AdminDashboard from "@/pages/adminPage/AdminDashboard.tsx";
+import UserManagement from "@/pages/adminPage/UserManagement.tsx";
+import BulkEmail from "@/pages/adminPage/BulkEmail.tsx";
 import ForgetPasswordPage from "@/pages/forgetPassword/ForgetPasswordPage.tsx";
 import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 import ResetPassword from "@/pages/forgetPassword/ResetPassword.tsx";
@@ -64,7 +67,7 @@ const router = createBrowserRouter([
                     {
                         path: '/creation-plante/:plantSlug?',
                         loader: accountLoader,
-                        element: <CreateApiPlantPage/>
+                        element: <CreateApiPlantPage />
                     },
                     {
                         path: '/ressources',
@@ -84,11 +87,6 @@ const router = createBrowserRouter([
                 element: <RequireAdmin />,
                 loader: userLoader,
                 children: [
-                    {
-                        path: '/admin',
-                        loader: accountLoader,
-                        element: <AdminTest />
-                    },
                     {
                         path:'/ressources/ajouter',
                         loader: accountLoader,
@@ -140,6 +138,31 @@ const router = createBrowserRouter([
     {
         path: "/verifier-email",
         element: <VerifyEmailPage />
+    },
+    {
+        element: <RequireAdmin />,
+        loader: userLoader,
+        children: [
+            {
+                path: '/admin',
+                element: <AdminLayout />,
+                loader: accountLoader,
+                children: [
+                    {
+                        index: true,
+                        element: <AdminDashboard />
+                    },
+                    {
+                        path: 'users',
+                        element: <UserManagement />
+                    },
+                    {
+                        path: 'communications',
+                        element: <BulkEmail />
+                    }
+                ]
+            }
+        ]
     },
 ]);
 

@@ -11,11 +11,13 @@ import InputForm from "@/shared/components/ui/customs/InputForm";
 import {FormControl, FormField, FormItem, FormLabel} from "@/shared/components/ui/form";
 import HoverInfoError from "@/shared/components/ui/customs/HoverInfoError";
 import {Textarea} from "@/shared/components/ui/textarea";
+import {Input} from "@/shared/components/ui/input";
 import {fileToBase64} from "@/shared/utils/FileIntoBase64.ts";
 import useAddResource from "@/shared/hooks/resource/useAddResource.ts";
 import {useResource} from "@/shared/hooks/resource/useResources.ts";
 import usePatchResource from "@/shared/hooks/resource/usePatchResource.ts";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
+import useGetCategories from "@/shared/hooks/resource/useGetCategories.ts";
 
 const SUMMARY_MAX_LENGTH = 255;
 const CONTENT_EDITOR_HEIGHT = "600px";
@@ -28,6 +30,8 @@ export default function ResourceFormulairePage() {
     const { addResource, error: addError, loading: addLoading } = useAddResource();
     const { resource, loading: fetchLoading } = useResource(slug ?? "");
     const { editResource, error: updateError, loading: updateLoading} = usePatchResource();
+    const { categories, loading: fetchCategories} = useGetCategories();
+
     const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
 
     const loading = addLoading || updateLoading;
@@ -41,6 +45,7 @@ export default function ResourceFormulairePage() {
             summary: "",
             content: "",
             picture: undefined,
+            categories: [],
         },
     });
 
@@ -51,6 +56,7 @@ export default function ResourceFormulairePage() {
                 summary: resource.summary,
                 content: resource.description,
                 picture: undefined,
+                categories: resource.categories?.map(cat => cat.name) ?? [],
             });
             setExistingImageUrl(resource.pictureUrl);
         }
@@ -149,6 +155,8 @@ export default function ResourceFormulairePage() {
 
                                     <SummaryInput />
 
+                                    <CategorySelect categories={categories ?? []} loading={fetchCategories} />
+
                                     <ResourceImageUpload existingImageUrl={existingImageUrl} />
                                 </section>
 
@@ -187,6 +195,202 @@ export default function ResourceFormulairePage() {
                 </section>
             </div>
         </main>
+    );
+}
+
+interface CategorySelectProps {
+    categories: Array<{ name: string }>;
+    loading: boolean;
+}
+
+function CategorySelect({ categories, loading }: CategorySelectProps) {
+    const { control } = useFormContext<ResourceCreationPost>();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+
+    const filteredCategories = categories.filter(cat =>
+        cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <FormField
+            control={control}
+            name="categories"
+            render={({ field, fieldState }) => {
+                const selectedCategories = field.value ?? [];
+
+                const toggleCategory = (categoryName: string) => {
+                    const isSelected = selectedCategories.includes(categoryName);
+                    if (isSelected) {
+                        field.onChange(selectedCategories.filter(c => c !== categoryName));
+                    } else {
+                        field.onChange([...selectedCategories, categoryName]);
+                    }
+                };
+
+                const removeCategory = (categoryName: string) => {
+                    field.onChange(selectedCategories.filter(c => c !== categoryName));
+                };
+
+                const addNewCategory = () => {
+                    const trimmedSearch = searchTerm.trim();
+
+                    if (!trimmedSearch) return;
+
+                    // Vérifier si la catégorie n'est pas déjà sélectionnée
+                    const isAlreadySelected = selectedCategories.some(
+                        cat => cat.toLowerCase() === trimmedSearch.toLowerCase()
+                    );
+
+                    if (!isAlreadySelected) {
+                        field.onChange([...selectedCategories, trimmedSearch]);
+                        setSearchTerm("");
+                        setIsOpen(false);
+                    }
+                };
+
+                const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addNewCategory();
+                    }
+                };
+
+                const canAddNewCategory = searchTerm.trim() && !filteredCategories.some(
+                    cat => cat.name.toLowerCase() === searchTerm.trim().toLowerCase()
+                );
+
+                return (
+                    <FormItem>
+                        <div className="flex items-center gap-1 min-w-0">
+                            <FormLabel className="whitespace-nowrap">Catégories</FormLabel>
+                            <span className="inline-flex w-5 h-5 shrink-0 items-center justify-center">
+                                {fieldState.error ? (
+                                    <HoverInfoError message={fieldState.error.message ?? ""} />
+                                ) : (
+                                    <span className="w-5 h-5 invisible" aria-hidden="true" />
+                                )}
+                            </span>
+                        </div>
+
+                        <FormControl>
+                            <div className="space-y-2">
+                                {selectedCategories.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 p-2 border border-gt-border rounded-lg bg-gt-surface">
+                                        {selectedCategories.map(catName => {
+                                            const isExisting = categories.some(cat => cat.name === catName);
+                                            return (
+                                                <span
+                                                    key={catName}
+                                                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm ${
+                                                        isExisting
+                                                            ? 'bg-gt-primary/20 text-gt-text'
+                                                            : 'bg-green-500/20 text-gt-text border border-green-500/50'
+                                                    }`}
+                                                    title={isExisting ? catName : `Nouvelle catégorie: ${catName}`}
+                                                >
+                                                    {!isExisting && (
+                                                        <span className="text-xs bg-green-500/30 px-1.5 py-0.5 rounded-full">
+                                                            Nouveau
+                                                        </span>
+                                                    )}
+                                                    {catName}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeCategory(catName)}
+                                                        className="hover:text-red-500 transition-colors ml-1"
+                                                        aria-label={`Retirer ${catName}`}
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                <div className="relative flex gap-2">
+                                    <div className="relative flex-1">
+                                        <Input
+                                            type="text"
+                                            placeholder="Rechercher ou sélectionner des catégories..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            onKeyDown={handleKeyDown}
+                                            onFocus={() => setIsOpen(true)}
+                                            disabled={loading}
+                                        />
+
+                                        {isOpen && !loading && (
+                                            <>
+                                                <div
+                                                    className="fixed inset-0 z-10"
+                                                    onClick={() => setIsOpen(false)}
+                                                />
+                                                <div className="absolute z-20 w-full mt-1 max-h-60 overflow-y-auto border border-gt-border rounded-lg bg-gt-surface-elevated shadow-lg">
+                                                    {filteredCategories.length > 0 ? (
+                                                        filteredCategories.map(cat => {
+                                                            const isSelected = selectedCategories.includes(cat.name);
+                                                            return (
+                                                                <button
+                                                                    key={cat.name}
+                                                                    type="button"
+                                                                    onClick={() => toggleCategory(cat.name)}
+                                                                    className={`w-full text-left px-4 py-2 hover:bg-gt-primary/10 transition-colors flex items-center justify-between ${
+                                                                        isSelected ? 'bg-gt-primary/20' : ''
+                                                                    }`}
+                                                                >
+                                                                    <span className="text-gt-text">{cat.name}</span>
+                                                                    {isSelected && (
+                                                                        <span className="text-gt-primary">✓</span>
+                                                                    )}
+                                                                </button>
+                                                            );
+                                                        })
+                                                    ) : (
+                                                        <div className="px-4 py-2 text-gt-text-muted text-sm">
+                                                            {searchTerm.trim() ? (
+                                                                <span>
+                                                                    Aucune catégorie trouvée.
+                                                                    Appuyez sur <kbd className="px-1.5 py-0.5 text-xs bg-gt-surface border border-gt-border rounded">Entrée</kbd> ou cliquez sur <kbd className="px-1.5 py-0.5 text-xs bg-gt-surface border border-gt-border rounded">+</kbd> pour créer "{searchTerm.trim()}"
+                                                                </span>
+                                                            ) : (
+                                                                "Aucune catégorie trouvée"
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {loading && (
+                                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gt-primary"></div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {canAddNewCategory && (
+                                        <button
+                                            type="button"
+                                            onClick={addNewCategory}
+                                            className="px-4 py-2 bg-gt-primary hover:bg-gt-primary/90 text-white font-medium rounded-lg transition-colors flex items-center justify-center"
+                                            title={`Ajouter "${searchTerm.trim()}"`}
+                                            aria-label={`Ajouter la catégorie ${searchTerm.trim()}`}
+                                        >
+                                            <span className="text-xl leading-none">+</span>
+                                        </button>
+                                    )}
+                                </div>
+                                <p className="text-xs text-gt-text-muted">
+                                    Sélectionnez une ou plusieurs catégories. Vous pouvez aussi créer de nouvelles catégories en tapant leur nom et en appuyant sur Entrée ou sur le bouton +
+                                </p>
+                            </div>
+                        </FormControl>
+                    </FormItem>
+                );
+            }}
+        />
     );
 }
 

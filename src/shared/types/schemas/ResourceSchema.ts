@@ -22,6 +22,7 @@ export const ResourceCreationSchema = z.object({
         }, {
             message: "L'image doit être PNG, JPG ou JPEG",
         }),
+    categories: z.array(z.string()).optional(),
 });
 
 export type ResourceCreationPost = z.infer<typeof ResourceCreationSchema>;

@@ -1,4 +1,4 @@
-import type {LikeResponse, Resource} from "@/shared/types/resource.ts";
+import type {Category, LikeResponse, Resource} from "@/shared/types/resource.ts";
 import apiClient from "@/services/http/apiClient.ts";
 import type {ResourceCreationPost} from "@/shared/types/schemas/ResourceSchema.ts";
 
@@ -12,6 +12,12 @@ export async function getResource(slug: string): Promise<Resource> {
     const resource = await apiClient.get<Resource>(`/resources/${slug}`);
 
     return resource.data;
+}
+
+export async function getCategories(): Promise<Category[]> {
+    const response = await apiClient.get<Category[]>("/resourceCategories");
+
+    return response.data;
 }
 
 export async function existsBySlug(slug: string): Promise<boolean> {
