@@ -21,7 +21,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
 
     const navItems: NavItemType[] = [
         { name: 'Dashboard', icon: Home, path: '/dashboard' },
-        { name: 'Communauté', icon: Users, path: '/community' },
+        { name: 'Forum', icon: Users, path: '/forum' },
         { name: 'Ressources', icon: BookOpen, path: '/ressources' },
     ]
 
