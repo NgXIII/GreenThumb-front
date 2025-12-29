@@ -21,15 +21,20 @@ export const UserCreationSchema = z
             .regex(/^\d{10,}$/, "Veuillez encoder un numéro de téléphone valide"),
         terms: z.literal(true, "Vous devez accepter les conditions pour continuer"),
         avatar: z
-            .any()
+            .string()
             .optional()
-            .refine((file) => !file || file instanceof File, {
-                message: "Fichier invalide",
-                path: ["avatar"],
+            .refine((base64) => {
+                if (!base64) return true;
+                return base64.startsWith('data:image/');
+            }, {
+                message: "L'image doit être au format base64 valide"
             })
-            .refine((file?: File) => !file || allowedImageTypes.includes(file.type), {
-                message: "L'image doit être PNG, JPG ou JPEG",
-                path: ["avatar"],
+            .refine((base64) => {
+                if (!base64) return true;
+                const match = base64.match(/^data:image\/(png|jpeg|jpg);base64,/);
+                return match !== null;
+            }, {
+                message: "L'image doit être PNG, JPG ou JPEG"
             }),
     })
     .refine((data) => data.password === data.confirmPassword, {
