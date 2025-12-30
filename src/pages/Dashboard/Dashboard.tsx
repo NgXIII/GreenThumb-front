@@ -6,6 +6,7 @@ import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
 import PlantCards from "@/pages/Dashboard/PlantCards.tsx";
 import PlantTasks from "@/pages/Dashboard/PlantTasks.tsx";
 import AddPlantDialog from "@/pages/Dashboard/AddPlantDialog.tsx";
+import PlantDetails from "@/pages/Dashboard/PlantDetails.tsx";
 
 interface PlantListProps {
     username: string | undefined;
@@ -110,23 +111,7 @@ function PlantHealth({ plant }: { plant: Plant | null }) {
                         description="Clique sur une plante pour voir son état de santé"
                     />
                 ) : (
-                    <div className="space-y-4">
-                        <div className="flex items-start gap-4">
-                            <img
-                                src={plant.imageUrl}
-                                alt={plant.commonName}
-                                className="w-24 h-24 rounded-lg object-cover border-2 border-gt-border flex-shrink-0"
-                            />
-                            <div className="flex-1">
-                                <h3 className="text-2xl font-bold text-gt-text mb-1">
-                                    {plant.commonName}
-                                </h3>
-                                <p className="text-gt-text-muted italic">
-                                    {plant.scientificName}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    <PlantDetails plant={plant} />
                 )}
             </article>
         </section>
