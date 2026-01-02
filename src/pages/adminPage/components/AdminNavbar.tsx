@@ -52,9 +52,13 @@ export default function AdminNavbar({ onMenuClick }: AdminNavbarProps) {
 
                     <Link
                         to="/profil"
-                        className="w-9 h-9 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
+                        className="w-9 h-9 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover overflow-hidden"
                     >
-                        <User size={18} className="text-gt-primary-foreground" />
+                        {user?.avatar ? (
+                            <img src={user.avatar} alt="Photo de profil" className="w-full h-full object-cover" />
+                        ) : (
+                            <User size={18} className="text-gt-primary-foreground" />
+                        )}
                     </Link>
 
                     <button

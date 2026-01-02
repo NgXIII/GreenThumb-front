@@ -8,16 +8,18 @@ interface UserTableProps {
     onToggleActivation: (username: string, currentEnabled: boolean) => Promise<void>;
     onSoftDelete: (username: string) => Promise<void>;
     onHardDelete: (username: string) => Promise<void>;
-    onRestore: (username: string) => Promise<void>;
     actionLoading: string | null;
 }
 
 function UserStatusBadge({ user }: { user: AdminUserDto }) {
     if (user.deleted) {
         return (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                <Trash2 size={12} />
-                Supprimé
+            <span
+                className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border border-red-300 dark:border-red-700"
+                title="Compte désactivé définitivement. Données anonymisées. Aucune restauration possible."
+            >
+                <XCircle size={12} />
+                DÉSACTIVÉ • IRRÉVERSIBLE
             </span>
         );
     }
@@ -60,14 +62,12 @@ function TableRow({
     onToggleActivation,
     onSoftDelete,
     onHardDelete,
-    onRestore,
     actionLoading,
 }: {
     user: AdminUserDto;
     onToggleActivation: (username: string, currentEnabled: boolean) => Promise<void>;
     onSoftDelete: (username: string) => Promise<void>;
     onHardDelete: (username: string) => Promise<void>;
-    onRestore: (username: string) => Promise<void>;
     actionLoading: string | null;
 }) {
     return (
@@ -110,7 +110,6 @@ function TableRow({
                     onToggleActivation={onToggleActivation}
                     onSoftDelete={onSoftDelete}
                     onHardDelete={onHardDelete}
-                    onRestore={onRestore}
                     actionLoading={actionLoading}
                 />
             </td>
@@ -124,14 +123,12 @@ function UserCard({
     onToggleActivation,
     onSoftDelete,
     onHardDelete,
-    onRestore,
     actionLoading,
 }: {
     user: AdminUserDto;
     onToggleActivation: (username: string, currentEnabled: boolean) => Promise<void>;
     onSoftDelete: (username: string) => Promise<void>;
     onHardDelete: (username: string) => Promise<void>;
-    onRestore: (username: string) => Promise<void>;
     actionLoading: string | null;
 }) {
     return (
@@ -178,7 +175,6 @@ function UserCard({
                     onToggleActivation={onToggleActivation}
                     onSoftDelete={onSoftDelete}
                     onHardDelete={onHardDelete}
-                    onRestore={onRestore}
                     actionLoading={actionLoading}
                 />
             </div>
@@ -191,7 +187,6 @@ export default function UserTable({
     onToggleActivation,
     onSoftDelete,
     onHardDelete,
-    onRestore,
     actionLoading,
 }: UserTableProps) {
     return (
@@ -226,7 +221,6 @@ export default function UserTable({
                                 onToggleActivation={onToggleActivation}
                                 onSoftDelete={onSoftDelete}
                                 onHardDelete={onHardDelete}
-                                onRestore={onRestore}
                                 actionLoading={actionLoading}
                             />
                         ))}
@@ -243,7 +237,6 @@ export default function UserTable({
                         onToggleActivation={onToggleActivation}
                         onSoftDelete={onSoftDelete}
                         onHardDelete={onHardDelete}
-                        onRestore={onRestore}
                         actionLoading={actionLoading}
                     />
                 ))}
