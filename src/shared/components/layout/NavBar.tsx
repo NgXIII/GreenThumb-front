@@ -65,9 +65,13 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
 
                                 <Link
                                     to="/profil"
-                                    className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
+                                    className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover overflow-hidden"
                                 >
-                                    <User size={20} className="text-gt-primary-foreground" />
+                                    {user?.avatar ? (
+                                        <img src={user.avatar} alt="Photo de profil" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User size={20} className="text-gt-primary-foreground" />
+                                    )}
                                 </Link>
 
                                 <button className="flex items-center gap-2 text-gt-interactive hover:text-red-600 dark:hover:text-red-400 transition-colors" onClick={onLogout}>
