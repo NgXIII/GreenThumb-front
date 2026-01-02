@@ -1,24 +1,23 @@
 import type { RefObject } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Users, BookOpen, User, LogOut } from 'lucide-react'
+import { Home, Users, BookOpen, User, LogOut, Shield } from 'lucide-react'
 import { useOutsideToggle } from '../../hooks/useOutsideToggle'
 import LogoLink from './LogoLink'
 import NavItem from './NavItem'
 import ProfileMenu from './ProfileMenu'
 import ThemeToggle from './ThemeToggle'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
-import {useAuth} from "@/shared/hooks/useAuth.ts";
-import { useUserStore } from '@/app/stores/userStore.ts' // ajouté
-import resolveAvatar from '@/shared/utils/resolveAvatar.ts' // ajouté
+import {useAuth} from "@/shared/hooks/useAuth.ts"
+import {useUserStore} from "@/app/stores/userStore.ts"
 
 export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const location = useLocation()
     const navigate = useNavigate();
     const { logout } = useAuth()
+    const { user } = useUserStore()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)
 
-    // récupérer l'utilisateur (cohérent avec l'usage dans ProfilePage)
-    const { user } = useUserStore.getState()
+    const isAdmin = user?.role === 'ADMIN'
 
     const navItems: NavItemType[] = [
         { name: 'Dashboard', icon: Home, path: '/dashboard' },
@@ -55,19 +54,20 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                             <div className="flex items-center gap-2">
                                 <ThemeToggle />
 
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="flex items-center gap-2 px-3 py-2 rounded-full text-gt-interactive hover:bg-gt-surface-hover transition-colors"
+                                    >
+                                        <Shield size={20} />
+                                    </Link>
+                                )}
+
                                 <Link
                                     to="/profil"
-                                    className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
+                                    className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover"
                                 >
-                                    {user?.avatar ? (
-                                        <img
-                                            src={resolveAvatar(user.avatar)}
-                                            alt={`${user?.username ?? 'user'} avatar`}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <User size={20} className="text-gt-primary-foreground" />
-                                    )}
+                                    <User size={20} className="text-gt-primary-foreground" />
                                 </Link>
 
                                 <button className="flex items-center gap-2 text-gt-interactive hover:text-red-600 dark:hover:text-red-400 transition-colors" onClick={onLogout}>
@@ -94,6 +94,10 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                         {navItems.map((item) => (
                             <NavItem key={item.name} name={item.name} icon={item.icon} path={item.path} active={isActive(item.path)} compact size={24} />
                         ))}
+
+                        {isAdmin && (
+                            <NavItem name="Admin" icon={Shield} path="/admin" active={isActive('/admin')} compact size={24} />
+                        )}
 
                         <ProfileMenu
                             refProp={profileRef as unknown as RefObject<HTMLDivElement>}

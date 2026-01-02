@@ -112,12 +112,12 @@ export default function LoginForm() {
                         )}
                     />
 
-                    <a
-                        href="#"
+                    <Link
+                        to="forgetPassword"
                         className="text-xs text-gt-text-accent hover:underline hover:text-gt-primary transition-colors"
                     >
                         Mot de passe oublié ?
-                    </a>
+                    </Link>
                 </div>
 
                 <SubmitButton isSubmitting={isSubmitting}/>

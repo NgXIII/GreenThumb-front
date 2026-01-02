@@ -80,6 +80,7 @@ export default function ProfilePage(){
 
             if (values.avatar instanceof File) {
                 avatarBase64 = await fileToBase64(values.avatar)
+                console.log(avatarBase64)
                 values.avatar = avatarBase64
             }
 
@@ -109,9 +110,6 @@ export default function ProfilePage(){
     const previewAvatar = avatarValue instanceof File
         ? URL.createObjectURL(avatarValue)
         : avatarValue || ''
-
-    console.log(form.formState.isValid)
-    console.log(form.getValues())
 
     return (
         <main className="min-h-screen bg-gt-surface border-gt-light-grey py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
@@ -321,7 +319,7 @@ const Biography = ({ user, isEditMode }: BiographyProps) => (
                 name="biography"
                 inputType="textarea"
                 label="Biographie"
-                placeholder="Votre biographie"
+                placeholder="Parlez de vous..."
             />
         ) : (
             <div className="flex items-start gap-3 p-4 bg-gt-surface rounded-lg">
