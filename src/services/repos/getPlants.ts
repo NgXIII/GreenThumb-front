@@ -24,6 +24,14 @@ export async function getCountTask(username: string | undefined): Promise<number
     return response.data;
 }
 
+export async function getMessagesCount(username: string | undefined): Promise<number> {
+    checkUsername(username);
+
+    const response = await apiClient.get<number>(`/users/${username}/messages/count`);
+
+    return response.data;
+}
+
 export async function searchPlants(query: string, page: number = 1): Promise<PlantSearchPage> {
     const response = await apiClient.get<PlantSearchPage>('/plants/search', {
         params: {

@@ -7,6 +7,7 @@ interface PlantCardsProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
+    refreshKey?: number;
 }
 
 interface PlantCardProps {
@@ -15,7 +16,7 @@ interface PlantCardProps {
     isSelected: boolean;
 }
 
-export default function PlantCards({ username, setSelectedPlant, selectedPlant }: PlantCardsProps) {
+export default function PlantCards({ username, setSelectedPlant, selectedPlant, refreshKey = 0 }: PlantCardsProps) {
     const [page, setPage] = useState(0);
 
     const {
@@ -23,7 +24,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
         totalPages,
         loading,
         error
-    } = usePlant(username, page, 5);
+    } = usePlant(username, page, 5, refreshKey);
 
     if (loading) {
         return (

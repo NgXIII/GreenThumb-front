@@ -17,12 +17,8 @@ import {AxiosError} from "axios";
 import {useEditUser} from "@/shared/hooks/useUser.ts";
 import {useUserStore} from "@/app/stores/userStore.ts";
 import {useNavigate} from "react-router-dom";
-
-const mockStats: Stat = {
-    plants: 15,
-    tasksCompleted: 3,
-    discussions: 4
-}
+import usePlant from "@/shared/hooks/usePlant.ts";
+import useMessagesCount from "@/shared/hooks/useMessagesCount.ts";
 
 type ProfileHeaderProps = {
     user: UserAccount | null
@@ -48,9 +44,22 @@ type StatsProps = {
 }
 
 export default function ProfilePage(){
-    const { user } = useUserStore.getState();
+    const user = useUserStore((state) => state.user);
     const [isEditMode, setEditMode] = useState<boolean>(false)
     const { editUser } = useEditUser();
+
+    // Récupérer le nombre total de plantes
+    const { totalElements: plantsCount } = usePlant(user?.username, 0, 1);
+
+    // Récupérer le nombre de messages postés
+    const { count: messagesCount } = useMessagesCount(user?.username);
+
+    // Statistiques basées sur les vraies données
+    const stats: Stat = {
+        plants: plantsCount,
+        tasksCompleted: user?.tasksCompleted ?? 0,
+        discussions: messagesCount
+    };
 
     const form = useForm<UserEditPost>({
         resolver: zodResolver(UserEditSchema),
@@ -151,7 +160,7 @@ export default function ProfilePage(){
                 {/* Section Confidentialité */}
                 <PrivacySection />
 
-                <Stats stats={mockStats} />
+                <Stats stats={stats} />
             </div>
         </main>
     )

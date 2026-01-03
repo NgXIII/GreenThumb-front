@@ -1,6 +1,6 @@
 import {useUserStore} from "@/app/stores/userStore.ts";
 import type {Plant} from "@/shared/types/plant.ts";
-import {useState} from "react";
+import {useState, useCallback} from "react";
 import useCountTask from "@/shared/hooks/useTaskCount.ts";
 import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
 import PlantCards from "@/pages/Dashboard/PlantCards.tsx";
@@ -12,12 +12,29 @@ interface PlantListProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
+    refreshKey: number;
 }
 
 export default function Dashboard() {
-    const { user } = useUserStore.getState();
+    const { user, incrementTasksCompleted } = useUserStore();
     const { count } = useCountTask(user?.username);
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const handleTaskCompleted = useCallback(() => {
+        // Incrémenter le compteur de tâches complétées dans le store
+        incrementTasksCompleted();
+        // Forcer le rafraîchissement des plantes
+        setRefreshKey(prev => prev + 1);
+        // Mettre à jour la plante sélectionnée (les tâches ont changé)
+        setSelectedPlant(prev => {
+            if (prev) {
+                // Retirer la tâche de la liste locale
+                return { ...prev, tasks: prev.tasks?.filter(t => t.id !== undefined) ?? [] };
+            }
+            return prev;
+        });
+    }, [incrementTasksCompleted]);
 
     return (
         <main className="min-h-screen bg-gt-surface p-6">
@@ -43,6 +60,7 @@ export default function Dashboard() {
                             username={user?.username}
                             setSelectedPlant={setSelectedPlant}
                             selectedPlant={selectedPlant}
+                            refreshKey={refreshKey}
                         />
                     </article>
 
@@ -51,7 +69,7 @@ export default function Dashboard() {
                         style={{ animationDelay: '0.3s' }}
                     >
                         <PlantHealth plant={selectedPlant} />
-                        <PlantTasks plant={selectedPlant} />
+                        <PlantTasks plant={selectedPlant} onTaskCompleted={handleTaskCompleted} />
                     </article>
                 </section>
             </div>
@@ -72,7 +90,7 @@ export default function Dashboard() {
     );
 }
 
-function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps) {
+function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: PlantListProps) {
     return (
         <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             <header className="bg-gt-primary p-4">
@@ -86,6 +104,7 @@ function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps
                     username={username}
                     setSelectedPlant={setSelectedPlant}
                     selectedPlant={selectedPlant}
+                    refreshKey={refreshKey}
                 />
 
                 <AddPlantDialog />
