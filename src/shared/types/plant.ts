@@ -1,4 +1,5 @@
 export type Plant = {
+    slug: string,
     scientificName: string,
     commonName: string,
     imageUrl: string,

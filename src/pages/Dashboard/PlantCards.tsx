@@ -1,12 +1,13 @@
 import usePlant from "@/shared/hooks/usePlant.ts";
 import type {Plant} from "@/shared/types/plant.ts";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 
 interface PlantCardsProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
+    onRefreshReady?: (refresh: () => void) => void;
 }
 
 interface PlantCardProps {
@@ -15,15 +16,22 @@ interface PlantCardProps {
     isSelected: boolean;
 }
 
-export default function PlantCards({ username, setSelectedPlant, selectedPlant }: PlantCardsProps) {
+export default function PlantCards({ username, setSelectedPlant, selectedPlant, onRefreshReady }: PlantCardsProps) {
     const [page, setPage] = useState(0);
 
     const {
         plants,
         totalPages,
         loading,
-        error
+        error,
+        refresh
     } = usePlant(username, page, 5);
+
+    useEffect(() => {
+        if (onRefreshReady) {
+            onRefreshReady(refresh);
+        }
+    }, [onRefreshReady, refresh]);
 
     if (loading) {
         return (

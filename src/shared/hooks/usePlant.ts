@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {getPlants, postPlant, postPlantApi, searchPlants} from "@/services/repos/getPlants.ts";
+import {useEffect, useState, useCallback} from "react";
+import {getPlants, postPlant, postPlantApi, searchPlants, deletePlant} from "@/services/repos/getPlants.ts";
 import type {PlantPage, PlantSearchPage, PlantSearchResult} from "@/shared/types/plant.ts";
 import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 
@@ -8,6 +8,11 @@ export default function usePlant(username: string | undefined, page: number, siz
     const [plantsPage, setPlantsPage] = useState<PlantPage | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const refresh = useCallback(() => {
+        setRefreshKey(prev => prev + 1);
+    }, []);
 
     useEffect(() => {
         setLoading(true);
@@ -16,14 +21,15 @@ export default function usePlant(username: string | undefined, page: number, siz
             .then((response: PlantPage) => setPlantsPage(response))
             .catch(e => setError(e.message))
             .finally(() => setLoading(false));
-    }, [username, page, size]);
+    }, [username, page, size, refreshKey]);
 
     return {
         plants: plantsPage?.content ?? [],
         totalPages: plantsPage?.totalPages ?? 0,
         currentPage: plantsPage?.number ?? 0,
         error,
-        loading
+        loading,
+        refresh
     };
 }
 
@@ -158,6 +164,45 @@ export function useCreatePlantApi() {
 
     return {
         createPlantApi,
+        isLoading,
+        error,
+        clearError
+    };
+}
+
+export function useDeletePlant() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const removePlant = async (slug: string): Promise<boolean> => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            await deletePlant(slug);
+            return true;
+        } catch (error: unknown) {
+            console.error("Erreur lors de la suppression de la plante:", error);
+
+            if ((error as any).response?.status === 404) {
+                setError("Plante introuvable.");
+            } else if ((error as any).response?.status === 403) {
+                setError("Vous n'avez pas le droit de supprimer cette plante.");
+            } else if ((error as any).code === 'ERR_NETWORK') {
+                setError("Impossible de se connecter au serveur. Veuillez vérifier que le backend est lancé.");
+            } else {
+                setError("Une erreur est survenue lors de la suppression de la plante. Veuillez réessayer.");
+            }
+            return false;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const clearError = () => setError(null);
+
+    return {
+        removePlant,
         isLoading,
         error,
         clearError

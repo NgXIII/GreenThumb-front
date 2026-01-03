@@ -1,6 +1,6 @@
 import {useUserStore} from "@/app/stores/userStore.ts";
 import type {Plant} from "@/shared/types/plant.ts";
-import {useState} from "react";
+import {useState, useCallback} from "react";
 import useCountTask from "@/shared/hooks/useTaskCount.ts";
 import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
 import PlantCards from "@/pages/Dashboard/PlantCards.tsx";
@@ -12,12 +12,25 @@ interface PlantListProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
+    onRefreshReady: (refresh: () => void) => void;
 }
 
 export default function Dashboard() {
     const { user } = useUserStore.getState();
     const { count } = useCountTask(user?.username);
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
+    const [refreshPlantsCallback, setRefreshPlantsCallback] = useState<(() => void) | null>(null);
+
+    const handleRefreshReady = useCallback((refresh: () => void) => {
+        setRefreshPlantsCallback(() => refresh);
+    }, []);
+
+    const handlePlantDeleted = useCallback(() => {
+        setSelectedPlant(null);
+        if (refreshPlantsCallback) {
+            refreshPlantsCallback();
+        }
+    }, [refreshPlantsCallback]);
 
     return (
         <main className="min-h-screen bg-gt-surface p-6">
@@ -43,6 +56,7 @@ export default function Dashboard() {
                             username={user?.username}
                             setSelectedPlant={setSelectedPlant}
                             selectedPlant={selectedPlant}
+                            onRefreshReady={handleRefreshReady}
                         />
                     </article>
 
@@ -50,7 +64,7 @@ export default function Dashboard() {
                         className="lg:col-span-2 space-y-6 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
                         style={{ animationDelay: '0.3s' }}
                     >
-                        <PlantHealth plant={selectedPlant} />
+                        <PlantHealth plant={selectedPlant} onPlantDeleted={handlePlantDeleted} />
                         <PlantTasks plant={selectedPlant} />
                     </article>
                 </section>
@@ -72,7 +86,7 @@ export default function Dashboard() {
     );
 }
 
-function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps) {
+function PlantList({ username, setSelectedPlant, selectedPlant, onRefreshReady }: PlantListProps) {
     return (
         <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             <header className="bg-gt-primary p-4">
@@ -86,6 +100,7 @@ function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps
                     username={username}
                     setSelectedPlant={setSelectedPlant}
                     selectedPlant={selectedPlant}
+                    onRefreshReady={onRefreshReady}
                 />
 
                 <AddPlantDialog />
@@ -94,7 +109,7 @@ function PlantList({ username, setSelectedPlant, selectedPlant }: PlantListProps
     );
 }
 
-function PlantHealth({ plant }: { plant: Plant | null }) {
+function PlantHealth({ plant, onPlantDeleted }: { plant: Plant | null; onPlantDeleted: () => void }) {
     return (
         <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             <header className="bg-gt-primary p-4">
@@ -111,7 +126,7 @@ function PlantHealth({ plant }: { plant: Plant | null }) {
                         description="Clique sur une plante pour voir son état de santé"
                     />
                 ) : (
-                    <PlantDetails plant={plant} />
+                    <PlantDetails plant={plant} onPlantDeleted={onPlantDeleted} />
                 )}
             </article>
         </section>
