@@ -6,9 +6,11 @@ import LogoLink from './LogoLink'
 import NavItem from './NavItem'
 import ProfileMenu from './ProfileMenu'
 import ThemeToggle from './ThemeToggle'
+import { NotificationPanel } from '../notifications/NotificationPanel'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
 import {useAuth} from "@/shared/hooks/useAuth.ts"
 import {useUserStore} from "@/app/stores/userStore.ts"
+import resolveAvatar from "@/shared/utils/resolveAvatar.ts"
 
 export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const location = useLocation()
@@ -53,6 +55,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
 
                             <div className="flex items-center gap-2">
                                 <ThemeToggle />
+                                <NotificationPanel />
 
                                 {isAdmin && (
                                     <Link
@@ -68,7 +71,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                     className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover overflow-hidden"
                                 >
                                     {user?.avatar ? (
-                                        <img src={user.avatar} alt="Photo de profil" className="w-full h-full object-cover" />
+                                        <img src={resolveAvatar(user.avatar)} alt="Photo de profil" className="w-full h-full object-cover" />
                                     ) : (
                                         <User size={20} className="text-gt-primary-foreground" />
                                     )}
@@ -88,7 +91,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                     <div className="px-4 h-16 flex items-center justify-between">
                         <ThemeToggle size={18} />
                         <LogoLink />
-                        <div className="w-10" /> {/* Spacer for balance */}
+                        <NotificationPanel />
                     </div>
                 </div>
 

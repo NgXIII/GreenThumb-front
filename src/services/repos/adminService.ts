@@ -54,11 +54,6 @@ export async function hardDeleteUser(username: string): Promise<UserActionRespon
     return response.data;
 }
 
-export async function restoreUser(username: string): Promise<UserActionResponse> {
-    const response = await apiClient.patch<UserActionResponse>(`/admin/users/${username}/restore`);
-    return response.data;
-}
-
 export async function sendBulkEmail(data: BulkEmailRequest): Promise<BulkEmailResponse> {
     const response = await apiClient.post<BulkEmailResponse>(
         '/admin/users/communications/send-bulk-email',
