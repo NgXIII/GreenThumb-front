@@ -8,6 +8,7 @@ export type UserAccount = {
     biography: string | undefined
     messageCount: number
     tier: Tier
+    countCreatedThread: number
     role: string
 }
 

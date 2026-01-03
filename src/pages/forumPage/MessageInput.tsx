@@ -11,10 +11,11 @@ interface MessageInputProps {
   tier: Tier | undefined;
   channelName?: string;
   username?: string;
+  countCreatedThread?: number;
   onThreadCreated?: () => void;
 }
 
-export default function MessageInput({ selectedThread, role, tier, channelName, username, onThreadCreated}: MessageInputProps) {
+export default function MessageInput({ selectedThread, role, tier, channelName, username, countCreatedThread, onThreadCreated}: MessageInputProps) {
   const [messageInput, setMessageInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -58,7 +59,9 @@ export default function MessageInput({ selectedThread, role, tier, channelName, 
   };
 
   if (!selectedThread) {
-    if (role === 'ADMIN' || (tier && tier?.threadUnlocked > 0)) {
+    if (role !== 'UTILISATEUR' ||
+        (tier && countCreatedThread !== undefined && countCreatedThread < tier.threadUnlocked)
+    ) {
       return (
           <>
             <button

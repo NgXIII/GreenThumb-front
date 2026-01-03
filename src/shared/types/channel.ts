@@ -19,7 +19,6 @@ export type Thread = {
 
 export type ThreadPost = {
     title: string;
-    channelName: string;
     creator: string;
 }
 

@@ -102,6 +102,7 @@ export default function ForumPage() {
               tier={user?.tier}
               channelName={currentChannel?.name}
               username={user?.username}
+              countCreatedThread={user?.countCreatedThread}
               onThreadCreated={refetch}
             />
           </div>

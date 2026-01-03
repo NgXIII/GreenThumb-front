@@ -11,6 +11,6 @@ export async function postChannel(channel: ChannelPost): Promise<void> {
     await apiClient.post<ChannelPost>("/channels", channel);
 }
 
-export async function postThread(thread: ThreadPost): Promise<void> {
-    await apiClient.post<ThreadPost>("/threads", thread);
+export async function postThread(thread: ThreadPost, channelName: string): Promise<void> {
+    await apiClient.post<ThreadPost>(`/channels/${channelName}/threads`, thread);
 }
