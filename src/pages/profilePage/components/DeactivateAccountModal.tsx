@@ -12,7 +12,6 @@ import {
 } from "@/shared/components/ui/dialog"
 import { Button } from "@/shared/components/ui/button"
 import { useAuth } from "@/shared/hooks/useAuth"
-import { useUserStore } from "@/app/stores/userStore"
 import apiClient from "@/services/http/apiClient"
 
 interface DeactivateAccountModalProps {
@@ -28,7 +27,6 @@ export default function DeactivateAccountModal({
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
     const { logout } = useAuth()
-    const { user } = useUserStore()
 
     const handleClose = () => {
         setConfirmText("")

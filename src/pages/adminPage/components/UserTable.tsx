@@ -1,4 +1,4 @@
-import { Shield, User, Mail, CheckCircle, XCircle, Trash2 } from "lucide-react";
+import { Shield, User, Mail, CheckCircle, XCircle } from "lucide-react";
 import type { AdminUserDto } from "@/shared/types/admin";
 import UserActions from "./UserActions";
 import { cn } from "@/shared/lib/utils";
