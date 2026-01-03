@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Power, Trash2, RotateCcw, Loader2, AlertTriangle } from "lucide-react";
+import { Power, Trash2, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import ConfirmationModal from "./ConfirmationModal";
 import { cn } from "@/shared/lib/utils";
@@ -11,18 +11,16 @@ interface UserActionsProps {
     onToggleActivation: (username: string, currentEnabled: boolean) => Promise<void>;
     onSoftDelete: (username: string) => Promise<void>;
     onHardDelete: (username: string) => Promise<void>;
-    onRestore: (username: string) => Promise<void>;
     actionLoading: string | null;
 }
 
-type ModalType = "toggle" | "softDelete" | "hardDelete" | "restore" | null;
+type ModalType = "toggle" | "softDelete" | "hardDelete" | null;
 
 export default function UserActions({
     user,
     onToggleActivation,
     onSoftDelete,
     onHardDelete,
-    onRestore,
     actionLoading,
 }: UserActionsProps) {
     const [modalOpen, setModalOpen] = useState<ModalType>(null);
@@ -43,9 +41,6 @@ export default function UserActions({
                 break;
             case "hardDelete":
                 await onHardDelete(user.username);
-                break;
-            case "restore":
-                await onRestore(user.username);
                 break;
         }
         setModalOpen(null);
@@ -69,9 +64,17 @@ export default function UserActions({
                 };
             case "softDelete":
                 return {
-                    title: "Supprimer l'utilisateur",
-                    description: `Êtes-vous sûr de vouloir supprimer le compte de "${user.username}" ? Cette action peut être annulée.`,
-                    confirmLabel: "Supprimer",
+                    title: "Désactivation Définitive",
+                    description: `ATTENTION : Cette action est IRRÉVERSIBLE et définitive.
+
+Conséquences :
+• Données personnelles anonymisées à jamais
+• Impossible de se reconnecter
+• Contributions préservées mais anonymes
+• Aucune restauration possible
+
+Êtes-vous absolument certain de vouloir désactiver définitivement le compte de "${user.username}" ?`,
+                    confirmLabel: "Désactiver définitivement",
                     variant: "destructive",
                 };
             case "hardDelete":
@@ -80,13 +83,6 @@ export default function UserActions({
                     description: `ATTENTION : Cette action est IRRÉVERSIBLE. Toutes les données de "${user.username}" seront définitivement supprimées. Êtes-vous absolument certain ?`,
                     confirmLabel: "Supprimer définitivement",
                     variant: "destructive",
-                };
-            case "restore":
-                return {
-                    title: "Restaurer l'utilisateur",
-                    description: `Voulez-vous restaurer le compte de "${user.username}" ?`,
-                    confirmLabel: "Restaurer",
-                    variant: "default",
                 };
             default:
                 return {
@@ -161,25 +157,6 @@ export default function UserActions({
                             <Trash2 size={16} />
                         )}
                         <span className="hidden sm:inline">Supprimer</span>
-                    </Button>
-                )}
-
-                {/* Restore button - only for deleted users */}
-                {user.deleted && (
-                    <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => setModalOpen("restore")}
-                        disabled={isLoading}
-                        className="gap-1 bg-teal-600 hover:bg-teal-700 text-white"
-                        title="Restaurer"
-                    >
-                        {isLoading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                            <RotateCcw size={16} />
-                        )}
-                        <span className="hidden sm:inline">Restaurer</span>
                     </Button>
                 )}
 

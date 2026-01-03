@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { searchAdminUsers, toggleUserActivation, softDeleteUser, hardDeleteUser, restoreUser } from "@/services/repos/adminService";
+import { searchAdminUsers, toggleUserActivation, softDeleteUser, hardDeleteUser } from "@/services/repos/adminService";
 import type { AdminUserDto, AdminUserPage, UserStatusFilter, UserRoleFilter, UserEnabledFilter } from "@/shared/types/admin";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
@@ -28,7 +28,6 @@ interface UseAdminUsersReturn {
     handleToggleActivation: (username: string, currentEnabled: boolean) => Promise<void>;
     handleSoftDelete: (username: string) => Promise<void>;
     handleHardDelete: (username: string) => Promise<void>;
-    handleRestore: (username: string) => Promise<void>;
     actionLoading: string | null;
 }
 
@@ -109,11 +108,14 @@ export default function useAdminUsers(initialPage: number = 0, pageSize: number 
         setActionLoading(username);
         try {
             const response = await softDeleteUser(username);
-            toast.success(response.message);
+            toast.warning(response.message || "Compte désactivé DÉFINITIVEMENT. Données anonymisées.", {
+                description: "Cette action est irréversible.",
+                duration: 6000
+            });
             fetchUsers();
         } catch (e) {
             if (e instanceof AxiosError) {
-                toast.error(e.response?.data?.message || "Erreur lors de la suppression");
+                toast.error(e.response?.data?.message || "Erreur lors de la désactivation");
             }
         } finally {
             setActionLoading(null);
@@ -129,21 +131,6 @@ export default function useAdminUsers(initialPage: number = 0, pageSize: number 
         } catch (e) {
             if (e instanceof AxiosError) {
                 toast.error(e.response?.data?.message || "Erreur lors de la suppression définitive");
-            }
-        } finally {
-            setActionLoading(null);
-        }
-    };
-
-    const handleRestore = async (username: string) => {
-        setActionLoading(username);
-        try {
-            const response = await restoreUser(username);
-            toast.success(response.message);
-            fetchUsers();
-        } catch (e) {
-            if (e instanceof AxiosError) {
-                toast.error(e.response?.data?.message || "Erreur lors de la restauration");
             }
         } finally {
             setActionLoading(null);
@@ -172,7 +159,6 @@ export default function useAdminUsers(initialPage: number = 0, pageSize: number 
         handleToggleActivation,
         handleSoftDelete,
         handleHardDelete,
-        handleRestore,
         actionLoading
     };
 }

@@ -1,6 +1,7 @@
 import type {UserAccount} from "@/shared/types/user";
 import type {Stat} from "@/shared/types/stat";
 import {StatCard} from "./StatCard";
+import PrivacySection from "./components/PrivacySection";
 import {Mail, Phone, User, FileText, Lock, SquarePen} from "lucide-react";
 import {Button} from "@/shared/components/ui/button.tsx";
 import React, {useState} from "react";
@@ -146,6 +147,9 @@ export default function ProfilePage(){
                         )}
                     </form>
                 </Form>
+
+                {/* Section Confidentialité */}
+                <PrivacySection />
 
                 <Stats stats={mockStats} />
             </div>

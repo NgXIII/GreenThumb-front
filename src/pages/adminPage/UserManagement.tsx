@@ -50,7 +50,6 @@ export default function UserManagement() {
         handleToggleActivation,
         handleSoftDelete,
         handleHardDelete,
-        handleRestore,
         actionLoading,
     } = useAdminUsers(0, PAGE_SIZE);
 
@@ -327,7 +326,6 @@ export default function UserManagement() {
                         onToggleActivation={handleToggleActivation}
                         onSoftDelete={handleSoftDelete}
                         onHardDelete={handleHardDelete}
-                        onRestore={handleRestore}
                         actionLoading={actionLoading}
                     />
                 )}
