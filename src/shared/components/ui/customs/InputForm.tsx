@@ -41,7 +41,7 @@ export default function InputForm<T extends Record<string, unknown>>(
                     <FormControl>
                         {inputType == "textarea" ? (
                             <Textarea
-                                placeholder="Parlez-nous de vous..."
+                                placeholder={placeholder}
                                 className="min-h-[120px] resize-none"
                                 value={(field.value ?? "") as string}
                                 onChange={(e) => field.onChange(e.target.value)}
