@@ -6,6 +6,7 @@ import LogoLink from './LogoLink'
 import NavItem from './NavItem'
 import ProfileMenu from './ProfileMenu'
 import ThemeToggle from './ThemeToggle'
+import { NotificationPanel } from '../notifications/NotificationPanel'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
 import {useAuth} from "@/shared/hooks/useAuth.ts"
 import {useUserStore} from "@/app/stores/userStore.ts"
@@ -53,6 +54,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
 
                             <div className="flex items-center gap-2">
                                 <ThemeToggle />
+                                <NotificationPanel />
 
                                 {isAdmin && (
                                     <Link
@@ -88,7 +90,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                     <div className="px-4 h-16 flex items-center justify-between">
                         <ThemeToggle size={18} />
                         <LogoLink />
-                        <div className="w-10" /> {/* Spacer for balance */}
+                        <NotificationPanel />
                     </div>
                 </div>
 
