@@ -18,6 +18,7 @@ import {type PlantPost, PlantSchema} from "@/shared/types/schemas/plantSchema.ts
 import {useCreatePlant} from "@/shared/hooks/usePlant.ts";
 import { useEffect } from "react";
 import {useUserStore} from "@/app/stores/userStore.ts";
+import resolveAvatar from "@/shared/utils/resolveAvatar";
 
 export type CreateApiPlantFormProps = {
     selectedPlant: PlantSearchResult | undefined;
@@ -162,7 +163,7 @@ function PlantInfoSection({
                         <div className="bg-gt-surface-elevated p-4 rounded-md border border-gt-border">
                             <p className="text-sm text-gt-text-muted mb-2">Image de la plante*</p>
                             <img
-                                src={selectedPlant.imageUrl}
+                                src={resolveAvatar(selectedPlant.imageUrl)}
                                 alt={selectedPlant.commonName}
                                 className="w-full max-w-md h-48 object-cover rounded-md"
                             />

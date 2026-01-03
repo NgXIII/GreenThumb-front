@@ -2,6 +2,7 @@ import { Shield, User, Mail, CheckCircle, XCircle } from "lucide-react";
 import type { AdminUserDto } from "@/shared/types/admin";
 import UserActions from "./UserActions";
 import { cn } from "@/shared/lib/utils";
+import resolveAvatar from "@/shared/utils/resolveAvatar";
 
 interface UserTableProps {
     users: AdminUserDto[];
@@ -77,7 +78,7 @@ function TableRow({
                     <div className="w-10 h-10 rounded-full bg-gt-primary flex items-center justify-center flex-shrink-0">
                         {user.avatar ? (
                             <img
-                                src={user.avatar}
+                                src={resolveAvatar(user.avatar)}
                                 alt={user.username}
                                 className="w-10 h-10 rounded-full object-cover"
                             />
@@ -139,7 +140,7 @@ function UserCard({
                     <div className="w-12 h-12 rounded-full bg-gt-primary flex items-center justify-center flex-shrink-0">
                         {user.avatar ? (
                             <img
-                                src={user.avatar}
+                                src={resolveAvatar(user.avatar)}
                                 alt={user.username}
                                 className="w-12 h-12 rounded-full object-cover"
                             />

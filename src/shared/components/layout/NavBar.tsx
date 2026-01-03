@@ -10,6 +10,7 @@ import { NotificationPanel } from '../notifications/NotificationPanel'
 import type { NavBarProps, NavItemType } from '../../types/layout.ts'
 import {useAuth} from "@/shared/hooks/useAuth.ts"
 import {useUserStore} from "@/app/stores/userStore.ts"
+import resolveAvatar from "@/shared/utils/resolveAvatar.ts"
 
 export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const location = useLocation()
@@ -70,7 +71,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                     className="w-10 h-10 rounded-full flex items-center justify-center transition-colors bg-gt-primary hover:bg-gt-primary-hover overflow-hidden"
                                 >
                                     {user?.avatar ? (
-                                        <img src={user.avatar} alt="Photo de profil" className="w-full h-full object-cover" />
+                                        <img src={resolveAvatar(user.avatar)} alt="Photo de profil" className="w-full h-full object-cover" />
                                     ) : (
                                         <User size={20} className="text-gt-primary-foreground" />
                                     )}
