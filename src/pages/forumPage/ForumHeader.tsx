@@ -17,6 +17,7 @@ export default function ForumHeader({
   onBackToThreads
 }: ForumHeaderProps) {
   return (
+    <>
     <div className="h-16 border-b border-gt-border/50 bg-gt-surface-elevated/80 backdrop-blur-sm px-6 flex items-center justify-between shadow-sm">
       <div className="flex items-center gap-4">
         {/* Sidebar Toggle */}
@@ -80,10 +81,8 @@ export default function ForumHeader({
         <button className="p-2.5 rounded-xl hover:bg-gt-surface/70 transition-all group">
           <Search className="w-5 h-5 text-gt-text-muted group-hover:text-gt-primary transition-colors"/>
         </button>
-        <button className="p-2.5 rounded-xl hover:bg-gt-surface/70 transition-all group">
-          <Users className="w-5 h-5 text-gt-text-muted group-hover:text-gt-primary transition-colors"/>
-        </button>
       </div>
     </div>
+    </>
   );
 }

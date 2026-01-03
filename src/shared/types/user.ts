@@ -6,7 +6,15 @@ export type UserAccount = {
     avatar: string | undefined
     phoneNumber: string
     biography: string | undefined
+    messageCount: number
+    tier: Tier
     role: string
+}
+
+export type Tier = {
+    name: string
+    messageRequired: number
+    threadUnlocked: number
 }
 
 export type UserAuthentification = {

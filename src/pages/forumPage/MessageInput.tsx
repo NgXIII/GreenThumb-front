@@ -1,16 +1,24 @@
 import { useRef, useState, useEffect, type ChangeEvent } from 'react';
 import { Send, Smile, Image as ImageIcon, X, Lock, Plus } from 'lucide-react';
 import EmojiPicker, { type EmojiClickData, Theme } from 'emoji-picker-react';
+import CreateThreadModal from "./CreateThreadModal.tsx";
 import type { Thread } from "@/shared/types/channel.ts";
+import type {Tier} from "@/shared/types/user.ts";
 
 interface MessageInputProps {
   selectedThread: Thread | null;
+  role: string | undefined;
+  tier: Tier | undefined;
+  channelName?: string;
+  username?: string;
+  onThreadCreated?: () => void;
 }
 
-export default function MessageInput({ selectedThread }: MessageInputProps) {
+export default function MessageInput({ selectedThread, role, tier, channelName, username, onThreadCreated}: MessageInputProps) {
   const [messageInput, setMessageInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
 
@@ -50,12 +58,34 @@ export default function MessageInput({ selectedThread }: MessageInputProps) {
   };
 
   if (!selectedThread) {
-    return (
-      <button className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-gt-primary to-gt-primary-dark hover:shadow-lg text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.02] active:scale-95 shadow-md">
-        <Plus className="w-5 h-5"/>
-        Créer un nouveau fil de discussion
-      </button>
-    );
+    if (role === 'ADMIN' || (tier && tier?.threadUnlocked > 0)) {
+      return (
+          <>
+            <button
+              onClick={() => setIsCreateThreadModalOpen(true)}
+              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-gt-primary to-gt-primary-dark hover:shadow-lg text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.02] active:scale-95 shadow-md"
+            >
+              <Plus className="w-5 h-5"/>
+              Créer un nouveau fil de discussion
+            </button>
+
+            {channelName && username && (
+              <CreateThreadModal
+                open={isCreateThreadModalOpen}
+                onOpenChange={setIsCreateThreadModalOpen}
+                channelName={channelName}
+                username={username}
+                onThreadCreated={onThreadCreated}
+              />
+            )}
+          </>
+      );
+    } else
+      return (
+          <div className="w-full flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-gt-primary to-gt-primary-dark hover:shadow-lg text-white rounded-xl text-sm font-semibold transition-all hover:scale-[1.02] active:scale-95 shadow-md">
+            Vous ne pouvez pas crée de file pour l'instant
+          </div>
+      );
   }
 
   if (selectedThread.isLocked) {

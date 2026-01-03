@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useCallback} from "react";
 import type {Channel} from "@/shared/types/channel.ts";
 import {getChannels} from "@/services/repos/channelRepo.ts";
 
@@ -7,13 +7,17 @@ export default function useGetChannels() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const fetchChannels = useCallback(() => {
         setLoading(true);
         getChannels()
             .then(channels => setChannels(channels))
             .catch(e => setError(e.message || "Une erreur est survenue"))
             .finally(() => setLoading(false));
-    }, [])
+    }, []);
 
-    return { channels, error, loading };
+    useEffect(() => {
+        fetchChannels();
+    }, [fetchChannels])
+
+    return { channels, error, loading, refetch: fetchChannels };
 }

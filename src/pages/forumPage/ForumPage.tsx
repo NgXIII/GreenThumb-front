@@ -6,6 +6,7 @@ import ForumHeader from "./ForumHeader.tsx";
 import ThreadListView from "./ThreadListView.tsx";
 import MessageListView from "./MessageListView.tsx";
 import MessageInput from "./MessageInput.tsx";
+import {useUserStore} from "@/app/stores/userStore.ts";
 
 export default function ForumPage() {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
@@ -13,8 +14,9 @@ export default function ForumPage() {
   const [expandedChannels, setExpandedChannels] = useState<Set<string>>(new Set());
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const hasInitialized = useRef(false);
+  const { user } = useUserStore.getState();
 
-  const { channels, error, loading } = useGetChannels();
+  const { channels, error, loading, refetch } = useGetChannels();
 
   const currentChannel = channels?.find((c) => c.name === selectedChannel) || channels?.[0];
 
@@ -61,16 +63,18 @@ export default function ForumPage() {
   return (
     <div className="flex bg-gradient-to-br from-gt-surface via-gt-surface to-gt-surface/95" style={{height: 'calc(100vh - 4rem)'}}>
       <Sidebar
-        isOpen={isSidebarOpen}
-        channels={channels}
-        loading={loading}
-        error={error}
-        selectedChannel={selectedChannel}
-        selectedThread={selectedThread}
-        expandedChannels={expandedChannels}
-        onSelectChannel={setSelectedChannel}
-        onSelectThread={handleSelectThread}
-        onToggleChannel={toggleChannel}
+          user={user}
+          isOpen={isSidebarOpen}
+          channels={channels}
+          loading={loading}
+          error={error}
+          selectedChannel={selectedChannel}
+          selectedThread={selectedThread}
+          expandedChannels={expandedChannels}
+          onSelectChannel={setSelectedChannel}
+          onSelectThread={handleSelectThread}
+          onToggleChannel={toggleChannel}
+          onChannelCreated={refetch}
       />
 
       <div className="flex-1 flex flex-col min-w-0">
@@ -92,7 +96,14 @@ export default function ForumPage() {
 
         <div className="p-6 border-t border-gt-border/50 bg-gt-surface-elevated/80 backdrop-blur-sm shadow-lg">
           <div className="max-w-4xl mx-auto">
-            <MessageInput selectedThread={selectedThread} />
+            <MessageInput
+              selectedThread={selectedThread}
+              role={user?.role}
+              tier={user?.tier}
+              channelName={currentChannel?.name}
+              username={user?.username}
+              onThreadCreated={refetch}
+            />
           </div>
         </div>
       </div>
