@@ -40,12 +40,10 @@ export type ChatMessage = {
     mediaUrls?: string[];
 }
 
-// Counter for generating unique temporary IDs
 let tempIdCounter = 0;
 
 export function chatMessageToMessage(chatMessage: ChatMessage): Message {
     return {
-        // Use actual ID if available, otherwise generate unique temporary ID
         idMessage: chatMessage.idMessage ?? -(Date.now() + tempIdCounter++),
         text: chatMessage.text,
         author: chatMessage.username,

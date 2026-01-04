@@ -22,6 +22,7 @@ export default function ForumPage() {
   const [tierUpgradeNotification, setTierUpgradeNotification] = useState<TierUpgradeNotification | null>(null)
 
   const hasInitialized = useRef(false);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const { user } = useUserStore();
 
   const { channels, error, loading, refetch } = useGetChannels();
@@ -40,6 +41,14 @@ export default function ForumPage() {
       hasInitialized.current = true;
     }
   }, [channels]);
+
+  // Bloquer le scroll du body sur cette page
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   useEffect(() => {
     setSelectedThread(null);
@@ -159,7 +168,7 @@ export default function ForumPage() {
 
   return (
       <>
-        <div className="flex bg-gradient-to-br from-gt-surface via-gt-surface to-gt-surface/95" style={{height: 'calc(100vh - 4rem)'}}>
+        <div className="flex bg-gradient-to-br from-gt-surface via-gt-surface to-gt-surface/95 overflow-hidden" style={{height: 'calc(100vh - 4rem)'}}>
           <Sidebar
               user={user}
               isOpen={isSidebarOpen}
@@ -184,9 +193,9 @@ export default function ForumPage() {
                 onBackToThreads={handleBackToThreads}
             />
 
-            <div className="flex-1 overflow-y-auto p-6">
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6">
               {selectedThread ? (
-                  <MessageListView messages={threadMessages} />
+                  <MessageListView messages={threadMessages} scrollContainerRef={messagesContainerRef} />
               ) : (
                   <ThreadListView threads={threads} onSelectThread={setSelectedThread} />
               )}
