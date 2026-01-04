@@ -15,10 +15,12 @@ import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
 import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
+import RequireSuperAdmin from "@/shared/components/layout/RequireSuperAdmin.tsx";
 import AdminLayout from "@/pages/adminPage/components/AdminLayout.tsx";
 import AdminDashboard from "@/pages/adminPage/AdminDashboard.tsx";
 import UserManagement from "@/pages/adminPage/UserManagement.tsx";
 import BulkEmail from "@/pages/adminPage/BulkEmail.tsx";
+import RoleManagement from "@/pages/adminPage/RoleManagement.tsx";
 import ForgetPasswordPage from "@/pages/forgetPassword/ForgetPasswordPage.tsx";
 import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 import ResetPassword from "@/pages/forgetPassword/ResetPassword.tsx";
@@ -165,6 +167,15 @@ const router = createBrowserRouter([
                     {
                         path: 'communications',
                         element: <BulkEmail />
+                    },
+                    {
+                        element: <RequireSuperAdmin />,
+                        children: [
+                            {
+                                path: 'roles',
+                                element: <RoleManagement />
+                            }
+                        ]
                     }
                 ]
             }

@@ -61,3 +61,31 @@ export async function sendBulkEmail(data: BulkEmailRequest): Promise<BulkEmailRe
     );
     return response.data;
 }
+
+export async function grantAdminRole(username: string): Promise<UserActionResponse> {
+    const response = await apiClient.patch<UserActionResponse>(
+        `/users/${username}/grant-admin`
+    );
+    return response.data;
+}
+
+export async function revokeAdminRole(username: string): Promise<UserActionResponse> {
+    const response = await apiClient.patch<UserActionResponse>(
+        `/users/${username}/revoke-admin`
+    );
+    return response.data;
+}
+
+export async function grantModeratorRole(username: string): Promise<UserActionResponse> {
+    const response = await apiClient.patch<UserActionResponse>(
+        `/users/${username}/grant-moderator`
+    );
+    return response.data;
+}
+
+export async function revokeModeratorRole(username: string): Promise<UserActionResponse> {
+    const response = await apiClient.patch<UserActionResponse>(
+        `/users/${username}/revoke-moderator`
+    );
+    return response.data;
+}

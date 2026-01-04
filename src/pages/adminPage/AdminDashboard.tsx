@@ -157,6 +157,30 @@ export default function AdminDashboard() {
                 </p>
             </div>
 
+            {/* Section: Super Admin - Gestion des rôles */}
+            {user?.role === "SUPER_ADMIN" && (
+                <section className="space-y-4">
+                    <SectionHeader
+                        title="Gestion des rôles (Super Admin)"
+                        description="Attribuez ou retirez les rôles d'administrateur et de modérateur aux utilisateurs"
+                        icon={Shield}
+                        iconColor="text-purple-600 dark:text-purple-400"
+                    />
+
+                    <div className="grid grid-cols-1 gap-4">
+                        <StatCard
+                            title="Gestion des rôles"
+                            icon={Shield}
+                            description="Gérez les permissions des utilisateurs en leur attribuant ou retirant les rôles d'administrateur et de modérateur"
+                            linkTo="/admin/roles"
+                            linkText="Gérer les rôles"
+                            iconColor="text-purple-600 dark:text-purple-400"
+                            iconBg="bg-purple-100 dark:bg-purple-900/30"
+                        />
+                    </div>
+                </section>
+            )}
+
             {/* Section: Gestion des Utilisateurs */}
             <section className="space-y-4">
                 <SectionHeader
