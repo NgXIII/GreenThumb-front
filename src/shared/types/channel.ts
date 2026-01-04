@@ -27,7 +27,8 @@ export type Message = {
     id: number;
     text: string;
     author: string;
-    createdAt: string;
+    timestamp: string;
+    mediaUrls?: string[];
 }
 
 export type ChatMessage = {
@@ -36,14 +37,20 @@ export type ChatMessage = {
     username: string;
     text: string;
     timestamp: string;
+    mediaUrls?: string[];
 }
+
+// Counter for generating unique temporary IDs
+let tempIdCounter = 0;
 
 export function chatMessageToMessage(chatMessage: ChatMessage): Message {
     return {
-        id: chatMessage.idMessage || Date.now(),
+        // Use actual ID if available, otherwise generate unique temporary ID
+        id: chatMessage.idMessage ?? -(Date.now() + tempIdCounter++),
         text: chatMessage.text,
         author: chatMessage.username,
-        createdAt: chatMessage.timestamp,
+        timestamp: chatMessage.timestamp,
+        mediaUrls: chatMessage.mediaUrls || [],
     }
 }
 
@@ -53,6 +60,7 @@ export function messageToChatMessage(message: Message, threadId: number): ChatMe
         idThread: threadId,
         username: message.author,
         text: message.text,
-        timestamp: message.createdAt
+        timestamp: message.timestamp,
+        mediaUrls: message.mediaUrls || [],
     }
 }

@@ -4,6 +4,8 @@ import EmojiPicker, { type EmojiClickData, Theme } from 'emoji-picker-react';
 import CreateThreadModal from "./CreateThreadModal.tsx";
 import type { Thread } from "@/shared/types/channel.ts";
 import type {Tier} from "@/shared/types/user.ts";
+import {toast} from "sonner";
+import {uploadForumImage} from "@/services/repos/forumMediaRepo.ts";
 
 interface MessageInputProps {
   selectedThread: Thread | null;
@@ -13,7 +15,7 @@ interface MessageInputProps {
   username?: string;
   countCreatedThread?: number;
   onThreadCreated?: () => void;
-  onSendMessage?: (text: string) => void;
+  onSendMessage?: (text: string, mediaUrls?: string[]) => void;
 }
 
 export default function MessageInput(
@@ -31,6 +33,8 @@ export default function MessageInput(
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
 
@@ -69,27 +73,46 @@ export default function MessageInput(
     }
   };
 
-  const handleSendMessage = () => {
-    if(!messageInput.trim() && !selectedImage) {
+  const handleSendMessage = async () => {
+    if (!messageInput.trim() && !selectedImage) {
       return;
     }
 
-    if(!onSendMessage) {
+    if (!onSendMessage) {
       return;
     }
 
-    if(!messageInput.trim()) {
+    if (!messageInput.trim() && selectedImage) {
+      toast.warning('Veuillez ajouter un message avec votre image');
       return;
     }
 
-    onSendMessage(messageInput.trim());
+    setIsUploading(true);
 
-    setMessageInput('');
-    handleRemoveImage();
+    try {
+      let imageUrl: string | undefined;
 
-    const textarea = document.querySelector('textarea');
-    if (textarea) {
-      textarea.style.height = 'auto';
+      if (selectedImage) {
+        toast.loading('Upload de l\'image en cours...', {id: 'upload-image'})
+
+        imageUrl = await uploadForumImage(selectedImage);
+
+        toast.success('Image uploadée avec succès', {id: 'upload-image'});
+      }
+
+      onSendMessage(messageInput.trim(), imageUrl ? [imageUrl] : undefined);
+
+      setMessageInput('');
+      handleRemoveImage();
+
+      const textarea = document.querySelector('textarea');
+      if (textarea) {
+        textarea.style.height = 'auto';
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de l\'upload de l\'image', {id: 'upload-image'});
+    } finally {
+      setIsUploading(false);
     }
   }
 
@@ -219,11 +242,20 @@ export default function MessageInput(
 
         <button
             onClick={handleSendMessage}
-            disabled={!messageInput.trim() && !selectedImage}
+            disabled={(!messageInput.trim() && !selectedImage) || isUploading}
             className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gt-primary to-gt-primary-dark hover:shadow-lg text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-md"
         >
-          <Send className="w-4 h-4"/>
-          Envoyer
+          {isUploading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
+                Upload...
+              </>
+          ) : (
+              <>
+                <Send className="w-4 h-4"/>
+                Envoyer
+              </>
+          )}
         </button>
       </div>
     </div>

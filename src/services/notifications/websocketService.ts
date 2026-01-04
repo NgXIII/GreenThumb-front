@@ -3,6 +3,7 @@ import SockJS from 'sockjs-client';
 import type { Notification } from '@/shared/types/notification';
 import { useAccountStore } from '@/app/stores/userStore';
 import type {ChatMessage} from "@/shared/types/channel.ts";
+import type {TierUpgradeNotification, UserStatsUpdate} from "@/shared/types/user.ts";
 
 type NotificationCallback = (notification: Notification) => void;
 type MessageCallback<T = unknown> = (message: T) => void;
@@ -12,10 +13,16 @@ interface Subscription {
     callback: MessageCallback<never>;
 }
 
+interface PendingSubscription<T = unknown> {
+    topic: string;
+    callback: MessageCallback<T>;
+}
+
 class WebSocketService {
     private client: Client | null = null;
     private subscriptions: Map<string, Subscription> = new Map();
     private notificationCallbacks: Set<NotificationCallback> = new Set();
+    private pendingSubscriptions: PendingSubscription[] = [];
     private reconnectAttempts = 0;
     private maxReconnectAttempts = 5;
     private reconnectDelay = 5000;
@@ -58,6 +65,16 @@ class WebSocketService {
                 console.log('WebSocket connected successfully');
                 this.isConnecting = false;
                 this.reconnectAttempts = 0;
+
+                // Process pending subscriptions
+                console.log(`Processing ${this.pendingSubscriptions.length} pending subscriptions...`);
+                const pending = [...this.pendingSubscriptions];
+                this.pendingSubscriptions = [];
+
+                pending.forEach(({ topic, callback }) => {
+                    console.log(`📌 Subscribing to pending topic: ${topic}`);
+                    this.subscribe(topic, callback);
+                });
             },
             onStompError: (frame) => {
                 console.error('WebSocket STOMP error:', frame.headers['message']);
@@ -80,8 +97,21 @@ class WebSocketService {
 
     public subscribe<T = unknown>(topic: string, callback: MessageCallback<T>): () => void {
         if (!this.client?.connected) {
-            console.warn(`Cannot subscribe to ${topic}: WebSocket not connected`);
-            return () => {}
+            console.warn(`⏳ WebSocket not connected, queueing subscription to ${topic}`);
+
+            // Check if already pending
+            const alreadyPending = this.pendingSubscriptions.some(sub => sub.topic === topic);
+            if (!alreadyPending) {
+                this.pendingSubscriptions.push({ topic, callback });
+            }
+
+            return () => {
+                // Remove from pending if unsubscribed before connection
+                const index = this.pendingSubscriptions.findIndex(sub => sub.topic === topic);
+                if (index !== -1) {
+                    this.pendingSubscriptions.splice(index, 1);
+                }
+            };
         }
 
         if (this.subscriptions.has(topic)) {
@@ -181,6 +211,7 @@ class WebSocketService {
                 subscription.stompSubscription.unsubscribe();
             });
             this.subscriptions.clear();
+            this.pendingSubscriptions = [];
 
             this.notificationCallbacks.clear();
 
@@ -208,6 +239,16 @@ class WebSocketService {
 
     public sendForumMessage(message: ChatMessage): void {
         this.publish('/app/forum/send', message);
+    }
+
+    public subscribeToUserStats(callback: (stats: UserStatsUpdate) => void): () => void {
+        const topic = '/user/queue/stats';
+        return this.subscribe<UserStatsUpdate>(topic, callback);
+    }
+
+    public subscribeToTierUpgrade(callback: (notification: TierUpgradeNotification) => void): () => void {
+        const topic = '/user/queue/tier-upgrade';
+        return this.subscribe<TierUpgradeNotification>(topic, callback);
     }
 }
 

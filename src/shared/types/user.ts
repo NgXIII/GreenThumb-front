@@ -27,3 +27,19 @@ export type UserConnection = {
     password: string
     rememberMe?: boolean
 }
+
+export type UserStatsUpdate = {
+    username: string
+    messageCount: number
+    tier: Tier
+    countCreatedThread: number
+}
+
+export interface TierUpgradeNotification {
+    type: 'TIER_UPGRADE';
+    tierName: string;
+    tierLevel: number;
+    threadsUnlocked: number;
+    messageRequired: number;
+    timestamp: string;
+}
