@@ -14,6 +14,7 @@ import { Button } from "@/shared/components/ui/button.tsx";
 import type {PlantSearchResult} from "@/shared/types/plant.ts";
 import {useCreatePlantApi, useSearchPlants} from "@/shared/hooks/usePlant.ts";
 import {toast} from "sonner";
+import resolveAvatar from "@/shared/utils/resolveAvatar";
 
 export default function AddPlantDialog() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -135,7 +136,7 @@ export default function AddPlantDialog() {
                                         }`}
                                     >
                                         <img
-                                            src={plant.imageUrl || '/placeholder-plant.png'}
+                                            src={resolveAvatar(plant.imageUrl) || '/placeholder-plant.png'}
                                             alt={plant.commonName || plant.scientificName}
                                             className="w-16 h-16 rounded-lg object-cover"
                                             onError={(e) => {

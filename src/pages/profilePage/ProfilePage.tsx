@@ -1,6 +1,7 @@
 import type {UserAccount} from "@/shared/types/user";
 import type {Stat} from "@/shared/types/stat";
 import {StatCard} from "./StatCard";
+import PrivacySection from "./components/PrivacySection";
 import {Mail, Phone, User, FileText, Lock, SquarePen} from "lucide-react";
 import {Button} from "@/shared/components/ui/button.tsx";
 import React, {useState} from "react";
@@ -80,6 +81,7 @@ export default function ProfilePage(){
 
             if (values.avatar instanceof File) {
                 avatarBase64 = await fileToBase64(values.avatar)
+                console.log(avatarBase64)
                 values.avatar = avatarBase64
             }
 
@@ -145,6 +147,9 @@ export default function ProfilePage(){
                         )}
                     </form>
                 </Form>
+
+                {/* Section Confidentialité */}
+                <PrivacySection />
 
                 <Stats stats={mockStats} />
             </div>
@@ -318,7 +323,7 @@ const Biography = ({ user, isEditMode }: BiographyProps) => (
                 name="biography"
                 inputType="textarea"
                 label="Biographie"
-                placeholder="Votre biographie"
+                placeholder="Parlez de vous..."
             />
         ) : (
             <div className="flex items-start gap-3 p-4 bg-gt-surface rounded-lg">

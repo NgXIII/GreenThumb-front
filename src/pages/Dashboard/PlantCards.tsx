@@ -22,7 +22,6 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
     const {
         plants,
         totalPages,
-        currentPage,
         loading,
         error
     } = usePlant(username, page, 5);
@@ -98,7 +97,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
             >
                 <button
                     className="p-2 rounded-lg bg-gt-surface border border-gt-border hover:bg-gt-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                    disabled={currentPage === 0}
+                    disabled={page === 0}
                     onClick={() => setPage(prev => prev - 1)}
                 >
                     <svg className="w-5 h-5 text-gt-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,7 +111,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
                             key={i}
                             onClick={() => setPage(i)}
                             className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                                i === currentPage
+                                i === page
                                     ? 'bg-gt-interactive w-6'
                                     : 'bg-gt-border hover:bg-gt-text-muted'
                             }`}
@@ -122,7 +121,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
 
                 <button
                     className="p-2 rounded-lg bg-gt-surface border border-gt-border hover:bg-gt-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                    disabled={currentPage + 1 >= totalPages}
+                    disabled={page + 1 >= totalPages}
                     onClick={() => setPage(prev => prev + 1)}
                 >
                     <svg className="w-5 h-5 text-gt-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">

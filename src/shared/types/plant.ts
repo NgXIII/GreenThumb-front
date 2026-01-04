@@ -1,17 +1,31 @@
-export type Task = {
-  title: string;
-  description: string;
-  endDate: string;
-  color: string;
-};
-
 export type Plant = {
-  scientificName: string;
-  commonName: string;
-  imageUrl: string;
-  description?: string; // ajouté pour éviter les cast `any`
-  tasks: Task[];
-};
+    scientificName: string,
+    commonName: string,
+    imageUrl: string,
+    description: string,
+    lifeCycle: string,
+    waterNeed: string,
+    lightLevel: string,
+    soilType: string,
+    soilPhMin: number,
+    soilPhMax: number,
+    temperatureMin: number,
+    temperatureMax: number,
+    humidityNeed: boolean,
+    bloomMonth: string,
+    petToxic: boolean,
+    humanToxic: boolean,
+    indoorFriendly: boolean,
+    tasks: Task[],
+}
+
+export type Task = {
+    title: string,
+    description: string,
+    endDate: string,
+    color: string,
+    statusDisplay: string,
+}
 
 export interface PlantPage {
   content: Plant[];

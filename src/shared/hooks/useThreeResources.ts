@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
-import type {Resource} from "../types/resource.ts";
+import type {HomeResource} from "../types/homeResource.ts";
 import {getThreeResources} from "@/services/repos/getThreeResources.ts";
 
 export default function useThreeResources() {
-    const [messages, setMessages] = useState<Resource[]>([]);
+    const [messages, setMessages] = useState<HomeResource[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
