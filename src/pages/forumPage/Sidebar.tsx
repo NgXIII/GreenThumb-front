@@ -83,12 +83,14 @@ export default function Sidebar({
               <TrendingUp className="w-3.5 h-3.5"/>
               Channels
             </h3>
-            <button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="p-1 rounded-lg hover:bg-gt-primary/10 transition-all group"
-            >
-              <Plus className="w-4 h-4 text-gt-text-muted group-hover:text-gt-primary transition-colors"/>
-            </button>
+              {user?.role == "ADMIN" && (
+                  <button
+                      onClick={() => setIsCreateModalOpen(true)}
+                      className="p-1 rounded-lg hover:bg-gt-primary/10 transition-all group"
+                  >
+                      <Plus className="w-4 h-4 text-gt-text-muted group-hover:text-gt-primary transition-colors"/>
+                  </button>
+              )}
           </div>
 
           <ChannelList

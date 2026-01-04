@@ -1,7 +1,8 @@
-import { MessageCircle, Image as ImageIcon, ExternalLink } from 'lucide-react';
+import {MessageCircle, Image as ImageIcon, ExternalLink, Flag} from 'lucide-react';
 import type { Message } from "@/shared/types/channel.ts";
 import { useState } from 'react';
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
+import ReportDialog from "@/pages/forumPage/ReportDialog.tsx";
 
 interface MessageListViewProps {
   messages: Message[];
@@ -9,6 +10,7 @@ interface MessageListViewProps {
 
 export default function MessageListView({ messages }: MessageListViewProps) {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+    const [reportingMessageId, setReportingMessageId] = useState<number | null>(null);
 
   if (messages.length === 0) {
     return (
@@ -36,7 +38,7 @@ export default function MessageListView({ messages }: MessageListViewProps) {
 
           return (
             <div
-              key={message.id}
+              key={message.idMessage}
               className="group relative animate-fadeIn"
               style={{ animationDelay: `${index * 30}ms` }}
             >
@@ -63,15 +65,26 @@ export default function MessageListView({ messages }: MessageListViewProps) {
                     </h4>
 
                     {/* Badge membre */}
-                    <span className="px-2.5 py-1 bg-gradient-to-r from-gt-primary/10 to-emerald-500/10 border border-gt-primary/20 text-gt-primary text-xs font-semibold rounded-lg">
-                      Membre
-                    </span>
+                      <span className="px-2.5 py-1 bg-gradient-to-r from-gt-primary/10 to-emerald-500/10 border border-gt-primary/20 text-gt-primary text-xs font-semibold rounded-lg">
+                          Membre
+                      </span>
 
                     {/* Timestamp */}
-                    <div className="flex items-center gap-2 text-xs text-gt-text-muted ml-auto">
-                      <span className="hidden sm:inline">{isToday ? "Aujourd'hui" : dateStr}</span>
-                      <span className="font-medium text-gt-primary">{timeStr}</span>
-                    </div>
+                      <div className="flex items-center gap-2 text-xs text-gt-text-muted">
+                          <span className="hidden sm:inline">{isToday ? "Aujourd'hui" : dateStr}</span>
+                          <span className="font-medium text-gt-primary">{timeStr}</span>
+                      </div>
+
+                      <button
+                          onClick={() => {
+                              setReportingMessageId(message.idMessage)
+                          }}
+                          className="ml-auto p-2 hover:bg-red-500/10 rounded-lg transition-all duration-200 group/report"
+                          title="Signaler ce message"
+                          aria-label="Signaler ce message"
+                      >
+                          <Flag className="w-4 h-4 text-gt-text-muted group-hover/report:text-red-500 transition-colors" />
+                      </button>
                   </div>
 
                   {/* Message Text */}
@@ -100,7 +113,7 @@ export default function MessageListView({ messages }: MessageListViewProps) {
                       }`}>
                         {message.mediaUrls.map((url, imgIndex) => (
                           <div
-                            key={`${message.id}-img-${imgIndex}`}
+                            key={`${message.idMessage}-img-${imgIndex}`}
                             className="relative group/img rounded-xl overflow-hidden border-2 border-gray-200/50 dark:border-gt-border/50 hover:border-gt-primary/60 transition-all duration-300 cursor-zoom-in shadow-md hover:shadow-xl hover:shadow-gt-primary/10"
                             onClick={() => setLightboxImage(url)}
                           >
@@ -155,6 +168,11 @@ export default function MessageListView({ messages }: MessageListViewProps) {
           />
         </div>
       )}
+
+        <ReportDialog
+            messageId={reportingMessageId}
+            onClose={() => setReportingMessageId(null)}
+        />
     </>
   );
 }

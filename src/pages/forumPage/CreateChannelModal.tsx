@@ -50,7 +50,7 @@ export default function CreateChannelModal({
             onOpenChange(false);
             onChannelCreated?.();
         } catch {
-            toast.error(error?.response?.data?.message);
+            toast.error(error?.response?.data);
         }
     };
 

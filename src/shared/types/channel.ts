@@ -24,7 +24,7 @@ export type ThreadPost = {
 }
 
 export type Message = {
-    id: number;
+    idMessage: number;
     text: string;
     author: string;
     timestamp: string;
@@ -46,7 +46,7 @@ let tempIdCounter = 0;
 export function chatMessageToMessage(chatMessage: ChatMessage): Message {
     return {
         // Use actual ID if available, otherwise generate unique temporary ID
-        id: chatMessage.idMessage ?? -(Date.now() + tempIdCounter++),
+        idMessage: chatMessage.idMessage ?? -(Date.now() + tempIdCounter++),
         text: chatMessage.text,
         author: chatMessage.username,
         timestamp: chatMessage.timestamp,
@@ -56,7 +56,7 @@ export function chatMessageToMessage(chatMessage: ChatMessage): Message {
 
 export function messageToChatMessage(message: Message, threadId: number): ChatMessage {
     return {
-        idMessage: message.id,
+        idMessage: message.idMessage,
         idThread: threadId,
         username: message.author,
         text: message.text,

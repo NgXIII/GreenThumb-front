@@ -10,12 +10,12 @@ type MessageCallback<T = unknown> = (message: T) => void;
 
 interface Subscription {
     stompSubscription: StompSubscription;
-    callback: MessageCallback<never>;
+    callback: MessageCallback<unknown>;
 }
 
-interface PendingSubscription<T = unknown> {
+interface PendingSubscription {
     topic: string;
-    callback: MessageCallback<T>;
+    callback: MessageCallback<unknown>;
 }
 
 class WebSocketService {
@@ -99,10 +99,12 @@ class WebSocketService {
         if (!this.client?.connected) {
             console.warn(`⏳ WebSocket not connected, queueing subscription to ${topic}`);
 
-            // Check if already pending
             const alreadyPending = this.pendingSubscriptions.some(sub => sub.topic === topic);
             if (!alreadyPending) {
-                this.pendingSubscriptions.push({ topic, callback });
+                this.pendingSubscriptions.push({
+                    topic,
+                    callback: callback as MessageCallback<unknown>
+                });
             }
 
             return () => {
@@ -121,7 +123,7 @@ class WebSocketService {
 
         const stompSubscription = this.client.subscribe(topic, (message: IMessage) => {
             try {
-                const data = JSON.parse(message.body);
+                const data = JSON.parse(message.body) as T;
                 callback(data);
             } catch (error) {
                 console.error(`Error parsing message from ${topic}:`, error);
@@ -130,7 +132,7 @@ class WebSocketService {
 
         this.subscriptions.set(topic, {
             stompSubscription,
-            callback
+            callback: callback as MessageCallback<unknown>
         });
 
         console.log(`✅ Subscribed to ${topic}`);
