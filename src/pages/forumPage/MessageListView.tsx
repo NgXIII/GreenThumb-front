@@ -1,4 +1,4 @@
-import {MessageCircle, Image as ImageIcon, ExternalLink, Flag} from 'lucide-react';
+import {MessageCircle, ExternalLink, Flag} from 'lucide-react';
 import type { Message } from "@/shared/types/channel.ts";
 import { useState, useEffect, type RefObject } from 'react';
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
@@ -42,9 +42,7 @@ export default function MessageListView({ messages, scrollContainerRef }: Messag
       <div className="space-y-4">
         {messages.map((message, index) => {
           const messageDate = new Date(message.timestamp);
-          const isToday = new Date().toDateString() === messageDate.toDateString();
           const timeStr = messageDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-          const dateStr = messageDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
           const userInfo = userMap.get(message.author);
 
           return (
