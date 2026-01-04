@@ -13,9 +13,20 @@ interface MessageInputProps {
   username?: string;
   countCreatedThread?: number;
   onThreadCreated?: () => void;
+  onSendMessage?: (text: string) => void;
 }
 
-export default function MessageInput({ selectedThread, role, tier, channelName, username, countCreatedThread, onThreadCreated}: MessageInputProps) {
+export default function MessageInput(
+    {
+        selectedThread,
+        role,
+        tier,
+        channelName,
+        username,
+        countCreatedThread,
+        onThreadCreated,
+        onSendMessage,
+    }: MessageInputProps) {
   const [messageInput, setMessageInput] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -57,6 +68,30 @@ export default function MessageInput({ selectedThread, role, tier, channelName, 
       fileInputRef.current.value = '';
     }
   };
+
+  const handleSendMessage = () => {
+    if(!messageInput.trim() && !selectedImage) {
+      return;
+    }
+
+    if(!onSendMessage) {
+      return;
+    }
+
+    if(!messageInput.trim()) {
+      return;
+    }
+
+    onSendMessage(messageInput.trim());
+
+    setMessageInput('');
+    handleRemoveImage();
+
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      textarea.style.height = 'auto';
+    }
+  }
 
   if (!selectedThread) {
     if (role !== 'UTILISATEUR' ||
@@ -132,6 +167,12 @@ export default function MessageInput({ selectedThread, role, tier, channelName, 
           target.style.height = 'auto';
           target.style.height = Math.min(target.scrollHeight, 200) + 'px';
         }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+          }
+        }}
       />
 
       <div className="flex items-center justify-between mt-3 pt-3 border-t border-gt-border/30">
@@ -177,8 +218,9 @@ export default function MessageInput({ selectedThread, role, tier, channelName, 
         </div>
 
         <button
-          disabled={!messageInput.trim() && !selectedImage}
-          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gt-primary to-gt-primary-dark hover:shadow-lg text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-md"
+            onClick={handleSendMessage}
+            disabled={!messageInput.trim() && !selectedImage}
+            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gt-primary to-gt-primary-dark hover:shadow-lg text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-md"
         >
           <Send className="w-4 h-4"/>
           Envoyer

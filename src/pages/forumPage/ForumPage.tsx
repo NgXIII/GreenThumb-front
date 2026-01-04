@@ -1,18 +1,22 @@
 import { useState, useRef, useEffect } from 'react';
 import useGetChannels from "@/shared/hooks/forum/useGetChannel.ts";
-import type { Thread } from "@/shared/types/channel.ts";
+import type { Thread, Message, ChatMessage } from "@/shared/types/channel.ts";
+import { chatMessageToMessage } from "@/shared/types/channel.ts";
 import Sidebar from "./Sidebar.tsx";
 import ForumHeader from "./ForumHeader.tsx";
 import ThreadListView from "./ThreadListView.tsx";
 import MessageListView from "./MessageListView.tsx";
 import MessageInput from "./MessageInput.tsx";
 import {useUserStore} from "@/app/stores/userStore.ts";
+import { websocketService } from "@/services/notifications/websocketService.ts";
+import {toast} from "sonner";
 
 export default function ForumPage() {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [expandedChannels, setExpandedChannels] = useState<Set<string>>(new Set());
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [threadMessages, setThreadMessages] = useState<Message[]>([]);
   const hasInitialized = useRef(false);
   const { user } = useUserStore.getState();
 
@@ -37,6 +41,52 @@ export default function ForumPage() {
     setSelectedThread(null);
   }, [selectedChannel]);
 
+  useEffect(() => {
+    console.log('🔌 Connexion au WebSocket...');
+    websocketService.connect();
+
+    return () => {
+      console.log('🔌 Déconnexion du WebSocket...');
+      websocketService.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedThread) {
+      setThreadMessages([]);
+      return;
+    }
+
+    console.log(`📡 Chargement des messages du thread #${selectedThread.id}...`);
+    setThreadMessages(selectedThread.messages || []);
+
+    console.log(`📡 Souscription au topic /topic/forum/${selectedThread.id}`);
+    const unsubscribe = websocketService.subscribeToThread(
+        selectedThread.id,
+        (chatMessage: ChatMessage) => {
+          console.log('📩 Nouveau message WebSocket reçu:', chatMessage);
+          const newMessage = chatMessageToMessage(chatMessage);
+
+          setThreadMessages((prevMessage) => {
+            const messageExists = prevMessage.some(msg => msg.id === newMessage.id);
+
+            if (messageExists) {
+              console.log('⚠️ Message déjà présent, doublon ignoré');
+              return prevMessage;
+            }
+
+            console.log('➕ Ajout du nouveau message à la liste');
+            return [...prevMessage, newMessage];
+          });
+        }
+    );
+
+    return () => {
+      console.log(`❌ Désouscription du topic /topic/forum/${selectedThread.id}`);
+      unsubscribe();
+    };
+  }, [selectedThread]);
+
   const toggleChannel = (channelName: string) => {
     const newExpanded = new Set(expandedChannels);
     if (newExpanded.has(channelName)) {
@@ -59,6 +109,36 @@ export default function ForumPage() {
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const handleSendMessage = (text: string) => {
+    if (!selectedThread) {
+      console.error('❌ Impossible d\'envoyer : aucun thread sélectionné');
+      return;
+    }
+
+    if (!user?.username) {
+      console.error('❌ Impossible d\'envoyer : utilisateur non connecté');
+      return;
+    }
+
+    const chatMessage: ChatMessage = {
+      idMessage: null,
+      idThread: selectedThread.id,
+      username: user.username,
+      text: text,
+      timestamp: new Date().toISOString(),
+    };
+
+    console.log('📤 Envoi du message via WebSocket:', chatMessage);
+
+    try {
+      websocketService.sendForumMessage(chatMessage);
+      console.log('✅ Message envoyé avec succès');
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'envoi du message:', error);
+      toast.error(error.message);
+    }
+  }
 
   return (
     <div className="flex bg-gradient-to-br from-gt-surface via-gt-surface to-gt-surface/95" style={{height: 'calc(100vh - 4rem)'}}>
@@ -88,7 +168,7 @@ export default function ForumPage() {
 
         <div className="flex-1 overflow-y-auto p-6">
           {selectedThread ? (
-            <MessageListView messages={selectedThread.messages || []} />
+            <MessageListView messages={threadMessages} />
           ) : (
             <ThreadListView threads={threads} onSelectThread={setSelectedThread} />
           )}
@@ -104,6 +184,7 @@ export default function ForumPage() {
               username={user?.username}
               countCreatedThread={user?.countCreatedThread}
               onThreadCreated={refetch}
+              onSendMessage={handleSendMessage}
             />
           </div>
         </div>
