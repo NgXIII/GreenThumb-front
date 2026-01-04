@@ -31,10 +31,10 @@ export type Task = {
 }
 
 export interface PlantPage {
-    content: Plant[];
-    totalPages: number;
-    totalElements: number;
-    number: number;
+  content: Plant[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
 }
 
 export type PlantSearchResult = {

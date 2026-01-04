@@ -4,7 +4,7 @@ import type {PlantPage, PlantSearchPage, PlantSearchResult} from "@/shared/types
 import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 
 
-export default function usePlant(username: string | undefined, page: number, size: number = 5, refreshKey: number = 0) {
+export default function usePlant(username: string | undefined, page: number, size: number = 5, search?: string, refreshKey: number = 0) {
     const [plantsPage, setPlantsPage] = useState<PlantPage | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -17,11 +17,11 @@ export default function usePlant(username: string | undefined, page: number, siz
 
         setLoading(true);
 
-        getPlants(username, page, size)
+        getPlants(username, page, size, search)
             .then((response: PlantPage) => setPlantsPage(response))
             .catch(e => setError(e.message))
             .finally(() => setLoading(false));
-    }, [username, page, size, refreshKey]);
+    }, [username, page, size, search, refreshKey]);
 
     return {
         plants: plantsPage?.content ?? [],
