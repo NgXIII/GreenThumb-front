@@ -28,6 +28,7 @@ import {combineLoaders} from "@/app/routes/combineLoaders.ts";
 import {articleLoader} from "@/app/routes/articleLoader.ts";
 import ResourceFormulairePage from "@/pages/Resource/formulaire/ResourceFormulairePage.tsx";
 import CreateApiPlantPage from "@/pages/plantCreationPage/CreateApiPlantPage.tsx";
+import ForumPage from "@/pages/forumPage/ForumPage.tsx";
 import PublicProfilePage from "@/pages/profilePage/PublicProfilePage.tsx";
 
 const router = createBrowserRouter([
@@ -87,6 +88,12 @@ const router = createBrowserRouter([
 
                         element: <ResourcePageDetail />
                     },
+                    {
+                        path: '/forum',
+                        loader: accountLoader,
+
+                        element: <ForumPage />
+                    },
                 ]
             },
             {
@@ -104,10 +111,6 @@ const router = createBrowserRouter([
                         element: <ResourceFormulairePage />
                     }
                 ]
-            },
-            {
-                path: '/community',
-                //element: <CommunautePage/>
             },
             {
                 path: "/legal-notice",
