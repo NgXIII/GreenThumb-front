@@ -28,6 +28,7 @@ import {combineLoaders} from "@/app/routes/combineLoaders.ts";
 import {articleLoader} from "@/app/routes/articleLoader.ts";
 import ResourceFormulairePage from "@/pages/Resource/formulaire/ResourceFormulairePage.tsx";
 import CreateApiPlantPage from "@/pages/plantCreationPage/CreateApiPlantPage.tsx";
+import PublicProfilePage from "@/pages/profilePage/PublicProfilePage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -58,6 +59,11 @@ const router = createBrowserRouter([
                         path: '/profil',
                         loader: accountLoader,
                         element: <ProfilePage />
+                    },
+                    {
+                        path: '/profil/:username',
+                        loader: accountLoader,
+                        element: <PublicProfilePage />
                     },
                     {
                         path: '/modification-mot-de-passe',
