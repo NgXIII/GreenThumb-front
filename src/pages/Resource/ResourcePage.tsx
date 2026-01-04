@@ -16,7 +16,6 @@ export default function ResourcePage() {
         window.scrollTo(0, 0);
     }, []);
 
-    // Extraire toutes les catégories uniques
     const allCategories = useMemo(() => {
         if (!resources) return [];
         const categoriesSet = new Set<string>();
@@ -28,7 +27,6 @@ export default function ResourcePage() {
         return Array.from(categoriesSet).sort();
     }, [resources]);
 
-    // Filtrer les ressources selon les catégories sélectionnées
     const filteredResources = useMemo(() => {
         if (!resources) return [];
         if (selectedCategories.length === 0) return resources;

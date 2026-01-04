@@ -8,6 +8,7 @@ interface PlantCardsProps {
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
     search?: string;
+    refreshKey?: number;
 }
 
 interface PlantCardProps {
@@ -16,7 +17,7 @@ interface PlantCardProps {
     isSelected: boolean;
 }
 
-export default function PlantCards({ username, setSelectedPlant, selectedPlant, search }: PlantCardsProps) {
+export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, refreshKey = 0 }: PlantCardsProps) {
     const [page, setPage] = useState(0);
 
     // Réinitialiser la page à 0 quand la recherche change
@@ -29,7 +30,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
         totalPages,
         loading,
         error
-    } = usePlant(username, page, 5, search);
+    } = usePlant(username, page, 5, search, refreshKey);
 
     if (loading) {
         return (
