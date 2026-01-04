@@ -1,6 +1,6 @@
 import usePlant from "@/shared/hooks/usePlant.ts";
 import type { Plant } from "@/shared/types/plant.ts";
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 
 interface PlantCardsProps {
@@ -19,25 +19,17 @@ interface PlantCardProps {
 export default function PlantCards({ username, setSelectedPlant, selectedPlant, search }: PlantCardsProps) {
     const [page, setPage] = useState(0);
 
+    // Réinitialiser la page à 0 quand la recherche change
+    useEffect(() => {
+        setPage(0);
+    }, [search]);
+
     const {
         plants,
         totalPages,
         loading,
         error
-    } = usePlant(username, page, 5);
-
-    const normalizedQuery = (search ?? "").trim().toLowerCase();
-
-    const filteredPlants = useMemo(() => {
-        if (!normalizedQuery) return plants;
-        return plants.filter((p) => {
-            const common = p.commonName ?? "";
-            const sci = p.scientificName ?? "";
-            const desc = p.description ?? "";
-            const haystack = `${common} ${sci} ${desc}`.toLowerCase();
-            return haystack.includes(normalizedQuery);
-        });
-    }, [plants, normalizedQuery]);
+    } = usePlant(username, page, 5, search);
 
     if (loading) {
         return (
@@ -55,7 +47,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
         );
     }
 
-    if (plants.length === 0 && !normalizedQuery) {
+    if (plants.length === 0 && !search) {
         return (
             <div className="text-center py-8 text-gt-text-muted">
                 Aucune plante pour le moment
@@ -63,11 +55,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
         );
     }
 
-    console.log(plants.map((plant: Plant) => {
-        console.log(plant.imageUrl);
-    }))
-
-    if (normalizedQuery && filteredPlants.length === 0) {
+    if (search && plants.length === 0) {
         return (
             <div className="text-center py-8 text-gt-text-muted">
                 Aucune plante trouvée pour « {search} »
@@ -77,7 +65,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
 
     return (
         <div className="space-y-3">
-            {filteredPlants.map((plant, index) => (
+            {plants.map((plant, index) => (
                 <div
                     key={index}
                     className="opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
@@ -93,7 +81,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
 
             <div
                 className="flex items-center justify-center gap-2 pt-4 opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
-                style={{ animationDelay: `${0.1 + (filteredPlants.length || plants.length) * 0.1}s` }}
+                style={{ animationDelay: `${0.1 + plants.length * 0.1}s` }}
             >
                 <button
                     className="p-2 rounded-lg bg-gt-surface border border-gt-border hover:bg-gt-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"

@@ -5,12 +5,18 @@ import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 export async function getPlants(
     username: string | undefined,
     page: number,
-    size: number
+    size: number,
+    search?: string
     ){
     checkUsername(username);
 
+    const params: Record<string, unknown> = { page, size };
+    if (search && search.trim()) {
+        params.search = search.trim();
+    }
+
     const response = await apiClient.get<PlantPage>(`/users/${username}/plants`, {
-        params: { page, size }
+        params
     });
 
     return response.data;
