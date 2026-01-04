@@ -10,3 +10,8 @@ export async function patchEditPassword(oldUsername: string | undefined, data: P
     const response = await apiClient.patch<{ message: string }>(`/users/${oldUsername}/password`, data)
     return response.data
 }
+
+export async function patchUserPrivacy(username: string, isPrivate: boolean): Promise<{ message: string }> {
+    const response = await apiClient.patch<{ message: string }>(`/users/${username}/privacy`, { isPrivate })
+    return response.data
+}

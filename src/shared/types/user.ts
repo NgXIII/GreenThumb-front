@@ -7,6 +7,7 @@ export type UserAccount = {
     phoneNumber: string
     biography: string | undefined
     role: string
+    isPrivate: boolean
 }
 
 export type UserAuthentification = {
