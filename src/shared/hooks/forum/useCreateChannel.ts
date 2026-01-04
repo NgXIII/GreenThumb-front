@@ -2,10 +2,11 @@ import { useState } from "react";
 import { postChannel } from "@/services/repos/channelRepo";
 import type {ChannelPost} from "@/shared/types/channel";
 import {AxiosError} from "axios";
+import type {ApiError} from "@/shared/types/api";
 
 export function useCreateChannel() {
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<AxiosError<AxiosError> | null>(null);
+    const [error, setError] = useState<AxiosError<ApiError> | null>(null);
 
     const createChannel = async (channel: ChannelPost) => {
         setIsLoading(true);

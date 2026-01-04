@@ -4,10 +4,11 @@ import type { ThreadPost } from "@/shared/types/channel";
 import { AxiosError } from "axios";
 import {getAuthenticate} from "@/services/auth/getAuthentification.ts";
 import {useUserStore} from "@/app/stores/userStore.ts";
+import type {ApiError} from "@/shared/types/api";
 
 export function useCreateThread() {
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<AxiosError<AxiosError> | null>(null);
+    const [error, setError] = useState<AxiosError<ApiError> | null>(null);
     const { setUser } = useUserStore();
 
     const createThread = async (thread: ThreadPost, channelName: string) => {

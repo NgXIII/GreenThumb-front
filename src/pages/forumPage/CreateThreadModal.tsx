@@ -56,7 +56,7 @@ export default function CreateThreadModal({
             onThreadCreated?.();
             toast.success("Thread créé avec succès !");
         } catch {
-            toast.error(error?.response?.data?.message || "Erreur lors de la création du thread");
+            toast.error(error?.response?.data?.message || error?.response?.data?.error || "Erreur lors de la création du thread");
         }
     };
 

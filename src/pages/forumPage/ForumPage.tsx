@@ -91,7 +91,7 @@ export default function ForumPage() {
           const newMessage = chatMessageToMessage(chatMessage);
 
           setThreadMessages((prevMessage) => {
-            const messageExists = prevMessage.some(msg => msg.id === newMessage.id);
+            const messageExists = prevMessage.some(msg => msg.idMessage === newMessage.idMessage);
 
             if (messageExists) {
               return prevMessage;
