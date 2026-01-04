@@ -19,7 +19,7 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const { user } = useUserStore()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)
 
-    const isAdmin = user?.role === 'ADMIN'
+    const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN'
 
     const navItems: NavItemType[] = [
         { name: 'Dashboard', icon: Home, path: '/dashboard' },
