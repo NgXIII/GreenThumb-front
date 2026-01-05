@@ -2,9 +2,10 @@ import {useEffect, useState, useCallback} from "react";
 import {getPlants, postPlant, postPlantApi, searchPlants, deletePlant} from "@/services/repos/getPlants.ts";
 import type {PlantPage, PlantSearchPage, PlantSearchResult} from "@/shared/types/plant.ts";
 import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
+import {AxiosError} from "axios";
 
 
-export default function usePlant(username: string | undefined, page: number, size: number = 5, search?: string, refreshKey: number = 0) {
+export default function usePlant(username: string | undefined, page: number, size: number = 5, search?: string) {
     const [plantsPage, setPlantsPage] = useState<PlantPage | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -72,10 +73,14 @@ export function useSearchPlants() {
             setTotalPages(0);
             setTotalElements(0);
 
-            if ((error as any).response?.status === 503) {
-                setError("Le service de recherche de plantes est temporairement indisponible. Veuillez vérifier que le backend est lancé.");
-            } else if ((error as any).code === 'ERR_NETWORK') {
-                setError("Impossible de se connecter au serveur. Veuillez vérifier votre connexion et que le backend est lancé.");
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 503) {
+                    setError("Le service de recherche de plantes est temporairement indisponible. Veuillez vérifier que le backend est lancé.");
+                } else if (error.code === 'ERR_NETWORK') {
+                    setError("Impossible de se connecter au serveur. Veuillez vérifier votre connexion et que le backend est lancé.");
+                } else {
+                    setError("Une erreur est survenue lors de la recherche. Veuillez réessayer.");
+                }
             } else {
                 setError("Une erreur est survenue lors de la recherche. Veuillez réessayer.");
             }
@@ -112,12 +117,16 @@ export function useCreatePlant() {
         } catch (error: unknown) {
             console.error("Erreur lors de la création de la plante:", error);
 
-            if ((error as any).response?.status === 400) {
-                setError("Données invalides. Veuillez vérifier les informations saisies.");
-            } else if ((error as any).response?.status === 409) {
-                setError("Une plante avec ce slug existe déjà.");
-            } else if ((error as any).code === 'ERR_NETWORK') {
-                setError("Impossible de se connecter au serveur. Veuillez vérifier que le backend est lancé.");
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 400) {
+                    setError("Données invalides. Veuillez vérifier les informations saisies.");
+                } else if (error.response?.status === 409) {
+                    setError("Une plante avec ce slug existe déjà.");
+                } else if (error.code === 'ERR_NETWORK') {
+                    setError("Impossible de se connecter au serveur. Veuillez vérifier que le backend est lancé.");
+                } else {
+                    setError("Une erreur est survenue lors de la création de la plante. Veuillez réessayer.");
+                }
             } else {
                 setError("Une erreur est survenue lors de la création de la plante. Veuillez réessayer.");
             }
@@ -151,12 +160,16 @@ export function useCreatePlantApi() {
         } catch (error: unknown) {
             console.error("Erreur lors de l'enregistrement de la plante venant de l'api:", error);
 
-            if ((error as any).response?.status === 400) {
-                setError("Données invalides. Veuillez vérifier les informations saisies.");
-            } else if ((error as any).response?.status === 409) {
-                setError("Une plante avec ce slug a déjà été encodée.");
-            } else if ((error as any).code === 'ERR_NETWORK') {
-                setError("Impossible de se connecter au serveur. Veuillez vérifier que le backend est lancé.");
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 400) {
+                    setError("Données invalides. Veuillez vérifier les informations saisies.");
+                } else if (error.response?.status === 409) {
+                    setError("Une plante avec ce slug a déjà été encodée.");
+                } else if (error.code === 'ERR_NETWORK') {
+                    setError("Impossible de se connecter au serveur. Veuillez vérifier que le backend est lancé.");
+                } else {
+                    setError("Une erreur est survenue lors de l'enregistrement de la plante. Veuillez réessayer.");
+                }
             } else {
                 setError("Une erreur est survenue lors de l'enregistrement de la plante. Veuillez réessayer.");
             }
@@ -190,12 +203,16 @@ export function useDeletePlant() {
         } catch (error: unknown) {
             console.error("Erreur lors de la suppression de la plante:", error);
 
-            if ((error as any).response?.status === 404) {
-                setError("Plante introuvable.");
-            } else if ((error as any).response?.status === 403) {
-                setError("Vous n'avez pas le droit de supprimer cette plante.");
-            } else if ((error as any).code === 'ERR_NETWORK') {
-                setError("Impossible de se connecter au serveur. Veuillez vérifier que le backend est lancé.");
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 404) {
+                    setError("Plante introuvable.");
+                } else if (error.response?.status === 403) {
+                    setError("Vous n'avez pas le droit de supprimer cette plante.");
+                } else if (error.code === 'ERR_NETWORK') {
+                    setError("Impossible de se connecter au serveur. Veuillez vérifier que le backend est lancé.");
+                } else {
+                    setError("Une erreur est survenue lors de la suppression de la plante. Veuillez réessayer.");
+                }
             } else {
                 setError("Une erreur est survenue lors de la suppression de la plante. Veuillez réessayer.");
             }
@@ -214,5 +231,4 @@ export function useDeletePlant() {
         clearError
     };
 }
-
 
