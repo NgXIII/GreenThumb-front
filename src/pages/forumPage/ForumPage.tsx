@@ -196,6 +196,19 @@ export default function ForumPage() {
     }
   }
 
+  const handleMessageClick = (messageId: number) => {
+    const messageElement = document.getElementById(`message-${messageId}`);
+    if (messageElement) {
+      messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // Highlight effect
+      messageElement.classList.add('bg-gt-primary/10');
+      setTimeout(() => {
+        messageElement.classList.remove('bg-gt-primary/10');
+      }, 2000);
+    }
+  }
+
   return (
       <>
         <div className="flex bg-gradient-to-br from-gt-surface via-gt-surface to-gt-surface/95 overflow-hidden" style={{height: 'calc(100vh - 4rem)'}}>
@@ -219,8 +232,10 @@ export default function ForumPage() {
                 isSidebarOpen={isSidebarOpen}
                 currentChannel={currentChannel}
                 selectedThread={selectedThread}
+                threadMessages={threadMessages}
                 onToggleSidebar={handleToggleSidebar}
                 onBackToThreads={handleBackToThreads}
+                onMessageClick={handleMessageClick}
             />
 
             <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6">

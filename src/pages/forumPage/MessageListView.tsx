@@ -59,6 +59,7 @@ export default function MessageListView({ messages, scrollContainerRef, currentU
           return (
             <div
               key={message.idMessage}
+              id={`message-${message.idMessage}`}
               className="group relative animate-fadeIn hover:bg-gt-surface/30 dark:hover:bg-gt-surface-elevated/30 px-4 py-2 rounded-md transition-colors"
               style={{ animationDelay: `${index * 30}ms` }}
             >
