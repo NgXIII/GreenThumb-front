@@ -61,6 +61,11 @@ export async function deletePlant(slug: string): Promise<void> {
     await apiClient.delete(`/plants/${slug}`);
 }
 
+export async function updatePlant(slug: string, plantData: PlantPost): Promise<{ slug: string }> {
+    const response = await apiClient.put<{ slug: string }>(`/plants/${slug}`, plantData);
+    return response.data;
+}
+
 function checkUsername(username: string | undefined) {
     if (!username) {
         throw new Error("Aucun utilisateur");

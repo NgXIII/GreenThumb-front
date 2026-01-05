@@ -1,5 +1,5 @@
 import {useEffect, useState, useCallback} from "react";
-import {getPlants, postPlant, postPlantApi, searchPlants, deletePlant} from "@/services/repos/getPlants.ts";
+import {getPlants, postPlant, postPlantApi, searchPlants, deletePlant, updatePlant} from "@/services/repos/getPlants.ts";
 import type {PlantPage, PlantSearchPage, PlantSearchResult} from "@/shared/types/plant.ts";
 import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 import {AxiosError} from "axios";
@@ -232,3 +232,47 @@ export function useDeletePlant() {
     };
 }
 
+export function useUpdatePlant() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const editPlant = async (slug: string, plantData: PlantPost): Promise<string | null> => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const result = await updatePlant(slug, plantData);
+            return result.slug;
+        } catch (error: unknown) {
+            console.error("Erreur lors de la modification de la plante:", error);
+
+            if (error instanceof AxiosError) {
+                if (error.response?.status === 404) {
+                    setError("Plante introuvable.");
+                } else if (error.response?.status === 403) {
+                    setError("Vous n'avez pas le droit de modifier cette plante.");
+                } else if (error.response?.status === 400) {
+                    setError("Données invalides. Veuillez vérifier les informations saisies.");
+                } else if (error.code === 'ERR_NETWORK') {
+                    setError("Impossible de se connecter au serveur. Veuillez vérifier que le backend est lancé.");
+                } else {
+                    setError("Une erreur est survenue lors de la modification de la plante. Veuillez réessayer.");
+                }
+            } else {
+                setError("Une erreur est survenue lors de la modification de la plante. Veuillez réessayer.");
+            }
+            return null;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const clearError = () => setError(null);
+
+    return {
+        editPlant,
+        isLoading,
+        error,
+        clearError
+    };
+}
