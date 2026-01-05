@@ -44,10 +44,37 @@ export type ChatMessage = {
     reactions?: Reaction[];
 }
 
+export type MessageModerationEvent = {
+    type: "MESSAGE_REMOVED";
+    messageId: number;
+    reason: string;
+}
+
+export type MessageRestoredEvent = {
+    type: "MESSAGE_RESTORED";
+    messageId: number;
+    text: string;
+    author: string;
+    timestamp: string;
+    reason: string;
+}
+
+export type ForumWebSocketMessage = ChatMessage | MessageModerationEvent | MessageRestoredEvent;
+
+export function isModerationEvent(data: ForumWebSocketMessage): data is MessageModerationEvent {
+    return 'type' in data && data.type === "MESSAGE_REMOVED";
+}
+
+export function isRestoredEvent(data: ForumWebSocketMessage): data is MessageRestoredEvent {
+    return 'type' in data && data.type === "MESSAGE_RESTORED";
+}
+
+// Counter for generating unique temporary IDs
 let tempIdCounter = 0;
 
 export function chatMessageToMessage(chatMessage: ChatMessage): Message {
     return {
+        // Use actual ID if available, otherwise generate unique temporary ID
         idMessage: chatMessage.idMessage ?? -(Date.now() + tempIdCounter++),
         text: chatMessage.text,
         author: chatMessage.username,

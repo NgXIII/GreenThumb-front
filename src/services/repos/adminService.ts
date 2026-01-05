@@ -1,5 +1,6 @@
 import apiClient from "@/services/http/apiClient";
 import type { AdminUserDto, AdminUserPage, UserActionResponse, UserSearchParams, BulkEmailRequest, BulkEmailResponse, RecipientType } from "@/shared/types/admin";
+import type { ModerationResponse, ModerationItem, ModerationActionRequest, ModerationActionResponse, ModerationFilter } from "@/shared/types/moderation";
 
 export type { RecipientType, BulkEmailRequest, BulkEmailResponse };
 
@@ -86,6 +87,44 @@ export async function grantModeratorRole(username: string): Promise<UserActionRe
 export async function revokeModeratorRole(username: string): Promise<UserActionResponse> {
     const response = await apiClient.patch<UserActionResponse>(
         `/users/${username}/revoke-moderator`
+    );
+    return response.data;
+}
+
+export async function getModerationQueue(
+    filter: ModerationFilter = 'all',
+    page: number = 0,
+    size: number = 20
+): Promise<ModerationResponse> {
+    const response = await apiClient.get<ModerationResponse>('/admin/moderation/pending', {
+        params: { filter, page, size }
+    });
+    return response.data;
+}
+
+export async function getModerationMessage(messageId: number): Promise<ModerationItem> {
+    const response = await apiClient.get<ModerationItem>(`/admin/moderation/messages/${messageId}`);
+    return response.data;
+}
+
+export async function approveModerationDecision(
+    messageId: number,
+    comment?: string
+): Promise<ModerationActionResponse> {
+    const response = await apiClient.post<ModerationActionResponse>(
+        `/admin/moderation/${messageId}/approve`,
+        { comment } as ModerationActionRequest
+    );
+    return response.data;
+}
+
+export async function rejectModerationDecision(
+    messageId: number,
+    comment?: string
+): Promise<ModerationActionResponse> {
+    const response = await apiClient.post<ModerationActionResponse>(
+        `/admin/moderation/${messageId}/reject`,
+        { comment } as ModerationActionRequest
     );
     return response.data;
 }

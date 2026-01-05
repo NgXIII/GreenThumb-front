@@ -9,10 +9,14 @@ import {
     AlertTriangle,
     CheckCircle,
     Info,
-    ExternalLink
+    ExternalLink,
+    ShieldCheck,
+    ArrowRight
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "@/app/stores/userStore";
+import { useAdminRole } from "@/shared/hooks/admin/useAdminRole";
+import { Button } from "@/shared/components/ui/button";
 
 // ============================================================================
 // Types & Interfaces
@@ -139,11 +143,74 @@ function ActionItem({ icon: Icon, text, variant = "default" }: ActionItemProps) 
 }
 
 // ============================================================================
+// Moderator Dashboard Component
+// ============================================================================
+
+function ModeratorDashboard() {
+    const { user } = useUserStore();
+
+    return (
+        <div className="space-y-8">
+            {/* Header */}
+            <div className="pb-6 border-b border-gt-border">
+                <h1 className="text-3xl sm:text-4xl font-bold text-gt-text">
+                    Tableau de bord Modération
+                </h1>
+                <p className="text-gt-text-muted mt-2">
+                    Bienvenue {user?.firstname}, gérez les contenus signalés et modérez les discussions.
+                </p>
+            </div>
+
+            {/* Moderation Section */}
+            <section className="space-y-4">
+                <SectionHeader
+                    title="Modération du Forum"
+                    description="Gérez les contenus signalés et analysés par l'IA"
+                    icon={MessageSquare}
+                    iconColor="text-orange-600 dark:text-orange-400"
+                />
+
+                <div className="bg-gt-surface-elevated rounded-xl border border-gt-border overflow-hidden">
+                    <div className="p-6 border-b border-gt-border">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 rounded-lg bg-orange-100 dark:bg-orange-900/30">
+                                <ShieldCheck size={24} className="text-orange-600 dark:text-orange-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gt-text">Modération IA</h2>
+                                <p className="text-sm text-gt-text-muted">Messages analysés automatiquement</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="p-6">
+                        <p className="text-gt-text-muted mb-4">
+                            Consultez et traitez les messages signalés par la communauté et analysés par l'IA de modération.
+                        </p>
+                        <Link to="/admin/moderation">
+                            <Button className="w-full gap-2">
+                                <ArrowRight size={16} />
+                                Accéder à la modération
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+}
+
+// ============================================================================
 // Main Component
 // ============================================================================
 
 export default function AdminDashboard() {
     const { user } = useUserStore();
+    const { isModerator, isAdmin, isSuperAdmin } = useAdminRole();
+
+    // Display moderator-specific dashboard
+    if (isModerator && !isAdmin && !isSuperAdmin) {
+        return <ModeratorDashboard />;
+    }
 
     return (
         <div className="space-y-8">
@@ -267,25 +334,14 @@ export default function AdminDashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <StatCard
-                        title="Messages signalés"
-                        icon={AlertTriangle}
-                        description="Consultez et traitez les messages signalés par la communauté"
+                        title="Modération IA"
+                        icon={ShieldCheck}
+                        description="Consultez et traitez les messages analysés par l'IA et signalés par la communauté"
+                        linkTo="/admin/moderation"
+                        linkText="Accéder à la modération"
                         iconColor="text-orange-600 dark:text-orange-400"
                         iconBg="bg-orange-100 dark:bg-orange-900/30"
-                        badge="Bientôt"
-                        disabled={true}
                     />
-
-                    <StatCard
-                        title="En attente de modération"
-                        icon={MessageSquare}
-                        description="Messages en attente de validation par l'équipe de modération"
-                        iconColor="text-orange-600 dark:text-orange-400"
-                        iconBg="bg-orange-100 dark:bg-orange-900/30"
-                        badge="Bientôt"
-                        disabled={true}
-                    />
-
                 </div>
             </section>
 

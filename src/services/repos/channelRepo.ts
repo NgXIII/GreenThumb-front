@@ -1,8 +1,14 @@
-import type {Channel, ChannelPost, ThreadPost} from "@/shared/types/channel.ts";
+import type {Channel, ChannelPost, ThreadPost, Message} from "@/shared/types/channel.ts";
 import apiClient from "@/services/http/apiClient.ts";
 
 export async function getChannels(): Promise<Channel[]> {
     const response = await apiClient.get<Channel[]>("/channels");
+
+    return response.data;
+}
+
+export async function getThreadMessages(threadId: number): Promise<Message[]> {
+    const response = await apiClient.get<Message[]>(`/threads/${threadId}/messages`);
 
     return response.data;
 }

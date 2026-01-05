@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Users, BookOpen, User, LogOut, Shield } from 'lucide-react'
+import { Home, Users, BookOpen, User, LogOut, Shield, ShieldCheck, ShieldX } from 'lucide-react'
 import { useOutsideToggle } from '../../hooks/useOutsideToggle'
 import LogoLink from './LogoLink'
 import NavItem from './NavItem'
@@ -11,6 +11,9 @@ import type { NavBarProps, NavItemType } from '../../types/layout.ts'
 import {useAuth} from "@/shared/hooks/useAuth.ts"
 import {useUserStore} from "@/app/stores/userStore.ts"
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts"
+import { Badge } from '@/shared/components/ui/badge'
+import { useAdminRole } from '@/shared/hooks/admin/useAdminRole'
+import { cn } from '@/shared/lib/utils'
 
 export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const location = useLocation()
@@ -19,7 +22,34 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
     const { user } = useUserStore()
     const { isOpen: mobileProfileOpen, ref: profileRef, toggle: toggleMobileProfile, close: closeMobileProfile } = useOutsideToggle(false)
 
-    const isAdmin = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN'
+    const { hasAnyAdminAccess, isModerator, isAdmin, isSuperAdmin } = useAdminRole()
+
+    const getAdminBadgeConfig = () => {
+        if (isSuperAdmin) {
+            return {
+                label: 'Super Admin',
+                icon: ShieldX,
+                className: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40'
+            }
+        }
+        if (isAdmin) {
+            return {
+                label: 'Admin',
+                icon: Shield,
+                className: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/40'
+            }
+        }
+        if (isModerator) {
+            return {
+                label: 'Modération',
+                icon: ShieldCheck,
+                className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/40'
+            }
+        }
+        return null
+    }
+
+    const adminBadgeConfig = getAdminBadgeConfig()
 
     const navItems: NavItemType[] = [
         { name: 'Dashboard', icon: Home, path: '/dashboard' },
@@ -57,12 +87,12 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                                 <ThemeToggle />
                                 <NotificationPanel />
 
-                                {isAdmin && (
-                                    <Link
-                                        to="/admin"
-                                        className="flex items-center gap-2 px-3 py-2 rounded-full text-gt-interactive hover:bg-gt-surface-hover transition-colors"
-                                    >
-                                        <Shield size={20} />
+                                {hasAnyAdminAccess && adminBadgeConfig && (
+                                    <Link to="/admin">
+                                        <Badge className={cn('flex items-center gap-1.5 px-3 py-1.5 cursor-pointer transition-colors', adminBadgeConfig.className)}>
+                                            <adminBadgeConfig.icon size={14} />
+                                            <span className="text-xs font-semibold">{adminBadgeConfig.label}</span>
+                                        </Badge>
                                     </Link>
                                 )}
 
@@ -102,8 +132,8 @@ export default function NavBar({ isAuthenticated = true }: NavBarProps) {
                             <NavItem key={item.name} name={item.name} icon={item.icon} path={item.path} active={isActive(item.path)} compact size={24} />
                         ))}
 
-                        {isAdmin && (
-                            <NavItem name="Admin" icon={Shield} path="/admin" active={isActive('/admin')} compact size={24} />
+                        {hasAnyAdminAccess && adminBadgeConfig && (
+                            <NavItem name={adminBadgeConfig.label} icon={adminBadgeConfig.icon} path="/admin" active={isActive('/admin')} compact size={24} />
                         )}
 
                         <ProfileMenu
