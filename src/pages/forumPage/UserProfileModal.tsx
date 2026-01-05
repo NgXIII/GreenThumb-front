@@ -37,13 +37,15 @@ export default function UserProfileModal({ open, onOpenChange, user, nextTier }:
                                 className="w-24 h-24 rounded-full bg-gradient-to-br from-gt-primary to-gt-primary-dark shadow-lg"
                             />
                             <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg whitespace-nowrap max-w-[150px] truncate ${
-                                user.role === 'ADMIN'
+                                user.role === 'SUPER_ADMIN'
+                                    ? 'bg-gradient-to-r from-purple-500 to-purple-600'
+                                    : user.role === 'ADMIN'
                                     ? 'bg-gradient-to-r from-red-500 to-red-600'
                                     : user.role === 'MODERATEUR'
                                     ? 'bg-gradient-to-r from-blue-500 to-blue-600'
                                     : 'bg-gt-primary'
                             }`}>
-                                {user.role === 'ADMIN' ? 'Admin' : user.role === 'MODERATEUR' ? 'Modérateur' : user.tier.name}
+                                {user.role === 'SUPER_ADMIN' ? 'Super Admin' : user.role === 'ADMIN' ? 'Admin' : user.role === 'MODERATEUR' ? 'Modérateur' : user.tier.name}
                             </div>
                         </div>
                         <div className="text-center">
@@ -92,8 +94,59 @@ export default function UserProfileModal({ open, onOpenChange, user, nextTier }:
                         </div>
                     </div>
 
-                    {/* Tier & Progress or Admin Privileges */}
-                    {user.role === 'ADMIN' ? (
+                    {/* Tier & Progress or Admin/Super Admin Privileges */}
+                    {user.role === 'SUPER_ADMIN' ? (
+                        <div className="space-y-3">
+                            <h4 className="text-sm font-semibold text-gt-text-muted uppercase tracking-wider flex items-center gap-2">
+                                <Award className="w-4 h-4" />
+                                Privilèges
+                            </h4>
+
+                            <div className="p-4 rounded-lg border-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 border-purple-500/30">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-3 h-3 rounded-full bg-purple-500 animate-pulse" />
+                                    <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                                        Super Administrateur
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <p className="text-sm text-gt-text font-semibold mb-2">Avantages :</p>
+                                    <div className="flex items-start gap-2 text-sm text-gt-text">
+                                        <span className="text-purple-500">✓</span>
+                                        <span>Création de <span className="font-semibold">channels illimités</span></span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-sm text-gt-text">
+                                        <span className="text-purple-500">✓</span>
+                                        <span>Création de <span className="font-semibold">threads illimités</span></span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-sm text-gt-text">
+                                        <span className="text-purple-500">✓</span>
+                                        <span>Gestion complète du forum</span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-sm text-gt-text">
+                                        <span className="text-purple-500">✓</span>
+                                        <span>Modération des contenus</span>
+                                    </div>
+                                    <div className="flex items-start gap-2 text-sm text-gt-text">
+                                        <span className="text-purple-500">✓</span>
+                                        <span className="font-semibold">Gestion des rôles utilisateurs</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Stats */}
+                            <div className="p-3 bg-gt-surface/40 rounded-lg">
+                                <div className="flex items-center justify-between">
+                                    <p className="text-xs text-gt-text-muted">Messages postés</p>
+                                    <p className="text-sm text-gt-text font-semibold flex items-center gap-1">
+                                        <MessageCircle className="w-4 h-4" />
+                                        {user.messageCount}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ) : user.role === 'ADMIN' ? (
                         <div className="space-y-3">
                             <h4 className="text-sm font-semibold text-gt-text-muted uppercase tracking-wider flex items-center gap-2">
                                 <Award className="w-4 h-4" />

@@ -83,7 +83,7 @@ export default function Sidebar({
               <TrendingUp className="w-3.5 h-3.5"/>
               Channels
             </h3>
-              {user?.role == "ADMIN" && (
+              {(user?.role == "ADMIN" || user?.role == "SUPER_ADMIN") && (
                   <button
                       onClick={() => setIsCreateModalOpen(true)}
                       className="p-1 rounded-lg hover:bg-gt-primary/10 transition-all group"
@@ -120,7 +120,9 @@ export default function Sidebar({
               />
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-semibold text-gt-text truncate group-hover:text-gt-primary transition-colors">{user?.username}</p>
-                {user?.role === 'ADMIN' ? (
+                {user?.role === 'SUPER_ADMIN' ? (
+                  <p className="text-xs font-semibold text-purple-600 dark:text-purple-400">Super Admin</p>
+                ) : user?.role === 'ADMIN' ? (
                   <p className="text-xs font-semibold text-red-600 dark:text-red-400">Admin</p>
                 ) : user?.role === 'MODERATEUR' ? (
                   <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Modérateur</p>
@@ -131,9 +133,23 @@ export default function Sidebar({
             </button>
           </div>
 
-          {/* XP Bar or Admin Badge */}
+          {/* XP Bar or Admin/Super Admin Badge */}
           {user && (
-            user.role === 'ADMIN' ? (
+            user.role === 'SUPER_ADMIN' ? (
+              <div className="px-4 pb-4">
+                <div className="p-3 rounded-xl border-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 border-purple-500/30">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+                    <p className="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                      Super Administrateur
+                    </p>
+                  </div>
+                  <p className="text-xs text-gt-text-muted">
+                    👑 Tous les privilèges + Gestion des rôles
+                  </p>
+                </div>
+              </div>
+            ) : user.role === 'ADMIN' ? (
               <div className="px-4 pb-4">
                 <div className="p-3 rounded-xl border-2 bg-gradient-to-r from-red-500/10 to-red-600/10 border-red-500/30">
                   <div className="flex items-center gap-2 mb-1">

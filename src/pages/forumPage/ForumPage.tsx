@@ -12,6 +12,7 @@ import { websocketService } from "@/services/notifications/websocketService.ts";
 import {toast} from "sonner";
 import type {TierUpgradeNotification} from "@/shared/types/user.ts";
 import TierUpgradeModal from "@/pages/forumPage/TierUpgradeModal.tsx";
+import useReactions from "@/shared/hooks/forum/useReactions.ts";
 
 export default function ForumPage() {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
@@ -26,6 +27,12 @@ export default function ForumPage() {
   const { user } = useUserStore();
 
   const { channels, error, loading, refetch } = useGetChannels();
+
+  const { toggleReaction } = useReactions({
+    threadId: selectedThread?.id ?? null,
+    messages: threadMessages,
+    setMessages: setThreadMessages
+  });
 
   const currentChannel = channels?.find((c) => c.name === selectedChannel) || channels?.[0];
 
@@ -195,7 +202,12 @@ export default function ForumPage() {
 
             <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6">
               {selectedThread ? (
-                  <MessageListView messages={threadMessages} scrollContainerRef={messagesContainerRef} />
+                  <MessageListView
+                    messages={threadMessages}
+                    scrollContainerRef={messagesContainerRef}
+                    currentUsername={user?.username}
+                    onToggleReaction={toggleReaction}
+                  />
               ) : (
                   <ThreadListView threads={threads} onSelectThread={setSelectedThread} />
               )}

@@ -4,6 +4,7 @@ import type { Notification } from '@/shared/types/notification';
 import { useAccountStore } from '@/app/stores/userStore';
 import type {ChatMessage} from "@/shared/types/channel.ts";
 import type {TierUpgradeNotification, UserStatsUpdate} from "@/shared/types/user.ts";
+import type {ReactionAction, ReactionBroadcast} from "@/shared/types/reaction.ts";
 
 type NotificationCallback = (notification: Notification) => void;
 type MessageCallback<T = unknown> = (message: T) => void;
@@ -251,6 +252,23 @@ class WebSocketService {
     public subscribeToTierUpgrade(callback: (notification: TierUpgradeNotification) => void): () => void {
         const topic = '/user/queue/tier-upgrade';
         return this.subscribe<TierUpgradeNotification>(topic, callback);
+    }
+
+    public subscribeToThreadReactions(
+        threadId: number,
+        callback: (broadcast: ReactionBroadcast) => void,
+    ): () => void {
+        const topic = `/topic/forum/${threadId}/reactions`;
+        return this.subscribe<ReactionBroadcast>(topic, callback);
+    }
+
+    public unsubscribeFromThreadReactions(threadId: number): void {
+        const topic = `/topic/forum/${threadId}/reactions`;
+        this.unsubscribe(topic);
+    }
+
+    public sendReactionToggle(reactionAction: ReactionAction): void {
+        this.publish('/app/forum/reaction', reactionAction);
     }
 }
 
