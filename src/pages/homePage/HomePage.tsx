@@ -9,6 +9,7 @@ import AboutMe from "./About.tsx";
 import CommunitySection from "./Community.tsx";
 import TutorialSession from "./Tutorial.tsx";
 import {useUser} from "@/shared/hooks/useUser.ts";
+import {useNavigate} from "react-router-dom";
 
 /**
  * Base component that displays the home page.
@@ -78,6 +79,7 @@ function HeaderHome(): JSX.Element {
 }
 
 function CallToActionSection() {
+    const navigate = useNavigate();
     return (
       <section className="relative w-full bg-gradient-to-br from-gt-primary via-gt-primary-hover to-gt-interactive dark:from-gt-primary-hover dark:via-gt-primary dark:to-gt-interactive text-white text-center py-24 px-6 sm:px-10 overflow-hidden transition-colors duration-300">
           <div className="max-w-3xl mx-auto flex flex-col items-center space-y-8">
@@ -92,7 +94,7 @@ function CallToActionSection() {
               <motion.a
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.97 }}
-                  href="#"
+                  onClick={() => navigate("/inscription")}
                   className="inline-flex items-center justify-center gap-2 bg-gt-surface-elevated text-gt-text font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200"
               >
                   Créer mon compte gratuitement

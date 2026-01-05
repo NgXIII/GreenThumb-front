@@ -35,6 +35,17 @@ export const UserCreationSchema = z
                 return match !== null;
             }, {
                 message: "L'image doit être PNG, JPG ou JPEG"
+            })
+            .refine((base64) => {
+                if (!base64) return true;
+                // Calculer la taille approximative du fichier original à partir du base64
+                // La taille base64 est environ 4/3 de la taille originale
+                const base64Data = base64.split(',')[1];
+                const sizeInBytes = (base64Data.length * 3) / 4;
+                const maxSize = 2 * 1024 * 1024; // 2 Mo
+                return sizeInBytes <= maxSize;
+            }, {
+                message: "L'image ne doit pas dépasser 2 Mo"
             }),
     })
     .refine((data) => data.password === data.confirmPassword, {

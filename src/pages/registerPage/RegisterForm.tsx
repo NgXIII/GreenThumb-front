@@ -7,6 +7,9 @@ import InputFile from "@/shared/components/ui/customs/InputFile.tsx";
 import {useAuth} from "@/shared/hooks/useAuth.ts";
 import {useNavigate} from "react-router-dom";
 import {toast} from "sonner";
+import {AxiosError} from "axios";
+import {Button} from "@/shared/components/ui/button.tsx";
+import {Loader2} from "lucide-react";
 
 export default function RegisterForm() {
     const {register} = useAuth()
@@ -25,13 +28,34 @@ export default function RegisterForm() {
         }
     })
 
+    const {
+        formState: { isSubmitting },
+    } = form;
+
     const submit = async (values: UserCreationPost) => {
         try {
             await register(values)
             toast.success("Inscription réussie ! Veuillez vérifier votre adresse e-mail.")
             navigate(`/verifier-email?email=${encodeURIComponent(values.email)}`)
-        } catch {
-            toast.error("Erreur lors de l'inscription. Veuillez réessayer.")
+        } catch (error: unknown) {
+            if (error instanceof AxiosError) {
+                const errorMessage = error.response?.data?.error || error.response?.data?.message;
+                const statusCode = error.response?.status;
+
+                if (errorMessage) {
+                    toast.error(errorMessage, { duration: 3000 });
+                } else if (statusCode === 409) {
+                    toast.error("Cette adresse e-mail, ce nom d'utilisateur ou ce numéro de téléphone est déjà utilisé.", { duration: 3000 });
+                } else if (statusCode === 400) {
+                    toast.error("Les données fournies sont invalides. Veuillez vérifier vos informations.", { duration: 3000 });
+                } else if (statusCode === 500) {
+                    toast.error("Une erreur s'est produite sur le serveur. Veuillez réessayer ultérieurement.", { duration: 3000 });
+                } else {
+                    toast.error("Erreur lors de l'inscription. Veuillez réessayer.", { duration: 3000 });
+                }
+            } else {
+                toast.error("Une erreur inattendue s'est produite. Veuillez réessayer.", { duration: 2000 });
+            }
         }
     }
 
@@ -48,7 +72,7 @@ export default function RegisterForm() {
 
                 <TermsCheckbox />
 
-                <SubmitButton />
+                <SubmitButton isSubmitting={isSubmitting} />
             </form>
         </Form>
     )
@@ -140,16 +164,24 @@ function TermsCheckbox() {
     )
 }
 
-function SubmitButton() {
+function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
     return (
         <div className="lg:flex lg:justify-center">
-            <button
+            <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full lg:w-auto lg:px-12 lg:text-xl py-2 rounded-md bg-gt-yellow hover:bg-gt-yellow-dark
                 text-gt-black mb-4 cursor-pointer hover:shadow-md transform transition duration-200 hover:scale-105 font-medium"
             >
-                S'inscrire
-            </button>
+                { isSubmitting ? (
+                    <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Inscription...
+                    </>
+                ) : (
+                    "S'inscrire"
+                )}
+            </Button>
         </div>
     );
 }
