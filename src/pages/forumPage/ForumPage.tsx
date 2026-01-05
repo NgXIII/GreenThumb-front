@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import useGetChannels from "@/shared/hooks/forum/useGetChannel.ts";
 import type { Thread, Message, ChatMessage } from "@/shared/types/channel.ts";
 import { chatMessageToMessage } from "@/shared/types/channel.ts";
@@ -15,6 +16,7 @@ import TierUpgradeModal from "@/pages/forumPage/TierUpgradeModal.tsx";
 import useReactions from "@/shared/hooks/forum/useReactions.ts";
 
 export default function ForumPage() {
+  const location = useLocation();
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [expandedChannels, setExpandedChannels] = useState<Set<string>>(new Set());
@@ -49,7 +51,29 @@ export default function ForumPage() {
     }
   }, [channels]);
 
+  // Restaurer le channel et thread quand on revient de la page profil
   useEffect(() => {
+    if (!channels || channels.length === 0) return;
+
+    const state = location.state as { selectedChannel?: string; selectedThreadId?: number } | null;
+
+    if (state?.selectedChannel && state?.selectedThreadId) {
+      // Restaurer le channel
+      setSelectedChannel(state.selectedChannel);
+
+      // Trouver et restaurer le thread
+      for (const channel of channels) {
+        const thread = channel.threads?.find(t => t.id === state.selectedThreadId);
+        if (thread) {
+          setSelectedThread(thread);
+          break;
+        }
+      }
+    }
+  }, [location.state, channels]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
@@ -206,6 +230,8 @@ export default function ForumPage() {
                     scrollContainerRef={messagesContainerRef}
                     currentUsername={user?.username}
                     onToggleReaction={toggleReaction}
+                    selectedChannel={selectedChannel}
+                    selectedThreadId={selectedThread.id}
                   />
               ) : (
                   <ThreadListView threads={threads} onSelectThread={setSelectedThread} />

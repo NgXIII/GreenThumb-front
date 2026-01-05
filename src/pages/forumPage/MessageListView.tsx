@@ -4,7 +4,7 @@ import { useState, useEffect, type RefObject } from 'react';
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 import ReportDialog from "@/pages/forumPage/ReportDialog.tsx";
 import { useUserMap } from "@/shared/hooks/useUserMap.ts";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import MessageReactions from "@/pages/forumPage/MessageReactions.tsx";
 
 interface MessageListViewProps {
@@ -12,9 +12,11 @@ interface MessageListViewProps {
   scrollContainerRef: RefObject<HTMLDivElement | null>;
   currentUsername?: string;
   onToggleReaction: (messageId: number, emoji: string) => void;
+  selectedChannel: string | null;
+  selectedThreadId: number | null;
 }
 
-export default function MessageListView({ messages, scrollContainerRef, currentUsername, onToggleReaction }: MessageListViewProps) {
+export default function MessageListView({ messages, scrollContainerRef, currentUsername, onToggleReaction, selectedChannel, selectedThreadId }: MessageListViewProps) {
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [reportingMessageId, setReportingMessageId] = useState<number | null>(null);
   const { userMap } = useUserMap(messages);
@@ -22,6 +24,7 @@ export default function MessageListView({ messages, scrollContainerRef, currentU
     console.log(messages);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (messages.length > 0 && scrollContainerRef.current) {
@@ -85,7 +88,13 @@ export default function MessageListView({ messages, scrollContainerRef, currentU
                   <div className="flex items-baseline gap-2 flex-wrap">
                     <span
                         className="font-semibold text-gt-text hover:underline cursor-pointer"
-                        onClick={() => navigate(`/profil/${message.author}`)}
+                        onClick={() => navigate(`/profil/${message.author}`, {
+                          state: {
+                            from: location.pathname,
+                            selectedChannel,
+                            selectedThreadId
+                          }
+                        })}
                     >
                       {message.author}
                     </span>
