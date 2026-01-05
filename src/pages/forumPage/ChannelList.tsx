@@ -1,6 +1,6 @@
 import ChannelItem from "./ChannelItem.tsx";
 import type { Channel, Thread } from "@/shared/types/channel.ts";
-import type { SearchResult } from "@/shared/utils/searchThreads.ts";
+import type { SearchResult } from "@/shared/types/SearchResult.ts";
 
 interface ChannelListProps {
   searchResults: SearchResult[];

@@ -1,7 +1,7 @@
-import type {Thread} from "@/shared/types/channel.ts";
+    import type {Thread} from "@/shared/types/channel.ts";
 
-export type SearchResult = {
-    channelName: string;
-    threads: Thread[];
-    matchType: 'channel' | 'thread' | 'both';
-}
+    export type SearchResult = {
+        channelName: string;
+        threads: Thread[];
+        matchType: 'channel' | 'thread' | 'both';
+    }

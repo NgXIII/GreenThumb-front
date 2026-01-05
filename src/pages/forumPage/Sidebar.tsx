@@ -10,7 +10,7 @@ import type { Channel, Thread } from "@/shared/types/channel.ts";
 import useGetNextTier from "@/shared/hooks/forum/useGetNextTier.ts";
 import type {UserAccount} from "@/shared/types/user.ts";
 import { searchThreads} from "@/shared/utils/searchThreads.ts";
-import type { SearchResult } from '@/shared/types/SearchResult.ts';
+import type { SearchResult } from "@/shared/types/SearchResult.ts";
 
 interface SidebarProps {
   user: UserAccount | null;
