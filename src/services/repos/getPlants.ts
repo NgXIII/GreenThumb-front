@@ -2,17 +2,53 @@ import type {PlantPage, PlantSearchPage, PlantSearchResult} from "@/shared/types
 import apiClient from "@/services/http/apiClient.ts";
 import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 
+export interface PlantFilters {
+    lifeCycle?: string[];
+    waterNeed?: string[];
+    lightLevel?: string[];
+    soilType?: string[];
+    petToxic?: boolean | null;
+    humanToxic?: boolean | null;
+    indoorFriendly?: boolean | null;
+}
+
 export async function getPlants(
     username: string | undefined,
     page: number,
     size: number,
-    search?: string
+    search?: string,
+    filters?: PlantFilters
     ){
     checkUsername(username);
 
     const params: Record<string, unknown> = { page, size };
     if (search && search.trim()) {
         params.search = search.trim();
+    }
+
+    // Ajouter les filtres aux paramètres
+    if (filters) {
+        if (filters.lifeCycle && filters.lifeCycle.length > 0) {
+            params.lifeCycle = filters.lifeCycle.join(',');
+        }
+        if (filters.waterNeed && filters.waterNeed.length > 0) {
+            params.waterNeed = filters.waterNeed.join(',');
+        }
+        if (filters.lightLevel && filters.lightLevel.length > 0) {
+            params.lightLevel = filters.lightLevel.join(',');
+        }
+        if (filters.soilType && filters.soilType.length > 0) {
+            params.soilType = filters.soilType.join(',');
+        }
+        if (filters.petToxic !== null && filters.petToxic !== undefined) {
+            params.petToxic = filters.petToxic;
+        }
+        if (filters.humanToxic !== null && filters.humanToxic !== undefined) {
+            params.humanToxic = filters.humanToxic;
+        }
+        if (filters.indoorFriendly !== null && filters.indoorFriendly !== undefined) {
+            params.indoorFriendly = filters.indoorFriendly;
+        }
     }
 
     const response = await apiClient.get<PlantPage>(`/users/${username}/plants`, {

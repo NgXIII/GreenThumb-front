@@ -2,6 +2,7 @@ import usePlant from "@/shared/hooks/usePlant.ts";
 import type { Plant } from "@/shared/types/plant.ts";
 import { useState, useEffect } from "react";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
+import type { PlantFiltersState } from "./PlantFilters";
 
 interface PlantCardsProps {
     username: string | undefined;
@@ -9,6 +10,7 @@ interface PlantCardsProps {
     selectedPlant: Plant | null;
     search?: string;
     refreshKey?: number;
+    filters?: PlantFiltersState;
 }
 
 interface PlantCardProps {
@@ -17,20 +19,42 @@ interface PlantCardProps {
     isSelected: boolean;
 }
 
-export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, refreshKey = 0 }: PlantCardsProps) {
+export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, refreshKey = 0, filters }: PlantCardsProps) {
     const [page, setPage] = useState(0);
 
-    // Réinitialiser la page à 0 quand la recherche change
+    // Réinitialiser la page à 0 quand la recherche ou les filtres changent
     useEffect(() => {
         setPage(0);
-    }, [search]);
+    }, [search, filters]);
+
+    // Convertir les filtres du composant en filtres pour l'API
+    const apiFilters = filters ? {
+        lifeCycle: filters.lifeCycle,
+        waterNeed: filters.waterNeed,
+        lightLevel: filters.lightLevel,
+        soilType: filters.soilType,
+        petToxic: filters.petToxic,
+        humanToxic: filters.humanToxic,
+        indoorFriendly: filters.indoorFriendly,
+    } : undefined;
 
     const {
         plants,
         totalPages,
         loading,
         error
-    } = usePlant(username, page, 5, search, refreshKey);
+    } = usePlant(username, page, 5, search, refreshKey, apiFilters);
+
+    // Vérifier si des filtres sont actifs
+    const hasActiveFilters = filters && (
+        filters.lifeCycle.length > 0 ||
+        filters.waterNeed.length > 0 ||
+        filters.lightLevel.length > 0 ||
+        filters.soilType.length > 0 ||
+        filters.petToxic !== null ||
+        filters.humanToxic !== null ||
+        filters.indoorFriendly !== null
+    );
 
     if (loading) {
         return (
@@ -44,6 +68,15 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
         return (
             <div className="bg-gt-surface rounded-lg p-4 border border-gt-border">
                 <p className="text-gt-text">Erreur : {error}</p>
+            </div>
+        );
+    }
+
+    if (plants.length === 0 && hasActiveFilters) {
+        return (
+            <div className="text-center py-8 text-gt-text-muted">
+                <p>Aucune plante ne correspond aux filtres sélectionnés</p>
+                <p className="text-sm mt-2">Essayez de modifier vos critères de recherche</p>
             </div>
         );
     }
