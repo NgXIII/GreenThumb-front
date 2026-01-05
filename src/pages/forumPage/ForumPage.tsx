@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import useGetChannels from "@/shared/hooks/forum/useGetChannel.ts";
-import type { Thread, Message, ChatMessage } from "@/shared/types/channel.ts";
-import { chatMessageToMessage } from "@/shared/types/channel.ts";
+import type { Thread, Message, ChatMessage, ForumWebSocketMessage } from "@/shared/types/channel.ts";
+import { chatMessageToMessage, isModerationEvent, isRestoredEvent } from "@/shared/types/channel.ts";
 import Sidebar from "./Sidebar.tsx";
 import ForumHeader from "./ForumHeader.tsx";
 import ThreadListView from "./ThreadListView.tsx";
@@ -126,18 +126,52 @@ export default function ForumPage() {
 
     const unsubscribe = websocketService.subscribeToThread(
         selectedThread.id,
-        (chatMessage: ChatMessage) => {
-          const newMessage = chatMessageToMessage(chatMessage);
+        (data: ForumWebSocketMessage) => {
+          if (isModerationEvent(data)) {
+            console.log(`Message ${data.messageId} removed by AI moderation`);
+            console.log(`Reason: ${data.reason}`);
 
-          setThreadMessages((prevMessage) => {
-            const messageExists = prevMessage.some(msg => msg.idMessage === newMessage.idMessage);
+            setThreadMessages((prevMessages) =>
+              prevMessages.filter(msg => msg.idMessage !== data.messageId)
+            );
 
-            if (messageExists) {
-              return prevMessage;
-            }
+            toast.info("Un message a été supprimé par la modération automatique");
+          } else if (isRestoredEvent(data)) {
+            console.log(`Message ${data.messageId} restored by moderator`);
+            console.log(`Reason: ${data.reason}`);
 
-            return [...prevMessage, newMessage];
-          });
+            const restoredMessage: Message = {
+              idMessage: data.messageId,
+              text: data.text,
+              author: data.author,
+              timestamp: data.timestamp,
+              mediaUrls: []
+            };
+
+            setThreadMessages((prevMessages) => {
+              const messageExists = prevMessages.some(msg => msg.idMessage === data.messageId);
+              if (messageExists) {
+                return prevMessages;
+              }
+              return [...prevMessages, restoredMessage].sort(
+                (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+              );
+            });
+
+            toast.success("Un message a été restauré après révision humaine");
+          } else {
+            const newMessage = chatMessageToMessage(data);
+
+            setThreadMessages((prevMessage) => {
+              const messageExists = prevMessage.some(msg => msg.idMessage === newMessage.idMessage);
+
+              if (messageExists) {
+                return prevMessage;
+              }
+
+              return [...prevMessage, newMessage];
+            });
+          }
         }
     );
 

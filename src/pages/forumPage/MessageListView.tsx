@@ -154,7 +154,7 @@ export default function MessageListView({ messages, scrollContainerRef, currentU
                           className="relative rounded-md overflow-hidden cursor-pointer group/img"
                           onClick={() => setLightboxImage(url)}
                           style={{
-                            maxWidth: (message.mediaUrls?.length ?? 0) === 1 ? '400px' : '300px',
+                            maxWidth: (message.mediaUrls?.length || 0) === 1 ? '400px' : '300px',
                             maxHeight: '300px'
                           }}
                         >

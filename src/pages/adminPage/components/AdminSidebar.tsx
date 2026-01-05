@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Users, ArrowLeft, X, Shield, Mail, UserCog } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-import { useUserStore } from "@/app/stores/userStore";
+import { useAdminRole } from "@/shared/hooks/admin/useAdminRole";
 
 interface AdminSidebarProps {
     isOpen: boolean;
@@ -12,20 +12,20 @@ interface SidebarItem {
     name: string;
     icon: React.ComponentType<{ size?: number; className?: string }>;
     path: string;
-    superAdminOnly?: boolean;
+    roles: ('MODERATEUR' | 'ADMIN' | 'SUPER_ADMIN')[];
 }
 
 const sidebarItems: SidebarItem[] = [
-    { name: "Accueil", icon: Home, path: "/admin" },
-    { name: "Utilisateurs", icon: Users, path: "/admin/users" },
-    { name: "Communications", icon: Mail, path: "/admin/communications" },
-    { name: "Gestion des rôles", icon: UserCog, path: "/admin/roles", superAdminOnly: true },
+    { name: "Accueil", icon: Home, path: "/admin", roles: ['MODERATEUR', 'ADMIN', 'SUPER_ADMIN'] },
+    { name: "Utilisateurs", icon: Users, path: "/admin/users", roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { name: "Modération", icon: Shield, path: "/admin/moderation", roles: ['MODERATEUR', 'ADMIN', 'SUPER_ADMIN'] },
+    { name: "Communications", icon: Mail, path: "/admin/communications", roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { name: "Gestion des rôles", icon: UserCog, path: "/admin/roles", roles: ['SUPER_ADMIN'] },
 ];
 
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     const location = useLocation();
-    const { user } = useUserStore();
-    const isSuperAdmin = user?.role === "SUPER_ADMIN";
+    const { role } = useAdminRole();
 
     const isActive = (path: string) => {
         if (path === "/admin") {
@@ -34,9 +34,10 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         return location.pathname.startsWith(path);
     };
 
-    const visibleItems = sidebarItems.filter(
-        (item) => !item.superAdminOnly || isSuperAdmin
-    );
+    const visibleItems = sidebarItems.filter((item) => {
+        // Filter items based on user role
+        return role && item.roles.includes(role);
+    });
 
     return (
         <>
