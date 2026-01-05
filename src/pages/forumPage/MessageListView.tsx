@@ -7,7 +7,7 @@ import { useUserMap } from "@/shared/hooks/useUserMap.ts";
 
 interface MessageListViewProps {
   messages: Message[];
-  scrollContainerRef: RefObject<HTMLDivElement>;
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
 }
 
 export default function MessageListView({ messages, scrollContainerRef }: MessageListViewProps) {
@@ -129,7 +129,7 @@ export default function MessageListView({ messages, scrollContainerRef }: Messag
                           className="relative rounded-md overflow-hidden cursor-pointer group/img"
                           onClick={() => setLightboxImage(url)}
                           style={{
-                            maxWidth: message.mediaUrls.length === 1 ? '400px' : '300px',
+                            maxWidth: (message.mediaUrls?.length ?? 0) === 1 ? '400px' : '300px',
                             maxHeight: '300px'
                           }}
                         >
