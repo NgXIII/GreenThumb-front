@@ -7,12 +7,16 @@ import PlantCards from "@/pages/Dashboard/PlantCards.tsx";
 import PlantTasks from "@/pages/Dashboard/PlantTasks.tsx";
 import AddPlantDialog from "@/pages/Dashboard/AddPlantDialog.tsx";
 import PlantDetails from "@/pages/Dashboard/PlantDetails.tsx";
+import PlantFilters, { type PlantFiltersState, defaultFilters } from "./PlantFilters";
 import { Search } from "lucide-react";
 
 interface PlantListProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
+    refreshKey: number;
+    filters: PlantFiltersState;
+    onFiltersChange: (filters: PlantFiltersState) => void;
     onRefreshReady?: (refresh: () => void) => void;
 }
 
@@ -20,6 +24,8 @@ export default function Dashboard() {
     const { user, incrementTasksCompleted } = useUserStore();
     const { count } = useCountTask(user?.username);
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const [filters, setFilters] = useState<PlantFiltersState>(defaultFilters);
     const [refreshPlants, setRefreshPlants] = useState<(() => void) | null>(null);
 
     const handleRefreshReady = useCallback((refresh: () => void) => {
@@ -71,6 +77,9 @@ export default function Dashboard() {
                             setSelectedPlant={setSelectedPlant}
                             selectedPlant={selectedPlant}
                             onRefreshReady={handleRefreshReady}
+                            refreshKey={refreshKey}
+                            filters={filters}
+                            onFiltersChange={setFilters}
                         />
                     </article>
 
@@ -100,7 +109,7 @@ export default function Dashboard() {
     );
 }
 
-function PlantList({ username, setSelectedPlant, selectedPlant, onRefreshReady }: PlantListProps) {
+function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey, filters, onFiltersChange, onRefreshReady }: PlantListProps) {
     const [query, setQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
 
@@ -122,19 +131,22 @@ function PlantList({ username, setSelectedPlant, selectedPlant, onRefreshReady }
                 <div className="mb-4">
                     <label className="sr-only">Rechercher une plante</label>
 
-                    <div className="relative">
-                        <div className="pointer-events-none absolute left-3 top-1/2 transform -translate-y-1/2 text-gt-text-muted">
-                            <Search width={16} height={16} aria-hidden />
-                        </div>
+                    <div className="flex gap-2">
+                        <div className="relative flex-1">
+                            <div className="pointer-events-none absolute left-3 top-1/2 transform -translate-y-1/2 text-gt-text-muted">
+                                <Search width={16} height={16} aria-hidden />
+                            </div>
 
-                        <input
-                            type="search"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            aria-label="Rechercher une plante"
-                            placeholder="Rechercher une plante..."
-                            className="w-full bg-gt-surface border border-gt-border rounded-lg py-2 pl-10 pr-3 text-gt-text focus:outline-none focus:ring-2 focus:ring-gt-primary transition"
-                        />
+                            <input
+                                type="search"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                aria-label="Rechercher une plante"
+                                placeholder="Rechercher une plante..."
+                                className="w-full bg-gt-surface border border-gt-border rounded-lg py-2 pl-10 pr-3 text-gt-text focus:outline-none focus:ring-2 focus:ring-gt-primary transition"
+                            />
+                        </div>
+                        <PlantFilters filters={filters} onFiltersChange={onFiltersChange} />
                     </div>
                 </div>
 
@@ -144,6 +156,7 @@ function PlantList({ username, setSelectedPlant, selectedPlant, onRefreshReady }
                     selectedPlant={selectedPlant}
                     onRefreshReady={onRefreshReady}
                     search={debouncedQuery}
+                    filters={filters}
                 />
 
                 <AddPlantDialog />

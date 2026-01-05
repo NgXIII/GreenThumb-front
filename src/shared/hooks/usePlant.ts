@@ -1,11 +1,11 @@
 import {useEffect, useState, useCallback} from "react";
-import {getPlants, postPlant, postPlantApi, searchPlants, deletePlant, updatePlant} from "@/services/repos/getPlants.ts";
+import {getPlants, postPlant, postPlantApi, searchPlants, deletePlant, updatePlant, type PlantFilters} from "@/services/repos/getPlants.ts";
 import type {PlantPage, PlantSearchPage, PlantSearchResult} from "@/shared/types/plant.ts";
 import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 import {AxiosError} from "axios";
 
 
-export default function usePlant(username: string | undefined, page: number, size: number = 5, search?: string) {
+export default function usePlant(username: string | undefined, page: number, size: number = 5, search?: string, refreshKey: number = 0, filters?: PlantFilters) {
     const [plantsPage, setPlantsPage] = useState<PlantPage | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -15,6 +15,9 @@ export default function usePlant(username: string | undefined, page: number, siz
         setRefreshKey(prev => prev + 1);
     }, []);
 
+    // Sérialiser les filtres pour la dépendance
+    const filtersKey = JSON.stringify(filters);
+
     useEffect(() => {
         if (!username) {
             setLoading(false);
@@ -23,11 +26,12 @@ export default function usePlant(username: string | undefined, page: number, siz
 
         setLoading(true);
 
-        getPlants(username, page, size, search)
+        getPlants(username, page, size, search, filters)
             .then((response: PlantPage) => setPlantsPage(response))
             .catch(e => setError(e.message))
             .finally(() => setLoading(false));
-    }, [username, page, size, search, refreshKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [username, page, size, search, refreshKey, filtersKey]);
 
     return {
         plants: plantsPage?.content ?? [],
