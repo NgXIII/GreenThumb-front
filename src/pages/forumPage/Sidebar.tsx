@@ -120,18 +120,40 @@ export default function Sidebar({
               />
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-semibold text-gt-text truncate group-hover:text-gt-primary transition-colors">{user?.username}</p>
-                <p className="text-xs text-gt-text-muted">{user?.tier.name}</p>
+                {user?.role === 'ADMIN' ? (
+                  <p className="text-xs font-semibold text-red-600 dark:text-red-400">Admin</p>
+                ) : user?.role === 'MODERATEUR' ? (
+                  <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Modérateur</p>
+                ) : (
+                  <p className="text-xs text-gt-text-muted">{user?.tier.name}</p>
+                )}
               </div>
             </button>
           </div>
 
-          {/* XP Bar */}
+          {/* XP Bar or Admin Badge */}
           {user && (
-            <UserXPBar
-              currentMessages={user.messageCount}
-              currentTier={user.tier}
-              nextTier={tier}
-            />
+            user.role === 'ADMIN' ? (
+              <div className="px-4 pb-4">
+                <div className="p-3 rounded-xl border-2 bg-gradient-to-r from-red-500/10 to-red-600/10 border-red-500/30">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    <p className="text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+                      Administrateur
+                    </p>
+                  </div>
+                  <p className="text-xs text-gt-text-muted">
+                    ✨ Privilèges complets
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <UserXPBar
+                currentMessages={user.messageCount}
+                currentTier={user.tier}
+                nextTier={tier}
+              />
+            )
           )}
         </div>
 
