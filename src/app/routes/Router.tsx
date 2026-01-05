@@ -29,6 +29,7 @@ import ResourcePageDetail from "@/pages/Resource/ResourcePageDetail.tsx";
 import {combineLoaders} from "@/app/routes/combineLoaders.ts";
 import {articleLoader} from "@/app/routes/articleLoader.ts";
 import ResourceFormulairePage from "@/pages/Resource/formulaire/ResourceFormulairePage.tsx";
+import EditPlantPage from "@/pages/plantCreationPage/EditPlantPage.tsx";
 import CreateApiPlantPage from "@/pages/plantCreationPage/CreateApiPlantPage.tsx";
 import ForumPage from "@/pages/forumPage/ForumPage.tsx";
 import PublicProfilePage from "@/pages/profilePage/PublicProfilePage.tsx";
@@ -77,6 +78,11 @@ const router = createBrowserRouter([
                         path: '/creation-plante/:plantSlug?',
                         loader: accountLoader,
                         element: <CreateApiPlantPage />
+                    },
+                    {
+                        path: '/edition-plante/:plantSlug',
+                        loader: accountLoader,
+                        element: <EditPlantPage />
                     },
                     {
                         path: '/ressources',
