@@ -7,26 +7,39 @@ import PlantCards from "@/pages/Dashboard/PlantCards.tsx";
 import PlantTasks from "@/pages/Dashboard/PlantTasks.tsx";
 import AddPlantDialog from "@/pages/Dashboard/AddPlantDialog.tsx";
 import PlantDetails from "@/pages/Dashboard/PlantDetails.tsx";
+import PlantFilters, { type PlantFiltersState, defaultFilters } from "./PlantFilters";
 import { Search } from "lucide-react";
 
 interface PlantListProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
-    refreshKey: number;
+    filters: PlantFiltersState;
+    onFiltersChange: (filters: PlantFiltersState) => void;
+    onRefreshReady?: (refresh: () => void) => void;
 }
 
 export default function Dashboard() {
     const { user, incrementTasksCompleted } = useUserStore();
     const { count } = useCountTask(user?.username);
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
-    const [refreshKey, setRefreshKey] = useState(0);
+    const [filters, setFilters] = useState<PlantFiltersState>(defaultFilters);
+    const [refreshPlants, setRefreshPlants] = useState<(() => void) | null>(null);
+
+    const handleRefreshReady = useCallback((refresh: () => void) => {
+        setRefreshPlants(() => refresh);
+    }, []);
+
+    const handlePlantDeleted = useCallback(() => {
+        setSelectedPlant(null);
+        refreshPlants?.();
+    }, [refreshPlants]);
 
     const handleTaskCompleted = useCallback(() => {
         // Incrémenter le compteur de tâches complétées dans le store
         incrementTasksCompleted();
         // Forcer le rafraîchissement des plantes
-        setRefreshKey(prev => prev + 1);
+        refreshPlants?.();
         // Mettre à jour la plante sélectionnée (les tâches ont changé)
         setSelectedPlant(prev => {
             if (prev) {
@@ -35,7 +48,7 @@ export default function Dashboard() {
             }
             return prev;
         });
-    }, [incrementTasksCompleted]);
+    }, [incrementTasksCompleted, refreshPlants]);
 
     return (
         <main className="min-h-screen bg-gt-surface p-6">
@@ -61,7 +74,9 @@ export default function Dashboard() {
                             username={user?.username}
                             setSelectedPlant={setSelectedPlant}
                             selectedPlant={selectedPlant}
-                            refreshKey={refreshKey}
+                            onRefreshReady={handleRefreshReady}
+                            filters={filters}
+                            onFiltersChange={setFilters}
                         />
                     </article>
 
@@ -69,7 +84,7 @@ export default function Dashboard() {
                         className="lg:col-span-2 space-y-6 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
                         style={{ animationDelay: '0.3s' }}
                     >
-                        <PlantHealth plant={selectedPlant} />
+                        <PlantHealth plant={selectedPlant} onPlantDeleted={handlePlantDeleted} />
                         <PlantTasks plant={selectedPlant} onTaskCompleted={handleTaskCompleted} />
                     </article>
                 </section>
@@ -91,7 +106,7 @@ export default function Dashboard() {
     );
 }
 
-function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: PlantListProps) {
+function PlantList({ username, setSelectedPlant, selectedPlant, filters, onFiltersChange, onRefreshReady }: PlantListProps) {
     const [query, setQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
 
@@ -113,19 +128,22 @@ function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: Pl
                 <div className="mb-4">
                     <label className="sr-only">Rechercher une plante</label>
 
-                    <div className="relative">
-                        <div className="pointer-events-none absolute left-3 top-1/2 transform -translate-y-1/2 text-gt-text-muted">
-                            <Search width={16} height={16} aria-hidden />
-                        </div>
+                    <div className="flex gap-2">
+                        <div className="relative flex-1">
+                            <div className="pointer-events-none absolute left-3 top-1/2 transform -translate-y-1/2 text-gt-text-muted">
+                                <Search width={16} height={16} aria-hidden />
+                            </div>
 
-                        <input
-                            type="search"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            aria-label="Rechercher une plante"
-                            placeholder="Rechercher une plante..."
-                            className="w-full bg-gt-surface border border-gt-border rounded-lg py-2 pl-10 pr-3 text-gt-text focus:outline-none focus:ring-2 focus:ring-gt-primary transition"
-                        />
+                            <input
+                                type="search"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                aria-label="Rechercher une plante"
+                                placeholder="Rechercher une plante..."
+                                className="w-full bg-gt-surface border border-gt-border rounded-lg py-2 pl-10 pr-3 text-gt-text focus:outline-none focus:ring-2 focus:ring-gt-primary transition"
+                            />
+                        </div>
+                        <PlantFilters filters={filters} onFiltersChange={onFiltersChange} />
                     </div>
                 </div>
 
@@ -133,8 +151,9 @@ function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: Pl
                     username={username}
                     setSelectedPlant={setSelectedPlant}
                     selectedPlant={selectedPlant}
-                    refreshKey={refreshKey}
+                    onRefreshReady={onRefreshReady}
                     search={debouncedQuery}
+                    filters={filters}
                 />
 
                 <AddPlantDialog />
@@ -143,7 +162,7 @@ function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: Pl
     );
 }
 
-function PlantHealth({ plant }: { plant: Plant | null }) {
+function PlantHealth({ plant, onPlantDeleted }: { plant: Plant | null; onPlantDeleted: () => void }) {
     return (
         <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             <header className="bg-gt-primary p-4">
@@ -160,7 +179,7 @@ function PlantHealth({ plant }: { plant: Plant | null }) {
                         description="Clique sur une plante pour voir son état de santé"
                     />
                 ) : (
-                    <PlantDetails plant={plant} />
+                    <PlantDetails plant={plant} onPlantDeleted={onPlantDeleted} />
                 )}
             </article>
         </section>

@@ -1,14 +1,18 @@
 import type { Plant } from "@/shared/types/plant.ts";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
-import React from "react";
+import {useState} from "react";
 import WaterDrop from "@/shared/components/ui/customs/WaterDrop.tsx";
+import { useDeletePlant } from "@/shared/hooks/usePlant.ts";
+import { Trash2, Pencil } from "lucide-react";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface PlantDetailsProps {
     plant: Plant;
+    onPlantDeleted: () => void;
 }
 
-export default function PlantDetails({ plant }: PlantDetailsProps) {
-    console.log(plant)
+export default function PlantDetails({ plant, onPlantDeleted }: PlantDetailsProps) {
     const getLightIcon = (light: string) => {
         switch (light) {
             case "Plein soleil": return "☀️";
@@ -27,7 +31,7 @@ export default function PlantDetails({ plant }: PlantDetailsProps) {
 
     return (
         <div className="space-y-6">
-            <HeaderPlantInfos plant={plant}/>
+            <HeaderPlantInfos plant={plant} onPlantDeleted={onPlantDeleted}/>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InfoCard title="Informations générales" icon="📋">
@@ -96,7 +100,26 @@ export default function PlantDetails({ plant }: PlantDetailsProps) {
     );
 }
 
-function HeaderPlantInfos({plant}: { plant: Plant }) {
+function HeaderPlantInfos({plant, onPlantDeleted}: { plant: Plant; onPlantDeleted: () => void }) {
+    const { removePlant, isLoading } = useDeletePlant();
+    const [showConfirm, setShowConfirm] = useState(false);
+    const navigate = useNavigate();
+
+    const handleDelete = async () => {
+        const success = await removePlant(plant.slug);
+        if (success) {
+            toast.success("Plante supprimée avec succès");
+            onPlantDeleted();
+        } else {
+            toast.error("Erreur lors de la suppression de la plante");
+        }
+        setShowConfirm(false);
+    };
+
+    const handleEdit = () => {
+        navigate(`/edition-plante/${plant.slug}`);
+    };
+
     return (
         <div className="flex items-start gap-4 pb-4 border-b border-gt-border">
             <img
@@ -105,9 +128,45 @@ function HeaderPlantInfos({plant}: { plant: Plant }) {
                 className="w-24 h-24 rounded-lg object-cover border-2 border-gt-border flex-shrink-0"
             />
             <div className="flex-1">
-                <h3 className="text-2xl font-bold text-gt-text mb-1">
-                    {plant.commonName || "Non renseigné"}
-                </h3>
+                <div className="flex items-center justify-between mb-1">
+                    <h3 className="text-2xl font-bold text-gt-text">
+                        {plant.commonName || "Non renseigné"}
+                    </h3>
+                    {!showConfirm ? (
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={handleEdit}
+                                className="p-2 text-gt-text-muted hover:text-gt-primary hover:bg-gt-primary/10 rounded-lg transition-colors"
+                                title="Modifier la plante"
+                            >
+                                <Pencil className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => setShowConfirm(true)}
+                                className="p-2 text-gt-text-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Supprimer la plante"
+                            >
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={handleDelete}
+                                disabled={isLoading}
+                                className="px-3 py-1 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+                            >
+                                {isLoading ? "..." : "Confirmer"}
+                            </button>
+                            <button
+                                onClick={() => setShowConfirm(false)}
+                                className="px-3 py-1 bg-gt-surface border border-gt-border text-gt-text text-sm rounded-lg hover:bg-gt-surface-hover transition-colors"
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    )}
+                </div>
                 <p className="text-lg text-gt-text-muted italic mb-2">
                     {plant.scientificName || "Non renseigné"}
                 </p>
