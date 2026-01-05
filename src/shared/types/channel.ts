@@ -46,10 +46,23 @@ export type MessageModerationEvent = {
     reason: string;
 }
 
-export type ForumWebSocketMessage = ChatMessage | MessageModerationEvent;
+export type MessageRestoredEvent = {
+    type: "MESSAGE_RESTORED";
+    messageId: number;
+    text: string;
+    author: string;
+    timestamp: string;
+    reason: string;
+}
+
+export type ForumWebSocketMessage = ChatMessage | MessageModerationEvent | MessageRestoredEvent;
 
 export function isModerationEvent(data: ForumWebSocketMessage): data is MessageModerationEvent {
     return 'type' in data && data.type === "MESSAGE_REMOVED";
+}
+
+export function isRestoredEvent(data: ForumWebSocketMessage): data is MessageRestoredEvent {
+    return 'type' in data && data.type === "MESSAGE_RESTORED";
 }
 
 // Counter for generating unique temporary IDs

@@ -13,11 +13,13 @@ interface SidebarItem {
     icon: React.ComponentType<{ size?: number; className?: string }>;
     path: string;
     superAdminOnly?: boolean;
+    moderatorAccess?: boolean;
 }
 
 const sidebarItems: SidebarItem[] = [
     { name: "Accueil", icon: Home, path: "/admin" },
     { name: "Utilisateurs", icon: Users, path: "/admin/users" },
+    { name: "Modération", icon: Shield, path: "/admin/moderation", moderatorAccess: true },
     { name: "Communications", icon: Mail, path: "/admin/communications" },
     { name: "Gestion des rôles", icon: UserCog, path: "/admin/roles", superAdminOnly: true },
 ];
@@ -26,6 +28,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     const location = useLocation();
     const { user } = useUserStore();
     const isSuperAdmin = user?.role === "SUPER_ADMIN";
+    const isAdmin = user?.role === "ADMIN" || isSuperAdmin;
+    const isModerator = user?.role === "MODERATEUR";
 
     const isActive = (path: string) => {
         if (path === "/admin") {
@@ -34,9 +38,18 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         return location.pathname.startsWith(path);
     };
 
-    const visibleItems = sidebarItems.filter(
-        (item) => !item.superAdminOnly || isSuperAdmin
-    );
+    const visibleItems = sidebarItems.filter((item) => {
+        // Super admin only items
+        if (item.superAdminOnly && !isSuperAdmin) {
+            return false;
+        }
+        // Moderator can only access items with moderatorAccess flag
+        if (isModerator && !isAdmin) {
+            return item.moderatorAccess === true;
+        }
+        // Admin and Super Admin can see everything except super admin only
+        return true;
+    });
 
     return (
         <>

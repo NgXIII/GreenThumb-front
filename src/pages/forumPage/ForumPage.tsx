@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import useGetChannels from "@/shared/hooks/forum/useGetChannel.ts";
 import type { Thread, Message, ChatMessage, ForumWebSocketMessage } from "@/shared/types/channel.ts";
-import { chatMessageToMessage, isModerationEvent } from "@/shared/types/channel.ts";
+import { chatMessageToMessage, isModerationEvent, isRestoredEvent } from "@/shared/types/channel.ts";
 import Sidebar from "./Sidebar.tsx";
 import ForumHeader from "./ForumHeader.tsx";
 import ThreadListView from "./ThreadListView.tsx";
@@ -104,8 +104,31 @@ export default function ForumPage() {
             setThreadMessages((prevMessages) =>
               prevMessages.filter(msg => msg.idMessage !== data.messageId)
             );
-            
+
             toast.info("Un message a été supprimé par la modération automatique");
+          } else if (isRestoredEvent(data)) {
+            console.log(`Message ${data.messageId} restored by moderator`);
+            console.log(`Reason: ${data.reason}`);
+
+            const restoredMessage: Message = {
+              idMessage: data.messageId,
+              text: data.text,
+              author: data.author,
+              timestamp: data.timestamp,
+              mediaUrls: []
+            };
+
+            setThreadMessages((prevMessages) => {
+              const messageExists = prevMessages.some(msg => msg.idMessage === data.messageId);
+              if (messageExists) {
+                return prevMessages;
+              }
+              return [...prevMessages, restoredMessage].sort(
+                (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+              );
+            });
+
+            toast.success("Un message a été restauré après révision humaine");
           } else {
             const newMessage = chatMessageToMessage(data);
 
