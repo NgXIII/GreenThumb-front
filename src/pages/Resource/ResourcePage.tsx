@@ -67,7 +67,7 @@ export default function ResourcePage() {
                                 Découvrez tous nos guides, tutoriels et conseils pour devenir un expert en jardinage
                             </p>
                         </div>
-                        {user?.role === 'ADMIN' && (
+                        {['ADMIN', 'SUPER_ADMIN'].includes(user?.role as string) && (
                             <Link
                                 to="/ressources/ajouter"
                                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-gt-primary hover:bg-gt-primary/90 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 shrink-0"

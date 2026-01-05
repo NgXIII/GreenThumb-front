@@ -1,6 +1,6 @@
 import {getTop3Messages} from "@/services/repos/getTop3Messages.ts";
 import {useEffect, useState} from "react";
-import type {Message} from "../types/message.ts";
+import type {Message} from "@/shared/types/channel.ts";
 
 export default function useTopMessages() {
     const [messages, setMessages] = useState<Message[]>([]);

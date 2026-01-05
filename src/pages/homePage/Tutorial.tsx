@@ -35,15 +35,14 @@ function TutorialCards({ data }: { data: HomeResource[]}) {
 }
 
 function TutorialCard({title, date, imageUrl }: HomeResource) {
-    const urlImage = "src/assets/resourceImage/" + imageUrl;
 
     return (
         <CardBase>
             {/* Image */}
             <div className="relative w-full h-44 sm:h-48 bg-gt-surface flex items-center justify-center overflow-hidden">
-                {urlImage ? (
+                {imageUrl ? (
                     <img
-                        src={urlImage}
+                        src={imageUrl}
                         alt={title}
                         className="w-full h-full object-cover"
                     />
