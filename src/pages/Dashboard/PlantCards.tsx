@@ -1,6 +1,6 @@
 import usePlant from "@/shared/hooks/usePlant.ts";
 import type { Plant } from "@/shared/types/plant.ts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 
 interface PlantCardsProps {
@@ -8,7 +8,7 @@ interface PlantCardsProps {
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
     search?: string;
-    refreshKey?: number;
+    onRefreshReady?: (refresh: () => void) => void;
 }
 
 interface PlantCardProps {
@@ -17,8 +17,10 @@ interface PlantCardProps {
     isSelected: boolean;
 }
 
-export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, refreshKey = 0 }: PlantCardsProps) {
+export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, onRefreshReady }: PlantCardsProps) {
     const [page, setPage] = useState(0);
+    const onRefreshReadyRef = useRef(onRefreshReady);
+    onRefreshReadyRef.current = onRefreshReady;
 
     // Réinitialiser la page à 0 quand la recherche change
     useEffect(() => {
@@ -29,8 +31,14 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
         plants,
         totalPages,
         loading,
-        error
-    } = usePlant(username, page, 5, search, refreshKey);
+        error,
+        refresh
+    } = usePlant(username, page, 5, search);
+
+    // Expose la fonction refresh au parent une seule fois
+    useEffect(() => {
+        onRefreshReadyRef.current?.(refresh);
+    }, [refresh]);
 
     if (loading) {
         return (

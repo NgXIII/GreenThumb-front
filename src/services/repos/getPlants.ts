@@ -57,6 +57,10 @@ export async function postPlantApi(newPlantApi: PlantSearchResult): Promise<void
     await apiClient.post("/plants/api", newPlantApi);
 }
 
+export async function deletePlant(slug: string): Promise<void> {
+    await apiClient.delete(`/plants/${slug}`);
+}
+
 function checkUsername(username: string | undefined) {
     if (!username) {
         throw new Error("Aucun utilisateur");
