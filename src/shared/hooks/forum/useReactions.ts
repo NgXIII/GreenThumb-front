@@ -36,17 +36,17 @@ export default function useReactions({
                              return message;
                         }
 
-                        const currentReactions = message.reaction || [];
+                        const currentReactions = message.reactions || [];
 
                         if (action === 'ADD') {
                              return {
                                   ...message,
-                                  reaction: [...currentReactions, reaction]
+                                  reactions: [...currentReactions, reaction]
                              };
                         } else {
                              return {
                                   ...message,
-                                  reaction: currentReactions.filter(
+                                  reactions: currentReactions.filter(
                                       r => r.idReaction !== reaction.idReaction
                                   )
                              };

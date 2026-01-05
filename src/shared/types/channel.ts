@@ -31,7 +31,7 @@ export type Message = {
     author: string;
     timestamp: string;
     mediaUrls?: string[];
-    reaction?: Reaction[];
+    reactions?: Reaction[];
 }
 
 export type ChatMessage = {
@@ -41,7 +41,7 @@ export type ChatMessage = {
     text: string;
     timestamp: string;
     mediaUrls?: string[];
-    reaction?: Reaction[];
+    reactions?: Reaction[];
 }
 
 let tempIdCounter = 0;
@@ -53,7 +53,7 @@ export function chatMessageToMessage(chatMessage: ChatMessage): Message {
         author: chatMessage.username,
         timestamp: chatMessage.timestamp,
         mediaUrls: chatMessage.mediaUrls || [],
-        reaction: chatMessage.reaction || [],
+        reactions: chatMessage.reactions || [],
     }
 }
 
@@ -65,6 +65,6 @@ export function messageToChatMessage(message: Message, threadId: number): ChatMe
         text: message.text,
         timestamp: message.timestamp,
         mediaUrls: message.mediaUrls || [],
-        reaction: message.reaction || [],
+        reactions: message.reactions || [],
     }
 }

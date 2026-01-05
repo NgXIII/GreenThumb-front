@@ -19,6 +19,8 @@ export default function MessageListView({ messages, scrollContainerRef, currentU
   const [reportingMessageId, setReportingMessageId] = useState<number | null>(null);
   const { userMap } = useUserMap(messages);
 
+    console.log(messages);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -167,7 +169,7 @@ export default function MessageListView({ messages, scrollContainerRef, currentU
 
                   {/* Reactions */}
                   <MessageReactions
-                    reactions={message.reaction}
+                    reactions={message.reactions}
                     currentUsername={currentUsername}
                     onToggleReaction={(emoji) => onToggleReaction(message.idMessage, emoji)}
                   />

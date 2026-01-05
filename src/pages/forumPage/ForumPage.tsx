@@ -49,7 +49,6 @@ export default function ForumPage() {
     }
   }, [channels]);
 
-  // Bloquer le scroll du body sur cette page
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
