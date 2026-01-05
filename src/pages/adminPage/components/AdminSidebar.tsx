@@ -36,7 +36,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
     const visibleItems = sidebarItems.filter((item) => {
         // Filter items based on user role
-        return role && item.roles.includes(role);
+        if (!role) return false;
+        return item.roles.includes(role as 'MODERATEUR' | 'ADMIN' | 'SUPER_ADMIN');
     });
 
     return (
