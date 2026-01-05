@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import useGetChannels from "@/shared/hooks/forum/useGetChannel.ts";
 import type { Thread, Message, ChatMessage } from "@/shared/types/channel.ts";
 import { chatMessageToMessage } from "@/shared/types/channel.ts";
@@ -12,8 +13,10 @@ import { websocketService } from "@/services/notifications/websocketService.ts";
 import {toast} from "sonner";
 import type {TierUpgradeNotification} from "@/shared/types/user.ts";
 import TierUpgradeModal from "@/pages/forumPage/TierUpgradeModal.tsx";
+import useReactions from "@/shared/hooks/forum/useReactions.ts";
 
 export default function ForumPage() {
+  const location = useLocation();
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [expandedChannels, setExpandedChannels] = useState<Set<string>>(new Set());
@@ -26,6 +29,12 @@ export default function ForumPage() {
   const { user } = useUserStore();
 
   const { channels, error, loading, refetch } = useGetChannels();
+
+  const { toggleReaction } = useReactions({
+    threadId: selectedThread?.id ?? null,
+    messages: threadMessages,
+    setMessages: setThreadMessages
+  });
 
   const currentChannel = channels?.find((c) => c.name === selectedChannel) || channels?.[0];
 
@@ -42,8 +51,29 @@ export default function ForumPage() {
     }
   }, [channels]);
 
-  // Bloquer le scroll du body sur cette page
+  // Restaurer le channel et thread quand on revient de la page profil
   useEffect(() => {
+    if (!channels || channels.length === 0) return;
+
+    const state = location.state as { selectedChannel?: string; selectedThreadId?: number } | null;
+
+    if (state?.selectedChannel && state?.selectedThreadId) {
+      // Restaurer le channel
+      setSelectedChannel(state.selectedChannel);
+
+      // Trouver et restaurer le thread
+      for (const channel of channels) {
+        const thread = channel.threads?.find(t => t.id === state.selectedThreadId);
+        if (thread) {
+          setSelectedThread(thread);
+          break;
+        }
+      }
+    }
+  }, [location.state, channels]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
@@ -166,6 +196,19 @@ export default function ForumPage() {
     }
   }
 
+  const handleMessageClick = (messageId: number) => {
+    const messageElement = document.getElementById(`message-${messageId}`);
+    if (messageElement) {
+      messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // Highlight effect
+      messageElement.classList.add('bg-gt-primary/10');
+      setTimeout(() => {
+        messageElement.classList.remove('bg-gt-primary/10');
+      }, 2000);
+    }
+  }
+
   return (
       <>
         <div className="flex bg-gradient-to-br from-gt-surface via-gt-surface to-gt-surface/95 overflow-hidden" style={{height: 'calc(100vh - 4rem)'}}>
@@ -189,13 +232,22 @@ export default function ForumPage() {
                 isSidebarOpen={isSidebarOpen}
                 currentChannel={currentChannel}
                 selectedThread={selectedThread}
+                threadMessages={threadMessages}
                 onToggleSidebar={handleToggleSidebar}
                 onBackToThreads={handleBackToThreads}
+                onMessageClick={handleMessageClick}
             />
 
             <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6">
               {selectedThread ? (
-                  <MessageListView messages={threadMessages} scrollContainerRef={messagesContainerRef} />
+                  <MessageListView
+                    messages={threadMessages}
+                    scrollContainerRef={messagesContainerRef}
+                    currentUsername={user?.username}
+                    onToggleReaction={toggleReaction}
+                    selectedChannel={selectedChannel}
+                    selectedThreadId={selectedThread.id}
+                  />
               ) : (
                   <ThreadListView threads={threads} onSelectThread={setSelectedThread} />
               )}
@@ -208,7 +260,7 @@ export default function ForumPage() {
                     role={user?.role}
                     tier={user?.tier}
                     channelName={currentChannel?.name}
-                    username={user?.username}
+                    user={user}
                     countCreatedThread={user?.countCreatedThread}
                     onThreadCreated={refetch}
                     onSendMessage={handleSendMessage}

@@ -1,8 +1,9 @@
 import ChannelItem from "./ChannelItem.tsx";
 import type { Channel, Thread } from "@/shared/types/channel.ts";
+import type { SearchResult } from "@/shared/utils/searchThreads.ts";
 
 interface ChannelListProps {
-  channels: Channel[] | null;
+  searchResults: SearchResult[];
   loading: boolean;
   error: string | null;
   selectedChannel: string | null;
@@ -14,7 +15,7 @@ interface ChannelListProps {
 }
 
 export default function ChannelList({
-  channels,
+  searchResults,
   loading,
   error,
   selectedChannel,
@@ -40,20 +41,38 @@ export default function ChannelList({
     );
   }
 
+  // Message si aucun résultat
+  if (searchResults.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-sm text-gt-text-muted">Aucun résultat trouvé</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-1">
-      {channels?.map((channel) => (
-        <ChannelItem
-          key={channel.name}
-          channel={channel}
-          isSelected={selectedChannel === channel.name}
-          isExpanded={expandedChannels.has(channel.name)}
-          selectedThread={selectedThread}
-          onSelectChannel={onSelectChannel}
-          onSelectThread={onSelectThread}
-          onToggleChannel={onToggleChannel}
-        />
-      ))}
+      {searchResults.map((result) => {
+        // Convertir SearchResult en Channel pour compatibilité avec ChannelItem
+        const channel: Channel = {
+          name: result.channelName,
+          description: "", // Pas utilisé par ChannelItem
+          threads: result.threads
+        };
+
+        return (
+          <ChannelItem
+            key={result.channelName}
+            channel={channel}
+            isSelected={selectedChannel === result.channelName}
+            isExpanded={expandedChannels.has(result.channelName)}
+            selectedThread={selectedThread}
+            onSelectChannel={onSelectChannel}
+            onSelectThread={onSelectThread}
+            onToggleChannel={onToggleChannel}
+          />
+        );
+      })}
     </div>
   );
 }

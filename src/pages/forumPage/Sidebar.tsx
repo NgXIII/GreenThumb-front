@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Search, Plus, MessageCircle, TrendingUp, ChevronDown } from 'lucide-react';
+import {Plus, MessageCircle, TrendingUp, ChevronDown} from 'lucide-react';
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 import ChannelList from "./ChannelList.tsx";
 import CreateChannelModal from "./CreateChannelModal.tsx";
 import UserXPBar from "./UserXPBar.tsx";
 import UserProfileModal from "./UserProfileModal.tsx";
+import SearchInput from "./SearchInput.tsx";
 import type { Channel, Thread } from "@/shared/types/channel.ts";
 import useGetNextTier from "@/shared/hooks/forum/useGetNextTier.ts";
 import type {UserAccount} from "@/shared/types/user.ts";
+import { searchThreads, type SearchResult } from "@/shared/utils/searchThreads.ts";
 
 interface SidebarProps {
   user: UserAccount | null;
@@ -41,6 +43,10 @@ export default function Sidebar({
     const { tier } = useGetNextTier(user?.tier)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Calculer les résultats de recherche
+    const searchResults: SearchResult[] = searchThreads(channels, searchQuery);
 
     return (
       <div className={`bg-gt-surface-elevated/80 backdrop-blur-sm border-r border-gt-border/50 flex flex-col shadow-lg transition-all duration-300 ${
@@ -64,16 +70,12 @@ export default function Sidebar({
           <p className="text-xs text-gt-text-muted">Communauté GreenThumb</p>
         </div>
 
-        {/* Search */}
-        <div className="p-4">
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gt-text-muted group-hover:text-gt-primary transition-colors"/>
-            <input
-              type="text"
-              placeholder="Rechercher dans le forum..."
-              className="w-full pl-11 pr-4 py-2.5 bg-gt-surface/70 border border-gt-border/50 rounded-xl text-sm text-gt-text placeholder:text-gt-text-muted focus:outline-none focus:ring-2 focus:ring-gt-primary/50 focus:border-gt-primary/50 focus:bg-gt-surface transition-all shadow-sm"
-            />
-          </div>
+        <div className="p-4 border-b border-gt-border/30">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Rechercher un thread ou channel..."
+          />
         </div>
 
         {/* Channels List */}
@@ -83,7 +85,7 @@ export default function Sidebar({
               <TrendingUp className="w-3.5 h-3.5"/>
               Channels
             </h3>
-              {user?.role == "ADMIN" && (
+              {(user?.role == "ADMIN" || user?.role == "SUPER_ADMIN") && (
                   <button
                       onClick={() => setIsCreateModalOpen(true)}
                       className="p-1 rounded-lg hover:bg-gt-primary/10 transition-all group"
@@ -94,7 +96,7 @@ export default function Sidebar({
           </div>
 
           <ChannelList
-            channels={channels}
+            searchResults={searchResults}
             loading={loading}
             error={error}
             selectedChannel={selectedChannel}
@@ -120,7 +122,9 @@ export default function Sidebar({
               />
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-semibold text-gt-text truncate group-hover:text-gt-primary transition-colors">{user?.username}</p>
-                {user?.role === 'ADMIN' ? (
+                {user?.role === 'SUPER_ADMIN' ? (
+                  <p className="text-xs font-semibold text-purple-600 dark:text-purple-400">Super Admin</p>
+                ) : user?.role === 'ADMIN' ? (
                   <p className="text-xs font-semibold text-red-600 dark:text-red-400">Admin</p>
                 ) : user?.role === 'MODERATEUR' ? (
                   <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Modérateur</p>
@@ -131,9 +135,23 @@ export default function Sidebar({
             </button>
           </div>
 
-          {/* XP Bar or Admin Badge */}
+          {/* XP Bar or Admin/Super Admin Badge */}
           {user && (
-            user.role === 'ADMIN' ? (
+            user.role === 'SUPER_ADMIN' ? (
+              <div className="px-4 pb-4">
+                <div className="p-3 rounded-xl border-2 bg-gradient-to-r from-purple-500/10 to-purple-600/10 border-purple-500/30">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+                    <p className="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                      Super Administrateur
+                    </p>
+                  </div>
+                  <p className="text-xs text-gt-text-muted">
+                    👑 Tous les privilèges + Gestion des rôles
+                  </p>
+                </div>
+              </div>
+            ) : user.role === 'ADMIN' ? (
               <div className="px-4 pb-4">
                 <div className="p-3 rounded-xl border-2 bg-gradient-to-r from-red-500/10 to-red-600/10 border-red-500/30">
                   <div className="flex items-center gap-2 mb-1">

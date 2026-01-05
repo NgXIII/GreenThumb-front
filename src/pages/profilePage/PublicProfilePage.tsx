@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { User, Loader2 } from "lucide-react"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
+import { User, Loader2, ArrowLeft } from "lucide-react"
 import { getUserByUsername } from "@/services/repos/getUserPublic"
 import { getPlants } from "@/services/repos/getPlants"
 import type { UserAccount } from "@/shared/types/user"
@@ -20,15 +20,19 @@ type PlantCardProps = {
 export default function PublicProfilePage() {
     const { username } = useParams<{ username: string }>()
     const navigate = useNavigate()
+    const location = useLocation()
     const [user, setUser] = useState<UserAccount | null>(null)
     const [plants, setPlants] = useState<Plant[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [plantsLoading, setPlantsLoading] = useState(false)
 
+    const state = location.state as { from?: string; selectedChannel?: string; selectedThreadId?: number } | null
+    const from = state?.from || "/dashboard"
+
     useEffect(() => {
         const fetchUserData = async () => {
             if (!username) {
-                navigate("/dashboard")
+                navigate(from)
                 return
             }
 
@@ -38,7 +42,7 @@ export default function PublicProfilePage() {
 
                 if (userData.isPrivate) {
                     toast.error("Ce profil est privé")
-                    navigate("/dashboard")
+                    navigate(from)
                     return
                 }
 
@@ -68,14 +72,14 @@ export default function PublicProfilePage() {
                     toast.error("Erreur lors du chargement du profil")
                 }
 
-                navigate("/dashboard")
+                navigate(from)
             } finally {
                 setIsLoading(false)
             }
         }
 
         fetchUserData()
-    }, [username, navigate])
+    }, [username, navigate, from])
 
     if (isLoading) {
         return (
@@ -95,6 +99,19 @@ export default function PublicProfilePage() {
     return (
         <main className="min-h-screen bg-gt-surface py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
             <div className="max-w-4xl mx-auto">
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate(from, {
+                        state: {
+                            selectedChannel: state?.selectedChannel,
+                            selectedThreadId: state?.selectedThreadId
+                        }
+                    })}
+                    className="mb-4 flex items-center gap-2 text-gt-text-muted hover:text-gt-text"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    Retour
+                </Button>
                 <PublicProfileHeader user={user} />
 
                 <section className="bg-gt-surface-elevated rounded-2xl shadow-xl p-8 mb-8 transition-colors duration-300">
@@ -120,15 +137,6 @@ export default function PublicProfilePage() {
                         </div>
                     )}
                 </section>
-
-                <div className="flex justify-center">
-                    <Button
-                        onClick={() => navigate("/dashboard")}
-                        className="bg-gt-green hover:bg-green-700 text-white"
-                    >
-                        Retour au tableau de bord
-                    </Button>
-                </div>
             </div>
         </main>
     )
