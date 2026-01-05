@@ -10,6 +10,7 @@ export type UserAccount = {
     tier: Tier
     countCreatedThread: number
     role: string
+    tasksCompleted: number
     isPrivate: boolean
 }
 

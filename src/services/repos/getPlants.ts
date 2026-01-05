@@ -5,12 +5,18 @@ import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 export async function getPlants(
     username: string | undefined,
     page: number,
-    size: number
+    size: number,
+    search?: string
     ){
     checkUsername(username);
 
+    const params: Record<string, unknown> = { page, size };
+    if (search && search.trim()) {
+        params.search = search.trim();
+    }
+
     const response = await apiClient.get<PlantPage>(`/users/${username}/plants`, {
-        params: { page, size }
+        params
     });
 
     return response.data;
@@ -20,6 +26,14 @@ export async function getCountTask(username: string | undefined): Promise<number
     checkUsername(username);
 
     const response = await apiClient.get<number>(`/users/${username}/tasks`);
+
+    return response.data;
+}
+
+export async function getMessagesCount(username: string | undefined): Promise<number> {
+    checkUsername(username);
+
+    const response = await apiClient.get<number>(`/users/${username}/messages/count`);
 
     return response.data;
 }

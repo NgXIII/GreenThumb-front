@@ -1,12 +1,14 @@
 import usePlant from "@/shared/hooks/usePlant.ts";
-import type {Plant} from "@/shared/types/plant.ts";
-import {useState} from "react";
+import type { Plant } from "@/shared/types/plant.ts";
+import { useState, useEffect } from "react";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 
 interface PlantCardsProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
+    search?: string;
+    refreshKey?: number;
 }
 
 interface PlantCardProps {
@@ -15,15 +17,20 @@ interface PlantCardProps {
     isSelected: boolean;
 }
 
-export default function PlantCards({ username, setSelectedPlant, selectedPlant }: PlantCardsProps) {
+export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, refreshKey = 0 }: PlantCardsProps) {
     const [page, setPage] = useState(0);
+
+    // Réinitialiser la page à 0 quand la recherche change
+    useEffect(() => {
+        setPage(0);
+    }, [search]);
 
     const {
         plants,
         totalPages,
         loading,
         error
-    } = usePlant(username, page, 5);
+    } = usePlant(username, page, 5, search, refreshKey);
 
     if (loading) {
         return (
@@ -33,7 +40,6 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
         );
     }
 
-
     if (error) {
         return (
             <div className="bg-gt-surface rounded-lg p-4 border border-gt-border">
@@ -42,7 +48,7 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
         );
     }
 
-    if (plants.length === 0) {
+    if (plants.length === 0 && !search) {
         return (
             <div className="text-center py-8 text-gt-text-muted">
                 Aucune plante pour le moment
@@ -50,9 +56,13 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
         );
     }
 
-    console.log(plants.map((plant: Plant) => {
-        console.log(plant.imageUrl);
-    }))
+    if (search && plants.length === 0) {
+        return (
+            <div className="text-center py-8 text-gt-text-muted">
+                Aucune plante trouvée pour « {search} »
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-3">
@@ -110,17 +120,17 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant }
             </div>
 
             <style>{`
-                @keyframes fadeInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            `}</style>
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
         </div>
     );
 }
