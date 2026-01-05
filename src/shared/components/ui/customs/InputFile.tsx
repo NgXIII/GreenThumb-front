@@ -3,6 +3,7 @@ import * as React from "react";
 import { useController, useFormContext, type Path, type FieldValues } from "react-hook-form";
 import {FormLabel} from "@/shared/components/ui/form.tsx";
 import HoverInfoError from "@/shared/components/ui/customs/HoverInfoError.tsx";
+import { toast } from "sonner";
 
 type InputFileProps<T extends FieldValues> = {
     label: string;
@@ -17,6 +18,17 @@ export default function InputFile<T extends FieldValues>({ label, name }: InputF
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
+            // Vérifier la taille du fichier (2 Mo max)
+            const maxSize = 2 * 1024 * 1024; // 2 Mo en bytes
+            if (file.size > maxSize) {
+                toast.error("L'image ne doit pas dépasser 2 Mo", { duration: 3000 });
+                field.onChange('');
+                setPreviewUrl(undefined);
+                // Reset l'input
+                e.target.value = '';
+                return;
+            }
+
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64String = reader.result as string;
