@@ -3,7 +3,7 @@ import { renderHook, waitFor } from "@testing-library/react"
 import * as repo from "../../services/repos/getTop3Messages.ts"
 
 const fakeMessage = [
-    { title: "Test", tags: [], author: "Moi", likeCount: 69, date: new Date().toISOString() },
+    { idMessage: 1, text: "c'est un text", author: "Moi", timestamp: new Date().toISOString(), mediaUrls: [], reactions: [] },
 ]
 
 describe("useTopMessage()", () => {
