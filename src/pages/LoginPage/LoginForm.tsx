@@ -37,11 +37,12 @@ export default function LoginForm() {
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
                 const errorCode = error.response?.data?.error;
-                const errorMessage = error.response?.data?.message || "Erreur de connexion.";
+                const statusCode = error.response?.status;
+                let errorMessage = error.response?.data?.message;
 
                 if (errorCode === "account_not_verified") {
-                    toast.error(errorMessage, { duration: 4000 });
-                    
+                    toast.error(errorMessage || "Votre compte n'est pas encore vérifié.", { duration: 4000 });
+
                     let userEmail = error.response?.data?.email;
                     if (!userEmail && values.login.includes('@')) {
                         userEmail = values.login;
@@ -60,9 +61,22 @@ export default function LoginForm() {
                     return;
                 }
 
-                toast.error(errorMessage, { duration: 2000 });
+                // Messages d'erreur plus spécifiques selon le code de statut
+                if (!errorMessage) {
+                    if (statusCode === 401 || statusCode === 403) {
+                        errorMessage = "Identifiants incorrects. Veuillez vérifier votre nom d'utilisateur/email et votre mot de passe.";
+                    } else if (statusCode === 404) {
+                        errorMessage = "Aucun compte trouvé avec ces identifiants.";
+                    } else if (statusCode === 500) {
+                        errorMessage = "Une erreur s'est produite sur le serveur. Veuillez réessayer ultérieurement.";
+                    } else {
+                        errorMessage = "Votre identifiant ou mot de passe est incorrect";
+                    }
+                }
+
+                toast.error(errorMessage, { duration: 3000 });
             } else {
-                toast.error("Erreur de connexion.", { duration: 2000 });
+                toast.error("Une erreur inattendue s'est produite. Veuillez réessayer.", { duration: 2000 });
             }
         }
     }
