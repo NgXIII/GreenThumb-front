@@ -13,20 +13,29 @@ interface PlantListProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
-    refreshKey: number;
+    onRefreshReady?: (refresh: () => void) => void;
 }
 
 export default function Dashboard() {
     const { user, incrementTasksCompleted } = useUserStore();
     const { count } = useCountTask(user?.username);
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
-    const [refreshKey, setRefreshKey] = useState(0);
+    const [refreshPlants, setRefreshPlants] = useState<(() => void) | null>(null);
+
+    const handleRefreshReady = useCallback((refresh: () => void) => {
+        setRefreshPlants(() => refresh);
+    }, []);
+
+    const handlePlantDeleted = useCallback(() => {
+        setSelectedPlant(null);
+        refreshPlants?.();
+    }, [refreshPlants]);
 
     const handleTaskCompleted = useCallback(() => {
         // Incrémenter le compteur de tâches complétées dans le store
         incrementTasksCompleted();
         // Forcer le rafraîchissement des plantes
-        setRefreshKey(prev => prev + 1);
+        refreshPlants?.();
         // Mettre à jour la plante sélectionnée (les tâches ont changé)
         setSelectedPlant(prev => {
             if (prev) {
@@ -35,7 +44,7 @@ export default function Dashboard() {
             }
             return prev;
         });
-    }, [incrementTasksCompleted]);
+    }, [incrementTasksCompleted, refreshPlants]);
 
     return (
         <main className="min-h-screen bg-gt-surface p-6">
@@ -61,7 +70,7 @@ export default function Dashboard() {
                             username={user?.username}
                             setSelectedPlant={setSelectedPlant}
                             selectedPlant={selectedPlant}
-                            refreshKey={refreshKey}
+                            onRefreshReady={handleRefreshReady}
                         />
                     </article>
 
@@ -69,7 +78,7 @@ export default function Dashboard() {
                         className="lg:col-span-2 space-y-6 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
                         style={{ animationDelay: '0.3s' }}
                     >
-                        <PlantHealth plant={selectedPlant} />
+                        <PlantHealth plant={selectedPlant} onPlantDeleted={handlePlantDeleted} />
                         <PlantTasks plant={selectedPlant} onTaskCompleted={handleTaskCompleted} />
                     </article>
                 </section>
@@ -91,7 +100,7 @@ export default function Dashboard() {
     );
 }
 
-function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: PlantListProps) {
+function PlantList({ username, setSelectedPlant, selectedPlant, onRefreshReady }: PlantListProps) {
     const [query, setQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
 
@@ -133,7 +142,7 @@ function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: Pl
                     username={username}
                     setSelectedPlant={setSelectedPlant}
                     selectedPlant={selectedPlant}
-                    refreshKey={refreshKey}
+                    onRefreshReady={onRefreshReady}
                     search={debouncedQuery}
                 />
 
@@ -143,7 +152,7 @@ function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: Pl
     );
 }
 
-function PlantHealth({ plant }: { plant: Plant | null }) {
+function PlantHealth({ plant, onPlantDeleted }: { plant: Plant | null; onPlantDeleted: () => void }) {
     return (
         <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             <header className="bg-gt-primary p-4">
@@ -160,7 +169,7 @@ function PlantHealth({ plant }: { plant: Plant | null }) {
                         description="Clique sur une plante pour voir son état de santé"
                     />
                 ) : (
-                    <PlantDetails plant={plant} />
+                    <PlantDetails plant={plant} onPlantDeleted={onPlantDeleted} />
                 )}
             </article>
         </section>
