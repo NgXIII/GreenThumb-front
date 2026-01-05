@@ -260,7 +260,7 @@ export default function ForumPage() {
                     role={user?.role}
                     tier={user?.tier}
                     channelName={currentChannel?.name}
-                    username={user?.username}
+                    user={user}
                     countCreatedThread={user?.countCreatedThread}
                     onThreadCreated={refetch}
                     onSendMessage={handleSendMessage}
