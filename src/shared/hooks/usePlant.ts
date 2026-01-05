@@ -4,8 +4,7 @@ import type {PlantPage, PlantSearchPage, PlantSearchResult} from "@/shared/types
 import type {PlantPost} from "@/shared/types/schemas/plantSchema.ts";
 import {AxiosError} from "axios";
 
-
-export default function usePlant(username: string | undefined, page: number, size: number = 5, search?: string, refreshKey: number = 0, filters?: PlantFilters) {
+export default function usePlant(username: string | undefined, page: number, size: number = 5, search?: string, filters?: PlantFilters) {
     const [plantsPage, setPlantsPage] = useState<PlantPage | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);

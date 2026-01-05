@@ -20,8 +20,7 @@ interface PlantCardProps {
     isSelected: boolean;
 }
 
-export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, onRefreshReady }: PlantCardsProps) {
-export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, refreshKey = 0, filters }: PlantCardsProps) {
+export default function PlantCards({ username, setSelectedPlant, selectedPlant, search, onRefreshReady, filters }: PlantCardsProps) {
     const [page, setPage] = useState(0);
     const onRefreshReadyRef = useRef(onRefreshReady);
     onRefreshReadyRef.current = onRefreshReady;
@@ -48,14 +47,12 @@ export default function PlantCards({ username, setSelectedPlant, selectedPlant, 
         loading,
         error,
         refresh
-    } = usePlant(username, page, 5, search);
+    } = usePlant(username, page, 5, search, apiFilters);
 
     // Expose la fonction refresh au parent une seule fois
     useEffect(() => {
         onRefreshReadyRef.current?.(refresh);
     }, [refresh]);
-        error
-    } = usePlant(username, page, 5, search, refreshKey, apiFilters);
 
     // Vérifier si des filtres sont actifs
     const hasActiveFilters = filters && (

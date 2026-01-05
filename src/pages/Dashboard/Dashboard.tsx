@@ -14,7 +14,6 @@ interface PlantListProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
-    refreshKey: number;
     filters: PlantFiltersState;
     onFiltersChange: (filters: PlantFiltersState) => void;
     onRefreshReady?: (refresh: () => void) => void;
@@ -24,7 +23,6 @@ export default function Dashboard() {
     const { user, incrementTasksCompleted } = useUserStore();
     const { count } = useCountTask(user?.username);
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
-    const [refreshKey, setRefreshKey] = useState(0);
     const [filters, setFilters] = useState<PlantFiltersState>(defaultFilters);
     const [refreshPlants, setRefreshPlants] = useState<(() => void) | null>(null);
 
@@ -77,7 +75,6 @@ export default function Dashboard() {
                             setSelectedPlant={setSelectedPlant}
                             selectedPlant={selectedPlant}
                             onRefreshReady={handleRefreshReady}
-                            refreshKey={refreshKey}
                             filters={filters}
                             onFiltersChange={setFilters}
                         />
@@ -109,7 +106,7 @@ export default function Dashboard() {
     );
 }
 
-function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey, filters, onFiltersChange, onRefreshReady }: PlantListProps) {
+function PlantList({ username, setSelectedPlant, selectedPlant, filters, onFiltersChange, onRefreshReady }: PlantListProps) {
     const [query, setQuery] = useState('');
     const [debouncedQuery, setDebouncedQuery] = useState('');
 
