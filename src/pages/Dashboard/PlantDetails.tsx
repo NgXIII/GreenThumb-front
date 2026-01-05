@@ -1,10 +1,11 @@
 import type { Plant } from "@/shared/types/plant.ts";
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
-import React, {useState} from "react";
+import {useState} from "react";
 import WaterDrop from "@/shared/components/ui/customs/WaterDrop.tsx";
 import { useDeletePlant } from "@/shared/hooks/usePlant.ts";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface PlantDetailsProps {
     plant: Plant;
@@ -12,7 +13,6 @@ interface PlantDetailsProps {
 }
 
 export default function PlantDetails({ plant, onPlantDeleted }: PlantDetailsProps) {
-    console.log(plant)
     const getLightIcon = (light: string) => {
         switch (light) {
             case "Plein soleil": return "☀️";
@@ -103,6 +103,7 @@ export default function PlantDetails({ plant, onPlantDeleted }: PlantDetailsProp
 function HeaderPlantInfos({plant, onPlantDeleted}: { plant: Plant; onPlantDeleted: () => void }) {
     const { removePlant, isLoading } = useDeletePlant();
     const [showConfirm, setShowConfirm] = useState(false);
+    const navigate = useNavigate();
 
     const handleDelete = async () => {
         const success = await removePlant(plant.slug);
@@ -113,6 +114,10 @@ function HeaderPlantInfos({plant, onPlantDeleted}: { plant: Plant; onPlantDelete
             toast.error("Erreur lors de la suppression de la plante");
         }
         setShowConfirm(false);
+    };
+
+    const handleEdit = () => {
+        navigate(`/edition-plante/${plant.slug}`);
     };
 
     return (
@@ -128,13 +133,22 @@ function HeaderPlantInfos({plant, onPlantDeleted}: { plant: Plant; onPlantDelete
                         {plant.commonName || "Non renseigné"}
                     </h3>
                     {!showConfirm ? (
-                        <button
-                            onClick={() => setShowConfirm(true)}
-                            className="p-2 text-gt-text-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Supprimer la plante"
-                        >
-                            <Trash2 className="w-5 h-5" />
-                        </button>
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={handleEdit}
+                                className="p-2 text-gt-text-muted hover:text-gt-primary hover:bg-gt-primary/10 rounded-lg transition-colors"
+                                title="Modifier la plante"
+                            >
+                                <Pencil className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => setShowConfirm(true)}
+                                className="p-2 text-gt-text-muted hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Supprimer la plante"
+                            >
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        </div>
                     ) : (
                         <div className="flex items-center gap-2">
                             <button
