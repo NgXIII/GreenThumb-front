@@ -1,5 +1,6 @@
 export type Plant = {
     slug: string,
+    id: number,
     scientificName: string,
     commonName: string,
     imageUrl: string,
@@ -21,6 +22,8 @@ export type Plant = {
 }
 
 export type Task = {
+    id: number,
+    plantId: number,
     title: string,
     description: string,
     endDate: string,
@@ -29,9 +32,10 @@ export type Task = {
 }
 
 export interface PlantPage {
-    content: Plant[];
-    totalPages: number;
-    number: number;
+  content: Plant[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
 }
 
 export type PlantSearchResult = {

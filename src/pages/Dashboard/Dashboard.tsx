@@ -1,36 +1,41 @@
 import {useUserStore} from "@/app/stores/userStore.ts";
 import type {Plant} from "@/shared/types/plant.ts";
-import {useState, useCallback} from "react";
+import {useState, useEffect, useCallback} from "react";
 import useCountTask from "@/shared/hooks/useTaskCount.ts";
 import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
 import PlantCards from "@/pages/Dashboard/PlantCards.tsx";
 import PlantTasks from "@/pages/Dashboard/PlantTasks.tsx";
 import AddPlantDialog from "@/pages/Dashboard/AddPlantDialog.tsx";
 import PlantDetails from "@/pages/Dashboard/PlantDetails.tsx";
+import { Search } from "lucide-react";
 
 interface PlantListProps {
     username: string | undefined;
     setSelectedPlant: (plant: Plant | null) => void;
     selectedPlant: Plant | null;
-    onRefreshReady: (refresh: () => void) => void;
+    refreshKey: number;
 }
 
 export default function Dashboard() {
-    const { user } = useUserStore.getState();
+    const { user, incrementTasksCompleted } = useUserStore();
     const { count } = useCountTask(user?.username);
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
-    const [refreshPlantsCallback, setRefreshPlantsCallback] = useState<(() => void) | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    const handleRefreshReady = useCallback((refresh: () => void) => {
-        setRefreshPlantsCallback(() => refresh);
-    }, []);
-
-    const handlePlantDeleted = useCallback(() => {
-        setSelectedPlant(null);
-        if (refreshPlantsCallback) {
-            refreshPlantsCallback();
-        }
-    }, [refreshPlantsCallback]);
+    const handleTaskCompleted = useCallback(() => {
+        // Incrémenter le compteur de tâches complétées dans le store
+        incrementTasksCompleted();
+        // Forcer le rafraîchissement des plantes
+        setRefreshKey(prev => prev + 1);
+        // Mettre à jour la plante sélectionnée (les tâches ont changé)
+        setSelectedPlant(prev => {
+            if (prev) {
+                // Retirer la tâche de la liste locale
+                return { ...prev, tasks: prev.tasks?.filter(t => t.id !== undefined) ?? [] };
+            }
+            return prev;
+        });
+    }, [incrementTasksCompleted]);
 
     return (
         <main className="min-h-screen bg-gt-surface p-6">
@@ -56,7 +61,7 @@ export default function Dashboard() {
                             username={user?.username}
                             setSelectedPlant={setSelectedPlant}
                             selectedPlant={selectedPlant}
-                            onRefreshReady={handleRefreshReady}
+                            refreshKey={refreshKey}
                         />
                     </article>
 
@@ -64,8 +69,8 @@ export default function Dashboard() {
                         className="lg:col-span-2 space-y-6 opacity-0 animate-[fadeInUp_0.5s_ease-out_forwards]"
                         style={{ animationDelay: '0.3s' }}
                     >
-                        <PlantHealth plant={selectedPlant} onPlantDeleted={handlePlantDeleted} />
-                        <PlantTasks plant={selectedPlant} />
+                        <PlantHealth plant={selectedPlant} />
+                        <PlantTasks plant={selectedPlant} onTaskCompleted={handleTaskCompleted} />
                     </article>
                 </section>
             </div>
@@ -86,7 +91,16 @@ export default function Dashboard() {
     );
 }
 
-function PlantList({ username, setSelectedPlant, selectedPlant, onRefreshReady }: PlantListProps) {
+function PlantList({ username, setSelectedPlant, selectedPlant, refreshKey }: PlantListProps) {
+    const [query, setQuery] = useState('');
+    const [debouncedQuery, setDebouncedQuery] = useState('');
+
+    // Debounce simple : met à jour debouncedQuery 300ms après la dernière frappe
+    useEffect(() => {
+        const id = setTimeout(() => setDebouncedQuery(query.trim()), 300);
+        return () => clearTimeout(id);
+    }, [query]);
+
     return (
         <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             <header className="bg-gt-primary p-4">
@@ -96,11 +110,31 @@ function PlantList({ username, setSelectedPlant, selectedPlant, onRefreshReady }
             </header>
 
             <article className="p-4">
+                <div className="mb-4">
+                    <label className="sr-only">Rechercher une plante</label>
+
+                    <div className="relative">
+                        <div className="pointer-events-none absolute left-3 top-1/2 transform -translate-y-1/2 text-gt-text-muted">
+                            <Search width={16} height={16} aria-hidden />
+                        </div>
+
+                        <input
+                            type="search"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            aria-label="Rechercher une plante"
+                            placeholder="Rechercher une plante..."
+                            className="w-full bg-gt-surface border border-gt-border rounded-lg py-2 pl-10 pr-3 text-gt-text focus:outline-none focus:ring-2 focus:ring-gt-primary transition"
+                        />
+                    </div>
+                </div>
+
                 <PlantCards
                     username={username}
                     setSelectedPlant={setSelectedPlant}
                     selectedPlant={selectedPlant}
-                    onRefreshReady={onRefreshReady}
+                    refreshKey={refreshKey}
+                    search={debouncedQuery}
                 />
 
                 <AddPlantDialog />
@@ -132,4 +166,3 @@ function PlantHealth({ plant, onPlantDeleted }: { plant: Plant | null; onPlantDe
         </section>
     );
 }
-

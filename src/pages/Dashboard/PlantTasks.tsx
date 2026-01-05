@@ -1,11 +1,29 @@
 import type {Plant, Task} from "@/shared/types/plant.ts";
 import EmptyState from "@/pages/Dashboard/EmptyState.tsx";
+import {completeTask} from "@/services/repos/taskService.ts";
+import {toast} from "sonner";
+import {useState} from "react";
 
 interface TaskCardProps {
-    task: Task
+    task: Task;
+    onTaskCompleted: (taskId: number) => void;
 }
 
-export default function PlantTasks({ plant }: { plant: Plant | null }) {
+interface PlantTasksProps {
+    plant: Plant | null;
+    onTaskCompleted?: () => void;
+}
+
+export default function PlantTasks({ plant, onTaskCompleted }: PlantTasksProps) {
+    const handleTaskCompleted = (taskId: number) => {
+        // Supprimer visuellement la tâche de la liste
+        if (plant?.tasks) {
+            plant.tasks = plant.tasks.filter(t => t.id !== taskId);
+        }
+        // Callback pour rafraîchir les données parentes
+        onTaskCompleted?.();
+    };
+
     return (
         <section className="bg-gt-surface-elevated rounded-lg border border-gt-border overflow-hidden">
             {/* Header */}
@@ -27,11 +45,11 @@ export default function PlantTasks({ plant }: { plant: Plant | null }) {
                     <div className="space-y-3">
                         {plant.tasks.map((task, index) => (
                             <div
-                                key={index}
+                                key={task.id || index}
                                 className="opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
                                 style={{ animationDelay: `${0.1 + index * 0.08}s` }}
                             >
-                                <TaskCard task={task} />
+                                <TaskCard task={task} onTaskCompleted={handleTaskCompleted} />
                             </div>
                         ))}
                     </div>
@@ -54,7 +72,28 @@ export default function PlantTasks({ plant }: { plant: Plant | null }) {
     );
 }
 
-function TaskCard({ task }: TaskCardProps) {
+function TaskCard({ task, onTaskCompleted }: TaskCardProps) {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleComplete = async () => {
+        if (!task.id) {
+            toast.error("Impossible de compléter cette tâche");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            await completeTask(task.id);
+            toast.success(`Tâche "${task.title}" complétée !`);
+            onTaskCompleted(task.id);
+        } catch (error) {
+            console.error("Erreur lors de la complétion de la tâche:", error);
+            toast.error("Erreur lors de la complétion de la tâche");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const getStatusStyle = (status: string) => {
         const statusLower = status.toLowerCase();
 
@@ -125,8 +164,12 @@ function TaskCard({ task }: TaskCardProps) {
                     </p>
                 </div>
 
-                <button className="flex-shrink-0 bg-gt-primary hover:bg-gt-primary-hover text-gt-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                    Marquer fait ✓
+                <button
+                    onClick={handleComplete}
+                    disabled={isLoading}
+                    className="flex-shrink-0 bg-gt-primary hover:bg-gt-primary-hover text-gt-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isLoading ? "..." : "Marquer fait ✓"}
                 </button>
             </div>
         </div>

@@ -15,10 +15,12 @@ import RequireGuest from "@/shared/components/layout/RequiereGuest.tsx";
 import {userLoader} from "@/app/routes/userLoader.ts";
 import Dashboard from "@/pages/Dashboard/Dashboard.tsx";
 import RequireAdmin from "@/shared/components/layout/RequireAdmin.tsx";
+import RequireSuperAdmin from "@/shared/components/layout/RequireSuperAdmin.tsx";
 import AdminLayout from "@/pages/adminPage/components/AdminLayout.tsx";
 import AdminDashboard from "@/pages/adminPage/AdminDashboard.tsx";
 import UserManagement from "@/pages/adminPage/UserManagement.tsx";
 import BulkEmail from "@/pages/adminPage/BulkEmail.tsx";
+import RoleManagement from "@/pages/adminPage/RoleManagement.tsx";
 import ForgetPasswordPage from "@/pages/forgetPassword/ForgetPasswordPage.tsx";
 import EditPassword from "@/pages/profilePage/EditPassword.tsx";
 import ResetPassword from "@/pages/forgetPassword/ResetPassword.tsx";
@@ -28,6 +30,8 @@ import {combineLoaders} from "@/app/routes/combineLoaders.ts";
 import {articleLoader} from "@/app/routes/articleLoader.ts";
 import ResourceFormulairePage from "@/pages/Resource/formulaire/ResourceFormulairePage.tsx";
 import CreateApiPlantPage from "@/pages/plantCreationPage/CreateApiPlantPage.tsx";
+import ForumPage from "@/pages/forumPage/ForumPage.tsx";
+import PublicProfilePage from "@/pages/profilePage/PublicProfilePage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -60,6 +64,11 @@ const router = createBrowserRouter([
                         element: <ProfilePage />
                     },
                     {
+                        path: '/profil/:username',
+                        loader: accountLoader,
+                        element: <PublicProfilePage />
+                    },
+                    {
                         path: '/modification-mot-de-passe',
                         loader: accountLoader,
                         element: <EditPassword />
@@ -81,6 +90,12 @@ const router = createBrowserRouter([
 
                         element: <ResourcePageDetail />
                     },
+                    {
+                        path: '/forum',
+                        loader: accountLoader,
+
+                        element: <ForumPage />
+                    },
                 ]
             },
             {
@@ -98,10 +113,6 @@ const router = createBrowserRouter([
                         element: <ResourceFormulairePage />
                     }
                 ]
-            },
-            {
-                path: '/community',
-                //element: <CommunautePage/>
             },
             {
                 path: "/legal-notice",
@@ -159,6 +170,15 @@ const router = createBrowserRouter([
                     {
                         path: 'communications',
                         element: <BulkEmail />
+                    },
+                    {
+                        element: <RequireSuperAdmin />,
+                        children: [
+                            {
+                                path: 'roles',
+                                element: <RoleManagement />
+                            }
+                        ]
                     }
                 ]
             }

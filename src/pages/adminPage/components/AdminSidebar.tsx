@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, ArrowLeft, X, Shield, Mail } from "lucide-react";
+import { Home, Users, ArrowLeft, X, Shield, Mail, UserCog } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
+import { useUserStore } from "@/app/stores/userStore";
 
 interface AdminSidebarProps {
     isOpen: boolean;
@@ -11,16 +12,20 @@ interface SidebarItem {
     name: string;
     icon: React.ComponentType<{ size?: number; className?: string }>;
     path: string;
+    superAdminOnly?: boolean;
 }
 
 const sidebarItems: SidebarItem[] = [
     { name: "Accueil", icon: Home, path: "/admin" },
     { name: "Utilisateurs", icon: Users, path: "/admin/users" },
     { name: "Communications", icon: Mail, path: "/admin/communications" },
+    { name: "Gestion des rôles", icon: UserCog, path: "/admin/roles", superAdminOnly: true },
 ];
 
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     const location = useLocation();
+    const { user } = useUserStore();
+    const isSuperAdmin = user?.role === "SUPER_ADMIN";
 
     const isActive = (path: string) => {
         if (path === "/admin") {
@@ -28,6 +33,10 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         }
         return location.pathname.startsWith(path);
     };
+
+    const visibleItems = sidebarItems.filter(
+        (item) => !item.superAdminOnly || isSuperAdmin
+    );
 
     return (
         <>
@@ -65,7 +74,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
                 {/* Navigation */}
                 <nav className="flex-1 p-4 space-y-2">
-                    {sidebarItems.map((item) => {
+                    {visibleItems.map((item) => {
                         const Icon = item.icon;
                         const active = isActive(item.path);
 

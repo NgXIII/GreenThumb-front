@@ -19,7 +19,7 @@ export interface AdminUserPage {
 }
 
 export type UserStatusFilter = 'all' | 'active' | 'deleted';
-export type UserRoleFilter = 'all' | 'ADMIN' | 'MODERATEUR' | 'UTILISATEUR';
+export type UserRoleFilter = 'all' | 'ADMIN' | 'MODERATEUR' | 'UTILISATEUR' | 'SUPER_ADMIN';
 export type UserEnabledFilter = 'all' | 'true' | 'false';
 
 export type UserFilter = UserStatusFilter;
