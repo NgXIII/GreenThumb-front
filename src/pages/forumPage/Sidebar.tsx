@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Search, Plus, MessageCircle, TrendingUp, ChevronDown } from 'lucide-react';
+import {Plus, MessageCircle, TrendingUp, ChevronDown} from 'lucide-react';
 import resolveAvatar from "@/shared/utils/resolveAvatar.ts";
 import ChannelList from "./ChannelList.tsx";
 import CreateChannelModal from "./CreateChannelModal.tsx";
 import UserXPBar from "./UserXPBar.tsx";
 import UserProfileModal from "./UserProfileModal.tsx";
+import SearchInput from "./SearchInput.tsx";
 import type { Channel, Thread } from "@/shared/types/channel.ts";
 import useGetNextTier from "@/shared/hooks/forum/useGetNextTier.ts";
 import type {UserAccount} from "@/shared/types/user.ts";
+import { searchThreads, type SearchResult } from "@/shared/utils/searchThreads.ts";
 
 interface SidebarProps {
   user: UserAccount | null;
@@ -41,6 +43,10 @@ export default function Sidebar({
     const { tier } = useGetNextTier(user?.tier)
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Calculer les résultats de recherche
+    const searchResults: SearchResult[] = searchThreads(channels, searchQuery);
 
     return (
       <div className={`bg-gt-surface-elevated/80 backdrop-blur-sm border-r border-gt-border/50 flex flex-col shadow-lg transition-all duration-300 ${
@@ -64,16 +70,12 @@ export default function Sidebar({
           <p className="text-xs text-gt-text-muted">Communauté GreenThumb</p>
         </div>
 
-        {/* Search */}
-        <div className="p-4">
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gt-text-muted group-hover:text-gt-primary transition-colors"/>
-            <input
-              type="text"
-              placeholder="Rechercher dans le forum..."
-              className="w-full pl-11 pr-4 py-2.5 bg-gt-surface/70 border border-gt-border/50 rounded-xl text-sm text-gt-text placeholder:text-gt-text-muted focus:outline-none focus:ring-2 focus:ring-gt-primary/50 focus:border-gt-primary/50 focus:bg-gt-surface transition-all shadow-sm"
-            />
-          </div>
+        <div className="p-4 border-b border-gt-border/30">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Rechercher un thread ou channel..."
+          />
         </div>
 
         {/* Channels List */}
@@ -94,7 +96,7 @@ export default function Sidebar({
           </div>
 
           <ChannelList
-            channels={channels}
+            searchResults={searchResults}
             loading={loading}
             error={error}
             selectedChannel={selectedChannel}
