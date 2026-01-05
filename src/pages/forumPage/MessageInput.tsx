@@ -3,7 +3,7 @@ import { Send, Smile, Image as ImageIcon, X, Lock, Plus } from 'lucide-react';
 import EmojiPicker, { type EmojiClickData, Theme } from 'emoji-picker-react';
 import CreateThreadModal from "./CreateThreadModal.tsx";
 import type { Thread } from "@/shared/types/channel.ts";
-import type {Tier} from "@/shared/types/user.ts";
+import type {Tier, UserAccount} from "@/shared/types/user.ts";
 import {toast} from "sonner";
 import {uploadForumImage} from "@/services/repos/forumMediaRepo.ts";
 
@@ -12,7 +12,7 @@ interface MessageInputProps {
   role: string | undefined;
   tier: Tier | undefined;
   channelName?: string;
-  username?: string;
+  user: UserAccount | null;
   countCreatedThread?: number;
   onThreadCreated?: () => void;
   onSendMessage?: (text: string, mediaUrls?: string[]) => void;
@@ -24,7 +24,7 @@ export default function MessageInput(
         role,
         tier,
         channelName,
-        username,
+        user,
         countCreatedThread,
         onThreadCreated,
         onSendMessage,
@@ -130,12 +130,12 @@ export default function MessageInput(
               Créer un nouveau fil de discussion
             </button>
 
-            {channelName && username && (
+            {channelName && user?.username && (
               <CreateThreadModal
                 open={isCreateThreadModalOpen}
                 onOpenChange={setIsCreateThreadModalOpen}
                 channelName={channelName}
-                username={username}
+                username={user?.username}
                 onThreadCreated={onThreadCreated}
               />
             )}
@@ -149,7 +149,7 @@ export default function MessageInput(
       );
   }
 
-  if (selectedThread.isLocked) {
+  if (selectedThread.isLocked && user?.role === "UTILISATEUR") {
     return (
       <div className="text-center py-4">
         <Lock className="w-8 h-8 text-red-500 mx-auto mb-2"/>

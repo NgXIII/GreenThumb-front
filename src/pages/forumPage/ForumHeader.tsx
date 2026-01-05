@@ -1,20 +1,25 @@
-import { Hash, Menu, X, ArrowLeft, MessageCircle, Pin, Lock, Search, Users } from 'lucide-react';
-import type { Channel, Thread } from "@/shared/types/channel.ts";
+import { Hash, Menu, X, ArrowLeft, MessageCircle, Pin, Lock, Users } from 'lucide-react';
+import type { Channel, Thread, Message } from "@/shared/types/channel.ts";
+import MessageSearchPopup from "./MessageSearchPopup.tsx";
 
 interface ForumHeaderProps {
   isSidebarOpen: boolean;
   currentChannel: Channel | undefined;
   selectedThread: Thread | null;
+  threadMessages: Message[];
   onToggleSidebar: () => void;
   onBackToThreads: () => void;
+  onMessageClick: (messageId: number) => void;
 }
 
 export default function ForumHeader({
   isSidebarOpen,
   currentChannel,
   selectedThread,
+  threadMessages,
   onToggleSidebar,
-  onBackToThreads
+  onBackToThreads,
+  onMessageClick
 }: ForumHeaderProps) {
   return (
     <>
@@ -78,9 +83,12 @@ export default function ForumHeader({
 
       {/* Actions */}
       <div className="flex items-center gap-2">
-        <button className="p-2.5 rounded-xl hover:bg-gt-surface/70 transition-all group">
-          <Search className="w-5 h-5 text-gt-text-muted group-hover:text-gt-primary transition-colors"/>
-        </button>
+        {selectedThread && (
+          <MessageSearchPopup
+            messages={threadMessages}
+            onMessageClick={onMessageClick}
+          />
+        )}
       </div>
     </div>
     </>

@@ -1,3 +1,5 @@
+import type {Reaction} from "@/shared/types/reaction.ts";
+
 export type Channel = {
     name: string;
     description: string;
@@ -29,6 +31,7 @@ export type Message = {
     author: string;
     timestamp: string;
     mediaUrls?: string[];
+    reactions?: Reaction[];
 }
 
 export type ChatMessage = {
@@ -38,6 +41,7 @@ export type ChatMessage = {
     text: string;
     timestamp: string;
     mediaUrls?: string[];
+    reactions?: Reaction[];
 }
 
 export type MessageModerationEvent = {
@@ -76,6 +80,7 @@ export function chatMessageToMessage(chatMessage: ChatMessage): Message {
         author: chatMessage.username,
         timestamp: chatMessage.timestamp,
         mediaUrls: chatMessage.mediaUrls || [],
+        reactions: chatMessage.reactions || [],
     }
 }
 
@@ -87,5 +92,6 @@ export function messageToChatMessage(message: Message, threadId: number): ChatMe
         text: message.text,
         timestamp: message.timestamp,
         mediaUrls: message.mediaUrls || [],
+        reactions: message.reactions || [],
     }
 }

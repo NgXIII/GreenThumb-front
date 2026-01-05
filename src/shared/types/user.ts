@@ -16,6 +16,17 @@ export type UserAccount = {
     isPrivate: boolean
 }
 
+export type UserPrivateAccount = {
+    username: string
+    avatar: string | undefined
+    messageCount: number
+    tier: Tier
+    countCreatedThread: number
+    role: string
+    tasksCompleted: number
+    isPrivate: boolean
+}
+
 export type Tier = {
     name: string
     messageRequired: number
