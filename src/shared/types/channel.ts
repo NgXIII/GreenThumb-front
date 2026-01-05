@@ -40,6 +40,18 @@ export type ChatMessage = {
     mediaUrls?: string[];
 }
 
+export type MessageModerationEvent = {
+    type: "MESSAGE_REMOVED";
+    messageId: number;
+    reason: string;
+}
+
+export type ForumWebSocketMessage = ChatMessage | MessageModerationEvent;
+
+export function isModerationEvent(data: ForumWebSocketMessage): data is MessageModerationEvent {
+    return 'type' in data && data.type === "MESSAGE_REMOVED";
+}
+
 // Counter for generating unique temporary IDs
 let tempIdCounter = 0;
 

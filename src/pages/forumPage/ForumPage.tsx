@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import useGetChannels from "@/shared/hooks/forum/useGetChannel.ts";
-import type { Thread, Message, ChatMessage } from "@/shared/types/channel.ts";
-import { chatMessageToMessage } from "@/shared/types/channel.ts";
+import type { Thread, Message, ChatMessage, ForumWebSocketMessage } from "@/shared/types/channel.ts";
+import { chatMessageToMessage, isModerationEvent } from "@/shared/types/channel.ts";
 import Sidebar from "./Sidebar.tsx";
 import ForumHeader from "./ForumHeader.tsx";
 import ThreadListView from "./ThreadListView.tsx";
@@ -87,18 +87,29 @@ export default function ForumPage() {
 
     const unsubscribe = websocketService.subscribeToThread(
         selectedThread.id,
-        (chatMessage: ChatMessage) => {
-          const newMessage = chatMessageToMessage(chatMessage);
+        (data: ForumWebSocketMessage) => {
+          if (isModerationEvent(data)) {
+            console.log(`Message ${data.messageId} removed by AI moderation`);
+            console.log(`Reason: ${data.reason}`);
 
-          setThreadMessages((prevMessage) => {
-            const messageExists = prevMessage.some(msg => msg.idMessage === newMessage.idMessage);
+            setThreadMessages((prevMessages) =>
+              prevMessages.filter(msg => msg.idMessage !== data.messageId)
+            );
+            
+            toast.info("Un message a été supprimé par la modération automatique");
+          } else {
+            const newMessage = chatMessageToMessage(data);
 
-            if (messageExists) {
-              return prevMessage;
-            }
+            setThreadMessages((prevMessage) => {
+              const messageExists = prevMessage.some(msg => msg.idMessage === newMessage.idMessage);
 
-            return [...prevMessage, newMessage];
-          });
+              if (messageExists) {
+                return prevMessage;
+              }
+
+              return [...prevMessage, newMessage];
+            });
+          }
         }
     );
 
