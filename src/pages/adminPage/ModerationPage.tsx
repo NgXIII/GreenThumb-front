@@ -1,17 +1,11 @@
-import { Shield, RefreshCw, Loader2, AlertCircle, CheckCircle, XCircle, Flag, MessageSquare } from "lucide-react";
+import { Shield, RefreshCw, Loader2, AlertCircle, CheckCircle, XCircle, Flag } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import useModeration from "@/shared/hooks/admin/useModeration";
 import Pagination from "./components/Pagination";
-import type { ModerationFilter, ModerationItem } from "@/shared/types/moderation";
+import type { ModerationItem } from "@/shared/types/moderation";
 import { cn } from "@/shared/lib/utils";
 
 const PAGE_SIZE = 20;
-
-const filterOptions: { value: ModerationFilter; label: string; icon: React.ReactNode }[] = [
-    { value: "all", label: "Tous les messages", icon: <MessageSquare className="w-4 h-4" /> },
-    { value: "ai_rejected", label: "IA invalidés", icon: <XCircle className="w-4 h-4" /> },
-    { value: "pending_review", label: "En attente", icon: <AlertCircle className="w-4 h-4" /> },
-];
 
 interface ModerationCardProps {
     item: ModerationItem;
@@ -148,8 +142,6 @@ export default function ModerationPage() {
         currentPage,
         loading,
         error,
-        filter,
-        setFilter,
         setPage,
         refresh,
         handleApprove,
@@ -182,29 +174,10 @@ export default function ModerationPage() {
                     </Button>
                 </div>
 
-                {/* Filters */}
-                <div className="flex items-center gap-3">
-                    {filterOptions.map((option) => (
-                        <button
-                            key={option.value}
-                            onClick={() => setFilter(option.value)}
-                            className={cn(
-                                "px-4 py-2 rounded-xl font-medium text-sm transition-all flex items-center gap-2",
-                                filter === option.value
-                                    ? "bg-gt-primary text-white shadow-lg shadow-gt-primary/30"
-                                    : "bg-white dark:bg-gt-surface text-gt-text-muted hover:bg-gray-50 dark:hover:bg-gt-surface-elevated border border-gray-200 dark:border-gt-border"
-                            )}
-                        >
-                            {option.icon}
-                            {option.label}
-                        </button>
-                    ))}
-                </div>
-
                 {/* Stats */}
                 {!loading && (
-                    <div className="mt-4 text-sm text-gt-text-muted">
-                        {totalElements} message{totalElements > 1 ? 's' : ''} trouvé{totalElements > 1 ? 's' : ''}
+                    <div className="mt-2 text-sm text-gt-text-muted">
+                        {totalElements} message{totalElements > 1 ? 's' : ''} à modérer
                     </div>
                 )}
             </div>

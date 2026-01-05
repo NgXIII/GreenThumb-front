@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Users, ArrowLeft, X, Shield, Mail, UserCog } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-import { useUserStore } from "@/app/stores/userStore";
+import { useAdminRole } from "@/shared/hooks/admin/useAdminRole";
 
 interface AdminSidebarProps {
     isOpen: boolean;
@@ -12,24 +12,20 @@ interface SidebarItem {
     name: string;
     icon: React.ComponentType<{ size?: number; className?: string }>;
     path: string;
-    superAdminOnly?: boolean;
-    moderatorAccess?: boolean;
+    roles: ('MODERATEUR' | 'ADMIN' | 'SUPER_ADMIN')[];
 }
 
 const sidebarItems: SidebarItem[] = [
-    { name: "Accueil", icon: Home, path: "/admin" },
-    { name: "Utilisateurs", icon: Users, path: "/admin/users" },
-    { name: "Modération", icon: Shield, path: "/admin/moderation", moderatorAccess: true },
-    { name: "Communications", icon: Mail, path: "/admin/communications" },
-    { name: "Gestion des rôles", icon: UserCog, path: "/admin/roles", superAdminOnly: true },
+    { name: "Accueil", icon: Home, path: "/admin", roles: ['MODERATEUR', 'ADMIN', 'SUPER_ADMIN'] },
+    { name: "Utilisateurs", icon: Users, path: "/admin/users", roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { name: "Modération", icon: Shield, path: "/admin/moderation", roles: ['MODERATEUR', 'ADMIN', 'SUPER_ADMIN'] },
+    { name: "Communications", icon: Mail, path: "/admin/communications", roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { name: "Gestion des rôles", icon: UserCog, path: "/admin/roles", roles: ['SUPER_ADMIN'] },
 ];
 
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     const location = useLocation();
-    const { user } = useUserStore();
-    const isSuperAdmin = user?.role === "SUPER_ADMIN";
-    const isAdmin = user?.role === "ADMIN" || isSuperAdmin;
-    const isModerator = user?.role === "MODERATEUR";
+    const { role } = useAdminRole();
 
     const isActive = (path: string) => {
         if (path === "/admin") {
@@ -39,16 +35,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     };
 
     const visibleItems = sidebarItems.filter((item) => {
-        // Super admin only items
-        if (item.superAdminOnly && !isSuperAdmin) {
-            return false;
-        }
-        // Moderator can only access items with moderatorAccess flag
-        if (isModerator && !isAdmin) {
-            return item.moderatorAccess === true;
-        }
-        // Admin and Super Admin can see everything except super admin only
-        return true;
+        // Filter items based on user role
+        return role && item.roles.includes(role);
     });
 
     return (

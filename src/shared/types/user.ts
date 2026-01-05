@@ -1,3 +1,5 @@
+export type Role = 'UTILISATEUR' | 'MODERATEUR' | 'ADMIN' | 'SUPER_ADMIN';
+
 export type UserAccount = {
     username: string
     firstname: string
@@ -9,7 +11,7 @@ export type UserAccount = {
     messageCount: number
     tier: Tier
     countCreatedThread: number
-    role: string
+    role: Role
     tasksCompleted: number
     isPrivate: boolean
 }

@@ -153,7 +153,7 @@ const router = createBrowserRouter([
         element: <VerifyEmailPage />
     },
     {
-        element: <RequireAdmin />,
+        element: <RequireAdminOrModerator />,
         loader: userLoader,
         children: [
             {
@@ -166,12 +166,21 @@ const router = createBrowserRouter([
                         element: <AdminDashboard />
                     },
                     {
-                        path: 'users',
-                        element: <UserManagement />
+                        path: 'moderation',
+                        element: <ModerationPage />
                     },
                     {
-                        path: 'communications',
-                        element: <BulkEmail />
+                        element: <RequireAdmin />,
+                        children: [
+                            {
+                                path: 'users',
+                                element: <UserManagement />
+                            },
+                            {
+                                path: 'communications',
+                                element: <BulkEmail />
+                            }
+                        ]
                     },
                     {
                         element: <RequireSuperAdmin />,
@@ -181,23 +190,6 @@ const router = createBrowserRouter([
                                 element: <RoleManagement />
                             }
                         ]
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        element: <RequireAdminOrModerator />,
-        loader: userLoader,
-        children: [
-            {
-                path: '/admin',
-                element: <AdminLayout />,
-                loader: accountLoader,
-                children: [
-                    {
-                        path: 'moderation',
-                        element: <ModerationPage />
                     }
                 ]
             }
