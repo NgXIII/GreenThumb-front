@@ -1,5 +1,5 @@
 import { Search, X } from 'lucide-react';
-import { useRef, type ChangeEvent, type FC } from 'react';
+import {useRef, type ChangeEvent, type FC, type JSX} from 'react';
 import { Input } from "@/shared/components/ui/input";
 import { cn } from "@/shared/lib/utils";
 

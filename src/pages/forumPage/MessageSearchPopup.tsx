@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import {useState, useMemo, type JSX} from 'react';
 import { Search, X, MessageCircle } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/components/ui/popover";
 import { Input } from "@/shared/components/ui/input";
